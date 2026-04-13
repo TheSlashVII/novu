@@ -1,0 +1,5 @@
+[client]
+database=novudb
+user=novu
+password="BDnovu3"
+default-character-set = utf8mb4

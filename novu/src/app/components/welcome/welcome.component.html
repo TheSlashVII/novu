@@ -1,0 +1,211 @@
+<main class="min-h-screen bg-white overflow-x-hidden">
+
+<!-- ===================== HERO ===================== -->
+<section class="relative min-h-screen flex items-center overflow-hidden bg-white">
+
+<!-- Blobs de fondo -->
+<div class="absolute inset-0 -z-10 overflow-hidden">
+    <div class="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full opacity-60 blur-3xl
+                  bg-gradient-to-r from-violet-300/35 via-purple-300/25 to-transparent"></div>
+    <div class="absolute -bottom-32 -left-32 w-[500px] h-[500px] rounded-full opacity-50 blur-3xl
+                  bg-gradient-to-r from-rose-300/22 via-coral-300/15 to-transparent"></div>
+</div>
+
+<div class="max-w-7x1 mx-auto px-6 lg:px-12 py-20 w-full">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+
+      <!-- Columna izquierda: texto -->
+       <div class="space-y-8">
+
+        <div class="animate-fade-in-up inline-flex items-center gap-2 px-4 py-2
+                      rounded-full border border-violet-200 bg-violet-50 w-fit">
+          <span class="w-2 h-2 rounded-full bg-violet-500 animate-pulse"></span>
+          <span class="text-sm font-medium text-violet-700 font-poppins">
+            Solo para estudiantes de Hospitalet
+          </span>
+        </div>
+
+        <!-- Título -->
+        <div class="animate-fade-in-up animation-delay-200">
+          <h1 class="font-poppins font-extrabold text-5xl lg:text-6xl leading-tight text-gray-900">
+            Conecta con
+            <span class="relative inline-block">
+              <span class="relative z-10 bg-gradient-to-r from-violet-600 via-purple-600 to-rose-500
+                             bg-clip-text text-transparent">
+                            estudiantes
+              </span>
+              <svg class="absolute -bottom-2 left-0 w-full" viewBox="0 0 300 12" fill="none">
+                <path d="M2 8 Q75 2 150 8 Q225 14 298 8"
+                      stroke="url(#underline-grad)" stroke-width="3"
+                      stroke-linecap="round" fill="none"/>
+                <defs>
+                    <linearGradient id="underline-grad" x1="0" y1="0" x2="300" y2="0">
+                      <stop offset="0%" stop-color="#7c3aed"/>
+                      <stop offset="100%" stop-color="#f43f5e"/>
+                    </linearGradient>
+                </defs>
+              </svg>
+            </span>
+            <br /> Cerca de ti
+          </h1>
+        </div>
+
+        <!-- Subtítulo -->
+         <p class="animate-fade-in-up animation-delay-400 text-xl text-gray-500 leading-relaxed max-w-lg">
+            Novu es el espacio donde los estudiantes se conocen de verdad.
+            Matches basados en intereses y estudios. Sin ruido, con privacidad.
+         </p>
+
+         <!-- Botones CTA -->
+          <div class="animate-fade-in-up animation-delay-600 flex flex-col sm:flex-row gap-4">
+            <button
+                (click)="goToLogin()"
+                class="px-8 py-4 rounded-2xl font-poppins font-semibold text-gray-700
+                     text-lg border-2 border-gray-200 bg-white
+                     hover:border-violet-300 hover:text-violet-700 hover:bg-violet-50
+                     transition-all duration-300 hover:scale-105 active:scale-95">
+                Iniciar sesión
+            </button>
+          </div>
+
+          <!-- Social proof -->
+           <div class="animate-fade-in-up animation-delay-800 flex items-center gap-4 pt-2">
+            <div class="flex -space-x-3">
+              <div class="w-9 h-9 rounded-full border-2 border-white flex items-center justify-center
+                          text-xs font-semibold text-white bg-gradient-to-br from-violet-600 to-purple-600">
+                        AL
+              </div>
+              <div class="w-9 h-9 rounded-full border-2 border-white flex items-center justify-center
+                          text-xs font-semibold text-white bg-gradient-to-br from-rose-500 to-orange-400">
+                        MR
+              </div>
+              <div class="w-9 h-9 rounded-full border-2 border-white flex items-center justify-center
+                          text-xs font-semibold text-white bg-gradient-to-br from-cyan-500 to-blue-500">
+                        JK
+              </div>
+              <div class="w-9 h-9 rounded-full border-2 border-white flex items-center justify-center
+                          text-xs font-semibold text-white bg-gradient-to-br from-emerald-500 to-cyan-500">
+                        SP
+              </div>
+            </div>
+           </div>
+       </div>
+
+
+       <!-- Columna derecha: tarjeta flotante -->
+       <div class="relative hidden lg:flex items-center justify-center h-[580px]">
+
+        <!-- Tarjeta de perfil -->
+          <div class="animate-float absolute z-20 w-72 rounded-3xl overflow-hidden shadow-2xl
+                      border border-white/80 bg-white">
+            <div class="h-52 relative bg-gradient-to-br from-violet-600 via-purple-600 to-rose-500">
+              <div class="absolute bottom-4 left-4 right-4 flex items-end justify-between">
+                <div>
+                    <p class="font-poppins font-bold text-xl text-white">Justin M.</p>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm
+                            flex items-center justify-center text-white font-bold">✓</div>
+              </div>
+            </div>
+            <div class="p-4 space-y-3">
+                <div class="flex gap-2 flex-wrap">
+                  <span class="px-3 py-1 rounded-full text-xs font-medium bg-violet-100 text-violet-700">Diseño</span>
+                  <span class="px-3 py-1 rounded-full text-xs font-medium bg-violet-100 text-violet-700">Música</span>
+                  <span class="px-3 py-1 rounded-full text-xs font-medium bg-violet-100 text-violet-700">Fotografía</span>
+                </div>
+                <div class="flex gap-3 pt-1">
+                    <button class="flex-1 py-2.5 rounded-xl border-2 border-gray-200
+                               text-gray-400 hover:border-rose-400 hover:text-rose-500
+                               transition-all duration-200 font-semibold text-lg">✕</button>
+                     <button class="flex-1 py-2.5 rounded-xl text-white font-semibold text-lg
+                               transition-all duration-200 hover:opacity-90
+                               bg-gradient-to-r from-violet-600 to-rose-500">♥</button>
+                </div>  
+            </div>
+          </div>
+
+          <!-- Chip: match -->
+           <div class="absolute top-12 -right-4 z-30 bg-white rounded-2xl shadow-xl
+                      border border-gray-100 px-4 py-3 flex items-center gap-3
+                      animate-fade-in-up animation-delay-600">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm
+                        bg-gradient-to-br from-violet-600 to-rose-500 text-white">✨</div>
+            <div>
+              <p class="font-poppins font-semibold text-sm text-gray-800">¡Es un match!</p>
+              <p class="text-xs text-gray-400">Tú y Marc coincidís</p>
+            </div>
+           </div>
+
+           <!-- Chip: verificado -->
+           <div class="absolute bottom-16 -left-8 z-30 bg-white rounded-2xl shadow-xl
+                      border border-gray-100 px-4 py-3 flex items-center gap-3
+                      animate-fade-in-up animation-delay-400">
+             <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center
+                        justify-center text-emerald-600 font-bold text-sm">✓</div>      
+            <div>
+              <p class="font-poppins font-semibold text-sm text-gray-800">Verificado</p>
+              <p class="text-xs text-gray-400">Carnet de estudiante</p>
+            </div>   
+           </div>
+
+
+       </div>
+    </div>
+</div>
+</section>
+
+  <!-- ===================== FEATURES ===================== -->
+   <section class="py-24 bg-gray-50">
+    <div class="max-w-7x1 mx-auto px-6 lg:px-12">
+
+        <div class="text-center max-w-2x1 mx-auto mb-16">
+          <span class="inline-block px-4 py-1.5 rounded-full bg-violet-100 text-violet-700
+                        text-sm font-semibold font-poppins mb-4">
+            ¿Por qué Novu?
+          </span>
+          <h2 class="font-poppins font-bold text-4xl lg:text-5xl text-gray-900 mb-4">
+            Pensado para la vida del estudiante 
+          </h2>
+          <p class="text-lg text-gray-500 leading-relaxed">
+            No somos otra app de citas. Somos el espacio donde los estudiantes
+            conectan de forma auténtica y segura.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Feature 1-->
+             <div class="group relative bg-white rounded-3xl p-8 border border-gray-100
+                          hover:border-violet-200 hover:shadow-xl
+                          transition-all duration-300 hover:-translate-y-2 cursor-default">
+               <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mb-6
+                           bg-gradient-to-br from-violet-100/80 to-purple-100/50 text-3xl">
+                🔒
+                </div>
+                <h3 class="font-poppins font-bold text-xl text-gray-900 mb-3">
+                    Conexión segura
+                </h3>
+                <p class="text-gray-500 leading-relaxed">
+                    Tu información está protegida. Solo ves lo que decides compartir y con quién.
+                </p>
+                </div>
+
+                <!-- Feature 2-->
+                 <div class="group relative bg-white rounded-3xl p-8 border border-gray-100
+                             hover:border-rose-200 hover:shadow-xl
+                             transition-all duration-300 hover:-translate-y-2 cursor-default">
+                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mb-6
+                      bg-gradient-to-br from-rose-100/80 to-orange-100/50 text-3xl">
+                     🎓 
+                    </div>
+                    <h3 class="font-poppins font-bold text-xl text-gray-900 mb-3">
+                        Verificación de estudiante
+                    </h3>
+                    <p class="text-gray-500 leading-relaxed">
+                        Solo entran estudiantes verificados con carnet de estudiante. Sin bots ni perfiles falsos. 
+                    </p>
+                            </div>
+        </div>
+    </div>
+   </section>
+
+</main>
