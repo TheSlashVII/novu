@@ -1,0 +1,92 @@
+
+<div class="min-h-screen flex bg-white overflow-hidden">
+
+  <div class="hidden md:flex md:w-5/12 lg:w-2/5 flex-col justify-between p-10"
+       style="background: linear-gradient(160deg, #6B5AED 0%, #4A3BAA 60%, #2D1F7A 100%);">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+        <span class="text-xl leading-none">📚</span>
+      </div>
+      <span class="text-white font-bold text-xl tracking-wide">novu</span>
+    </div>
+
+    <div class="max-w-sm">
+      <h2 class="text-white font-extrabold leading-tight" style="font-size: clamp(2rem, 4vw, 3rem);">
+        Conecta con<br>estudiantes<br>cerca de ti
+      </h2>
+    </div>
+
+    <p class="text-white/50 text-sm">© 2026 Novu. Todos los derechos reservados.</p>
+  </div>
+
+  <div class="flex-1 flex items-center justify-center px-6 py-10">
+    <div class="w-full max-w-[560px] mx-auto">
+      <h1 class="text-3xl font-bold text-gray-900 mb-10 text-center">Iniciar sesión</h1>
+
+      <form [formGroup]="formLogin" (ngSubmit)="submit()" class="space-y-6">
+        <div>
+          <label class="block text-sm font-semibold mb-3" style="color: #6B5AED;">Email</label>
+          <div class="relative">
+            <input type="email" formControlName="email" placeholder="example@mail.com"
+              class="w-full pl-12 pr-4 py-2.5 rounded-full border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50">
+          </div>
+          @if(formLogin.get('email')?.touched){
+            @if(formLogin.get('email')?.errors?.['required']){
+              <span class="text-red-500 text-xs block mt-1 ml-3">El correo no puede quedar vacío</span>
+            }
+            @if(formLogin.get('email')?.errors?.['pattern']){
+              <span class="text-red-500 text-xs block mt-1 ml-3">Debes poner un email válido</span>
+            }
+          }
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold mb-3" style="color: #6B5AED;">Contraseña</label>
+          <div class="relative">
+            <input [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Introduce tu contraseña..."
+              class="w-full pl-12 pr-12 py-2.5 rounded-full border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50">
+            <button type="button" (click)="togglePassword()" tabindex="-1"
+              class="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 transition">
+              <span class="leading-none text-sm">{{ showPassword ? '👁️‍🗨️' : '👁️' }}</span>
+            </button>
+          </div>
+          @if(formLogin.get('password')?.touched){
+            @if(formLogin.get('password')?.errors?.['required']){
+              <span class="text-red-500 text-xs block mt-1 ml-3">La contraseña no puede quedar vacía</span>
+            }
+            @if(formLogin.get('password')?.errors?.['minlength']){
+              <span class="text-red-500 text-xs block mt-1 ml-3">Mínimo 6 caracteres</span>
+            }
+          }
+        </div>
+
+        <div class="pt-2">
+          <button type="submit" [disabled]="!isFormReady || loading"
+            class="w-full py-3 rounded-full text-white font-bold text-base transition-all focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2"
+            [ngClass]="isFormReady && !loading ? 'hover:opacity-90 active:scale-95 cursor-pointer' : 'opacity-40 cursor-not-allowed'"
+            [style]="isFormReady && !loading ? 'background: linear-gradient(90deg, #F05A5A, #E03333);' : 'background: #9CA3AF;'">
+            @if (loading) {
+              <span class="inline-flex items-center gap-2">
+                <svg class="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                </svg>
+                Iniciando...
+              </span>
+            } @else {
+              Iniciar sesión
+            }
+          </button>
+
+          <p class="text-center mt-4 text-sm text-gray-500">
+            ¿No tienes cuenta?
+            <a href="#" class="font-medium hover:underline" style="color:#6B5AED;">Registrarse</a>
+          </p>
+          <p class="text-center mt-2 text-sm">
+            <a href="#" class="font-medium hover:underline" style="color:#6B5AED;">¿Olvidaste tu contraseña?</a>
+          </p>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
