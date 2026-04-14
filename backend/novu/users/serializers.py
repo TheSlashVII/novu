@@ -1,5 +1,6 @@
 from django.contrib.auth.models import *
 from rest_framework import serializers
+from .models import *
 
 # these Serializer Classes are used to simplify the process of serializing models
 # we would have to serialize manually each field.
@@ -83,12 +84,12 @@ class GoalSerializer(serializers.ModelSerializer):
 
 class RelationshipPreferenceSerializer(serializers.ModelSerializer):
     class Meta:
-        model=RelationshipPreference
+        model=Relationship_preference
         fields='__all__'
 
 class UserRelationPreferenceSerializer(serializers.ModelSerializer):
     class Meta:
-        model=UserRelationPreference
+        model=User_relation_preference
         fields='__all__'
 
 class PhotoSerializer(serializers.ModelSerializer):
