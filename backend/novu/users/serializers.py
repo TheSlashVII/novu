@@ -31,7 +31,7 @@ class UserSeralizer(serializers.HyperlinkedModelSerializer):
 
 """
 
-class UserSeralizer(serializers.HyperlinkedModelSerializer):
+class UserSeralizer(serializers.ModelSerializer):
     class Meta:
         model=User
         fields='__all__'

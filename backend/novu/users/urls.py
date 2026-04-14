@@ -1,7 +1,7 @@
 from django.urls import path
-from django.contrib import admin
+from rest_framework import routers
+from . import views
+router=routers.SimpleRouter()
+router.register("get/", viewset=views.getAllUsers)
 
-urlpatterns = [
-   path('admin/', admin.site.urls),
-
-]
+urlpatterns = router
