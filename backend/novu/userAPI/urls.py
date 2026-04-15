@@ -7,11 +7,13 @@ from .viewsets import UserViewset
 UserController=UserViewset.UserViewset
 
 list_test=UserController.as_view({ "get" : "test" })
+create_user=UserController.as_view({"post" : "create"})
 
 
 
 
 #urlpatterns = router.urls
 urlpatterns = [
-    path('list/', list_test)
+    path('list/', list_test),
+    path("create/", create_user)
 ]
