@@ -23,6 +23,9 @@ class UserViewset(viewsets.ViewSet):
     def test(self,request):
         testData = {"name": "Junior"}
         return JsonResponse(testData)
+    def test2(self,request):
+        
+        return JsonResponse(request, safe=False)
 
     # to create a new model inside the database
     def create(self, request):

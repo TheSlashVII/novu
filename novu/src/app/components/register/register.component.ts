@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { UserAPIService } from '../../services/user-api.service';
 
 @Component({
   selector: 'app-register',
@@ -49,12 +50,12 @@ export class RegisterComponent {
     }
 
     const hoy = new Date();
-    let edad = hoy.getFullYear() - anio;
+    let age = hoy.getFullYear() - anio;
     const mesDiff = hoy.getMonth() - (mes - 1);
     if (mesDiff < 0 || (mesDiff === 0 && hoy.getDate() < dia)) {
-      edad--;
+      age--;
     }
-    return edad >= 18;
+    return age >= 18;
   }
 
   onFileChange(event: any, fieldName: string) {
@@ -68,7 +69,9 @@ export class RegisterComponent {
   submit(): void {
     if (this.isFormReady) {
       console.log('Formulario válido:', this.formRegister.value);
-      alert('¡Registro exitoso! Revisa la consola para ver los datos.');
+      // this.userAPI.createRegisterRequest(this.formRegister.value)
+      // alert('¡Registro exitoso! Revisa la consola para ver los datos.');
+
     }
   }
 }

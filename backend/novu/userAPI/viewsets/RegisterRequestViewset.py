@@ -12,13 +12,13 @@ class RequestViewset(viewsets.ViewSet):
     def list(self,request):
         queryset = Request.objects.all()
         serializer = RequestSerializer(queryset, many=True)
-        return Response(serializer.data,status=status.HTTP_200_OK)
+        return JsonResponse(serializer.data,status=status.HTTP_200_OK, safe=False) # false parameter permits us to convert other items to json. Not exclusively Dictionaries (Json)
 
     # to create a new request inisde the database
     def create(self,request):
         serializer = RequestSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save() # save newly created object to the database
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
