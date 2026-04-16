@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, formatCurrency } from '@angular/common';
 import { UserAPIService } from '../../services/user-api.service';
 
 @Component({
@@ -70,10 +70,44 @@ export class RegisterComponent {
 
   submit(): void {
     if (this.isFormReady) {
-      console.log('Formulario válido:', this.formRegister.value);
+      const formData= new FormData(); // new empty object to colect the form data since the formRegister.value only returns strings
+      // name field
+      formData.append("name", this.formRegister.get("name")?.value!) 
+      // surname field
+      formData.append("surnames", this.formRegister.get("surnames")?.value!)
+      
+      // restructure the date field to be sent as the expected django date format
+      const dateValue = this.formRegister.get('date_of_birth')?.value;
+        if (dateValue) {
+          const [dia, mes, anio] = dateValue.split('/'); // Destructuring the date components into seperate variables
+          formData.append('date_of_birth', `${anio}-${mes}-${dia}`);
+        }
+
+        // email field
+        formData.append('email', this.formRegister.get('email')?.value!);
+        // password field
+        formData.append('password', this.formRegister.get('password')?.value!);
+        
+        // add student photos
+        /**
+         * We cast the input field contents into HTMLInputElement to capture the true file inside of it instead of the name of the file 
+         * also the [0] at the end is necessary because the .files property returns an array (FileList).
+         */
+        const studentIdFile = (document.getElementById('photo_student_id') as HTMLInputElement).files?.[0]; 
+        const selfieFile = (document.getElementById('photo_id_selfie') as HTMLInputElement).files?.[0];
+        if (studentIdFile) {
+          formData.append('photo_student_id', studentIdFile);
+        }
+         if (selfieFile) {
+          formData.append('photo_id_selfie', selfieFile);
+         }
+
+
+
+      console.log('Formulario válido:', formData);
       // this.userAPI.createRegisterRequest(this.formRegister.value)
       // alert('¡Registro exitoso! Revisa la consola para ver los datos.');
-       this.userAPI.createRegisterRequest(this.formRegister.value).subscribe({
+       this.userAPI.createRegisterRequest(formData).subscribe({
        next: (res) => console.log(res),
       error: (err) => console.error(err)
   });
