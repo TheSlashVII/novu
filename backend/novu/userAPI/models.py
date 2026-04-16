@@ -157,7 +157,7 @@ class Request(models.Model):
     date_of_birth=models.DateField()
     photo_student_id=models.ImageField(upload_to=utilities.fileRename) # the url to the photo uploaded to the server
     photo_id_selfie=models.ImageField(upload_to=utilities.fileRename) # the url to the photo with the student holding his id 
-    id_student=models.BigIntegerField()
+    id_student=models.BigIntegerField(default='')
     
     # set status states
     # this is for setting a list of available choices when writing to this column. Only these options are valid
