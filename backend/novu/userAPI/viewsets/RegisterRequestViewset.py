@@ -18,7 +18,6 @@ class RequestViewset(viewsets.ViewSet):
     def create(self,request):
         serializer = RequestSerializer(data=request.data)
         if serializer.is_valid():
-            
             serializer.save() # save newly created object to the database
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
