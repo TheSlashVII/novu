@@ -1,8 +1,6 @@
 from django.db import models
-
+from . import utilities
 # Create your models here.
-from django.db import models
-
 # this file is used to create the models for the database
 # by default the id field is created so no need to declare it 
 class User(models.Model):
@@ -157,8 +155,8 @@ class Request(models.Model):
     email=models.CharField(max_length=100)
     password=models.TextField()
     date_of_birth=models.DateField()
-    photo_student_id=models.TextField() # the url to the photo uploaded to the server
-    photo_id_selfie=models.TextField() # the url to the photo with the student holding his id 
+    photo_student_id=models.ImageField(upload_to=utilities.fileRename) # the url to the photo uploaded to the server
+    photo_id_selfie=models.ImageField(upload_to=utilities.fileRename) # the url to the photo with the student holding his id 
     id_student=models.BigIntegerField()
     
     # set status states
