@@ -1,7 +1,7 @@
 import uuid, os
 from pathlib import Path
 
-BASE_URL=Path(__file__).resolve().parent.parent
+BASE_URL=Path(__file__).resolve().parent.parent # project root
 def fileRename(model, file:str, isRegister:bool):
     if isRegister:
         fileExtension=file.split('.')[-1] # gets the file extension by searching the first set of letters after the last '.'
