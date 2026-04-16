@@ -15,7 +15,7 @@ export class RegisterComponent {
   constructor(private userAPI: UserAPIService) {}
   formRegister = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
-    surname: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]),
+    surnames: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]),
     date_of_birth: new FormControl('', [Validators.required]),
     email: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$')]),
     password: new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(20)]),

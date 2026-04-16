@@ -1,202 +1,217 @@
-<div class="min-h-screen flex">
+<div class="min-h-screen flex bg-white overflow-hidden">
 
   <!-- Panel izquierdo -->
-  <div class="hidden md:flex md:w-5/12 lg:w-2/5 flex-col justify-between p-10"
-       style="background: linear-gradient(160deg, #6B5AED 0%, #4A3BAA 60%, #2D1F7A 100%);">
+  <aside class="hidden md:flex md:w-[40%] lg:w-[38%] xl:w-[36%] flex-col justify-between px-10 py-8 bg-[linear-gradient(180deg,#5E6FE5_0%,#4A4ABF_45%,#5A2D9E_100%)]">
     <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
-        <span style="font-size:20px;">📚</span>
+      <div class="w-11 h-11 rounded-2xl flex items-center justify-center bg-white/20">
+        <span class="text-2xl">📚</span>
       </div>
-      <span class="text-white font-bold text-xl tracking-wide">novu</span>
+      <span class="text-white font-bold text-2xl tracking-tight">novu</span>
     </div>
 
-    <div>
-      <h2 class="text-white font-extrabold leading-tight"
-          style="font-size: clamp(2rem, 4vw, 3rem);">
-        Conecta con<br>estudiantes<br>cerca de ti
+    <div class="max-w-xs mb-24">
+      <h2 class="text-white font-black leading-[1.05] tracking-tight text-[clamp(2.6rem,4vw,4.2rem)]">
+        Conecta con<br>
+        estudiantes<br>
+        cerca de ti
       </h2>
     </div>
 
-    <p class="text-white/50 text-sm">© 2026 Novu. Todos los derechos reservados.</p>
-  </div>
+    <p class="text-white/55 text-sm">© 2026 Novu. Todos los derechos reservados.</p>
+  </aside>
 
-  <!-- Panel derecho: formulario -->
-  <div class="flex-1 flex items-start justify-center bg-white overflow-y-auto py-10 px-6">
-    <div class="w-full max-w-xl">
+  <!-- Panel derecho -->
+  <main class="flex-1 flex justify-center items-center px-10 py-16">
+    <div class="w-full max-w-[720px]">
 
-      <h1 class="text-3xl font-bold text-gray-900 mb-8 text-center">Crear cuenta</h1>
+      <h1 class="text-center text-4xl md:text-5xl font-black text-black mb-14 md:mb-16">
+        Crear cuenta
+      </h1>
 
-      <form [formGroup]="formRegister" (ngSubmit)="submit()" class="space-y-6">
+      <form [formGroup]="formRegister" (ngSubmit)="submit()" class="space-y-12" enctype="multipart/form-data">
 
         <!-- Datos personales -->
-        <div>
-          <h2 class="text-sm font-semibold mb-3" style="color: #6B5AED;">Datos personales</h2>
-          <div class="flex gap-3">
-            <!-- name -->
-            <div class="flex-1">
-              <input type="text" formControlName="name" placeholder="Tu name..."
-                     class="w-full px-4 py-2.5 rounded-full border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50">
-              @if(this.formRegister.get('name')?.touched){
-                @if(this.formRegister.get('name')?.errors?.['required']){
-                  <span class="text-red-500 text-xs block mt-1 ml-3">El name no puede quedar vacío</span>
+        <section class="space-y-4">
+          <h2 class="text-[15px] font-semibold text-[#5B8CD9]">Datos personales</h2>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <input
+                type="text"
+                formControlName="name"
+                placeholder="Tu nombre..."
+                class="w-full h-9 rounded-full border-2 border-black bg-white px-4 text-[12px] outline-none placeholder:text-gray-400 focus:ring-0"
+              />
+              @if (formRegister.get('name')?.touched) {
+                @if (formRegister.get('name')?.errors?.['required']) {
+                  <span class="block ml-3 text-xs text-red-500">El nombre no puede quedar vacío</span>
                 }
-                @if(this.formRegister.get('name')?.errors?.['minlength']){
-                  <span class="text-red-500 text-xs block mt-1 ml-3">Mínimo 2 caracteres</span>
+                @if (formRegister.get('name')?.errors?.['minlength']) {
+                  <span class="block ml-3 text-xs text-red-500">Mínimo 2 caracteres</span>
                 }
               }
             </div>
-            <!-- surname -->
-            <div class="flex-1">
-              <input type="text" formControlName="surname" placeholder="surname..."
-                     class="w-full px-4 py-2.5 rounded-full border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50">
-              @if(this.formRegister.get('surname')?.touched){
-                @if(this.formRegister.get('surname')?.errors?.['required']){
-                  <span class="text-red-500 text-xs block mt-1 ml-3">Los surname no pueden quedar vacíos</span>
+
+            <div class="space-y-2">
+              <input
+                type="text"
+                formControlName="surnames"
+                placeholder="Apellidos..."
+                class="w-full h-9 rounded-full border-2 border-black bg-white px-4 text-[12px] outline-none placeholder:text-gray-400 focus:ring-0"
+              />
+              @if (formRegister.get('surnames')?.touched) {
+                @if (formRegister.get('surnames')?.errors?.['required']) {
+                  <span class="block ml-3 text-xs text-red-500">Los apellidos no pueden quedar vacíos</span>
                 }
-                @if(this.formRegister.get('surname')?.errors?.['minlength']){
-                  <span class="text-red-500 text-xs block mt-1 ml-3">Mínimo 2 caracteres</span>
+                @if (formRegister.get('surnames')?.errors?.['minlength']) {
+                  <span class="block ml-3 text-xs text-red-500">Mínimo 2 caracteres</span>
                 }
               }
             </div>
           </div>
-        </div>
+        </section>
 
         <!-- Fecha de nacimiento -->
-        <div>
-          <h2 class="text-sm font-semibold mb-3" style="color: #6B5AED;">Fecha de nacimiento</h2>
-          <div class="relative">
-            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">📅</span>
-            <input type="text" formControlName="date_of_birth" placeholder="DD/MM/YYYY"
-                   class="w-full pl-10 pr-4 py-2.5 rounded-full border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50">
-          </div>
-          @if(this.formRegister.get('date_of_birth')?.touched){
-            @if(this.formRegister.get('date_of_birth')?.errors?.['required']){
-              <span class="text-red-500 text-xs block mt-1 ml-3">La fecha de nacimiento no puede quedar vacía</span>
+        <section class="space-y-4">
+          <h2 class="text-[15px] font-semibold text-[#5B8CD9]">Fecha de nacimiento</h2>
+
+          <div class="space-y-2">
+            <div class="relative">
+              <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[12px] text-gray-500">📅</span>
+              <input
+                type="text"
+                formControlName="date_of_birth"
+                placeholder="DD/MM/YYYY"
+                class="w-full h-9 rounded-full border-2 border-black bg-white pl-8 pr-4 text-[12px] outline-none placeholder:text-gray-400 focus:ring-0"
+              />
+            </div>
+
+            @if (formRegister.get('date_of_birth')?.touched && formRegister.get('date_of_birth')?.errors?.['required']) {
+              <span class="block ml-3 text-xs text-red-500">La fecha de nacimiento no puede quedar vacía</span>
             }
-          }
-          @if(this.formRegister.get('date_of_birth')?.touched && !this.isFechaValida() && this.formRegister.get('date_of_birth')?.value){
-            <span class="text-red-500 text-xs block mt-1 ml-3">Fecha inválida. Debes ser mayor de 18 años (DD/MM/YYYY)</span>
-          }
-        </div>
+            @if (formRegister.get('date_of_birth')?.touched && !isFechaValida() && formRegister.get('date_of_birth')?.value) {
+              <span class="block ml-3 text-xs text-red-500">Fecha inválida. Debes ser mayor de 18 años (DD/MM/YYYY)</span>
+            }
+          </div>
+        </section>
 
         <!-- Cuenta -->
-        <div>
-          <h2 class="text-sm font-semibold mb-3" style="color: #6B5AED;">Cuenta</h2>
+        <section class="space-y-4">
+          <h2 class="text-[15px] font-semibold text-[#5B8CD9]">Cuenta</h2>
 
-          <!-- Email -->
-          <div class="relative mb-3">
-            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">✉️</span>
-            <input type="email" formControlName="email" placeholder="example@gmail.com"
-                   class="w-full pl-10 pr-4 py-2.5 rounded-full border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50">
-          </div>
-          @if(this.formRegister.get('email')?.touched){
-            @if(this.formRegister.get('email')?.errors?.['required']){
-              <span class="text-red-500 text-xs block mb-2 ml-3">El correo no puede quedar vacío</span>
-            }
-            @if(this.formRegister.get('email')?.errors?.['pattern']){
-              <span class="text-red-500 text-xs block mb-2 ml-3">Debes poner un email válido</span>
-            }
-          }
-
-          <!-- Contraseña + Confirmar en línea -->
-          <div class="flex gap-3">
-            <div class="flex-1">
+          <div class="space-y-5">
+            <div class="space-y-2">
               <div class="relative">
-                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">🔒</span>
-                <input type="password" formControlName="password" placeholder="Contraseña..."
-                       class="w-full pl-10 pr-4 py-2.5 rounded-full border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50">
+                <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[12px] text-gray-500">✉️</span>
+                <input
+                  type="email"
+                  formControlName="email"
+                  placeholder="example@gmail.com"
+                  class="w-full h-9 rounded-full border-2 border-black bg-white pl-8 pr-4 text-[12px] outline-none placeholder:text-gray-400 focus:ring-0"
+                />
               </div>
-              @if(this.formRegister.get('password')?.touched){
-                @if(this.formRegister.get('password')?.errors?.['required']){
-                  <span class="text-red-500 text-xs block mt-1 ml-3">La contraseña no puede quedar vacía</span>
+
+              @if (formRegister.get('email')?.touched) {
+                @if (formRegister.get('email')?.errors?.['required']) {
+                  <span class="block ml-3 text-xs text-red-500">El correo no puede quedar vacío</span>
                 }
-                @if(this.formRegister.get('password')?.errors?.['minlength']){
-                  <span class="text-red-500 text-xs block mt-1 ml-3">Mínimo 6 caracteres</span>
-                }
-                @if(this.formRegister.get('password')?.errors?.['maxlength']){
-                  <span class="text-red-500 text-xs block mt-1 ml-3">Máximo 20 caracteres</span>
+                @if (formRegister.get('email')?.errors?.['pattern']) {
+                  <span class="block ml-3 text-xs text-red-500">Debes poner un email válido</span>
                 }
               }
             </div>
-            <div class="flex-1">
-              <div class="relative">
-                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">🔒</span>
-                <input type="password" formControlName="confirmPassword" placeholder="Confirmar contraseña..."
-                       class="w-full pl-10 pr-4 py-2.5 rounded-full border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50">
-              </div>
-              @if(this.formRegister.get('confirmPassword')?.touched){
-                @if(this.formRegister.get('confirmPassword')?.errors?.['required']){
-                  <span class="text-red-500 text-xs block mt-1 ml-3">Debes confirmar tu contraseña</span>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <div class="relative">
+                  <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[12px] text-gray-500">🔒</span>
+                  <input
+                    type="password"
+                    formControlName="password"
+                    placeholder="Contraseña..."
+                    class="w-full h-9 rounded-full border-2 border-black bg-white pl-8 pr-4 text-[12px] outline-none placeholder:text-gray-400 focus:ring-0"
+                  />
+                </div>
+                @if (formRegister.get('password')?.touched) {
+                  @if (formRegister.get('password')?.errors?.['required']) {
+                    <span class="block ml-3 text-xs text-red-500">La contraseña no puede quedar vacía</span>
+                  }
+                  @if (formRegister.get('password')?.errors?.['minlength']) {
+                    <span class="block ml-3 text-xs text-red-500">Mínimo 6 caracteres</span>
+                  }
+                  @if (formRegister.get('password')?.errors?.['maxlength']) {
+                    <span class="block ml-3 text-xs text-red-500">Máximo 20 caracteres</span>
+                  }
                 }
-              }
-              @if(this.formRegister.get('confirmPassword')?.touched && this.formRegister.get('password')?.touched && !this.passwordsMatch() && this.formRegister.get('confirmPassword')?.value){
-                <span class="text-red-500 text-xs block mt-1 ml-3">Las contraseñas no coinciden</span>
-              }
+              </div>
+
+              <div class="space-y-2">
+                <div class="relative">
+                  <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[12px] text-gray-500">🔒</span>
+                  <input
+                    type="password"
+                    formControlName="confirmPassword"
+                    placeholder="Confirmar contraseña..."
+                    class="w-full h-9 rounded-full border-2 border-black bg-white pl-8 pr-4 text-[12px] outline-none placeholder:text-gray-400 focus:ring-0"
+                  />
+                </div>
+                @if (formRegister.get('confirmPassword')?.touched && formRegister.get('confirmPassword')?.errors?.['required']) {
+                  <span class="block ml-3 text-xs text-red-500">Debes confirmar tu contraseña</span>
+                }
+                @if (formRegister.get('confirmPassword')?.touched && formRegister.get('password')?.touched && !passwordsMatch() && formRegister.get('confirmPassword')?.value) {
+                  <span class="block ml-3 text-xs text-red-500">Las contraseñas no coinciden</span>
+                }
+              </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        <!-- Verificación de estudiante -->
-        <div>
-          <h2 class="text-sm font-semibold mb-3" style="color: #6B5AED;">Verificación de estudiante</h2>
+        <!-- Verificación -->
+        <section class="space-y-4">
+          <h2 class="text-[15px] font-semibold text-[#5B8CD9]">Verificación de estudiante</h2>
 
-          <!-- Carnet de estudiante -->
-          <label class="flex items-center gap-4 px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 hover:border-indigo-300 transition-colors cursor-pointer mb-3">
-            <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-                 style="background:#E8F4FD;">
-              <span style="font-size:20px;">🪪</span>
-            </div>
-            <div class="flex-1 min-w-0">
-              <p class="text-sm font-medium text-gray-800">Carnet de estudiante</p>
-              <p class="text-xs text-gray-400">Arrastra o sube una foto de tu carnet</p>
-            </div>
-            <span class="text-xs text-indigo-500 font-medium whitespace-nowrap">Elegir archivo</span>
-            <input type="file" (change)="onFileChange($event,'photo_student_id')" accept="image/*" class="hidden">
-          </label>
-          @if(this.formRegister.get('photo_student_id')?.touched && this.formRegister.get('photo_student_id')?.errors?.['required']){
-            <span class="text-red-500 text-xs block mb-2 ml-3">Debes subir una foto de tu carnet de estudiante</span>
-          }
+          <div class="space-y-4">
+            <label class="flex items-center gap-4 rounded-2xl bg-[#D9EEF8] px-4 py-3 cursor-pointer hover:opacity-95 transition">
+              <div class="w-8 h-8 shrink-0 rounded-lg flex items-center justify-center text-lg text-slate-700">🪪</div>
+              <div class="min-w-0 flex-1">
+                <p class="text-sm font-semibold text-slate-900 leading-tight">Carnet de estudiante</p>
+                <p class="text-[11px] text-slate-500 leading-tight">Arrastra o sube una foto de tu carnet</p>
+              </div>
+              <span class="text-xs text-slate-400 whitespace-nowrap">Choose file...</span>
+              <input type="file" (change)="onFileChange($event,'photo_student_id')" accept="image/*" class="hidden" />
+            </label>
 
-          <!-- Selfie con carnet -->
-          <label class="flex items-center gap-4 px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 hover:border-indigo-300 transition-colors cursor-pointer">
-            <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-                 style="background:#E8F4FD;">
-              <span style="font-size:20px;">🤳</span>
-            </div>
-            <div class="flex-1 min-w-0">
-              <p class="text-sm font-medium text-gray-800">Selfie con tu carnet</p>
-              <p class="text-xs text-gray-400">Tómate una foto sosteniendo tu carnet</p>
-            </div>
-            <span class="text-xs text-indigo-500 font-medium whitespace-nowrap">Elegir archivo</span>
-            <input type="file" (change)="onFileChange($event,'photo_id_selfie')" accept="image/*" class="hidden">
-          </label>
-          @if(this.formRegister.get('photo_id_selfie')?.touched && this.formRegister.get('photo_id_selfie')?.errors?.['required']){
-            <span class="text-red-500 text-xs block mt-2 ml-3">Debes subir un selfie con tu carnet</span>
-          }
-        </div>
+            <label class="flex items-center gap-4 rounded-2xl bg-[#D9EEF8] px-4 py-3 cursor-pointer hover:opacity-95 transition">
+              <div class="w-8 h-8 shrink-0 rounded-lg flex items-center justify-center text-lg text-slate-700">🤳</div>
+              <div class="min-w-0 flex-1">
+                <p class="text-sm font-semibold text-slate-900 leading-tight">Selfie con tu carnet</p>
+                <p class="text-[11px] text-slate-500 leading-tight">Tómate una foto sosteniendo tu carnet</p>
+              </div>
+              <span class="text-xs text-slate-400 whitespace-nowrap">Choose file...</span>
+              <input type="file" (change)="onFileChange($event,'photo_id_selfie')" accept="image/*" class="hidden" />
+            </label>
+          </div>
+        </section>
 
-        <!-- Botón submit -->
-        <div class="pt-2">
-        <button type="submit"
-            [disabled]="!isFormReady"
-            class="w-full py-3 rounded-full text-white font-bold text-base transition-all focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2"
-            [ngClass]="isFormReady
-            ? 'hover:opacity-90 active:scale-95 cursor-pointer'
-            : 'opacity-40 cursor-not-allowed'"
-            [style]="isFormReady
-            ? 'background: linear-gradient(90deg, #F05A5A, #E03333);'
-            : 'background: #9CA3AF;'">
-            Crear cuenta
-        </button>
+        <!-- Botón -->
+        <section class="pt-4">
+          <div class="flex justify-center">
+            <button
+              type="submit"
+              [disabled]="!isFormReady"
+              class="h-12 w-[240px] rounded-full border-2 border-black text-white font-bold text-[16px] transition active:scale-[0.99]"
+              [ngClass]="isFormReady ? 'bg-[#FF6D6D] hover:brightness-95' : 'bg-gray-400 opacity-60 cursor-not-allowed'">
+              Crear cuenta
+            </button>
+          </div>
 
-          <p class="text-center mt-4 text-sm text-gray-500">
+          <p class="mt-3 text-center text-[11px] text-gray-500">
             ¿Ya tienes cuenta?
-            <a href="#" class="font-medium hover:underline" style="color:#6B5AED;">Inicia sesión</a>
+            <a href="#" class="font-semibold text-[#5B8CD9] hover:underline">Inicia sesión</a>
           </p>
-        </div>
+        </section>
 
       </form>
     </div>
-  </div>
-
+  </main>
 </div>
