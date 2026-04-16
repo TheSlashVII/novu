@@ -12,6 +12,8 @@ import { UserAPIService } from '../../services/user-api.service';
 })
 export class RegisterComponent {
 
+  private studentIdFile:File | null = null;
+  private selfieFile:File | null = null;
   constructor(private userAPI: UserAPIService) {}
   formRegister = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
@@ -63,7 +65,14 @@ export class RegisterComponent {
   onFileChange(event: any, fieldName: string) {
     const file = event.target.files[0];
     if (file) {
-      this.formRegister.get(fieldName)?.setValue(file.name);
+      // check if the field is the student ID field or the selfie with the id field
+      if (fieldName === "photo_student_id"){
+        this.studentIdFile = file // set the variable as the file
+      }
+      if (fieldName === "photo_id_selfie"){
+        this.selfieFile = file // set the variable as the file
+      }
+      this.formRegister.get(fieldName)?.setValue(file.name); // set the name of the file in the field
       this.formRegister.get(fieldName)?.markAsTouched();
     }
   }
@@ -72,10 +81,10 @@ export class RegisterComponent {
     if (this.isFormReady) {
       const formData= new FormData(); // new empty object to colect the form data since the formRegister.value only returns strings
       // name field
-      formData.append("name", this.formRegister.get("name")?.value!) 
+      formData.append("name", this.formRegister.get("name")?.value!)
       // surname field
       formData.append("surnames", this.formRegister.get("surnames")?.value!)
-      
+
       // restructure the date field to be sent as the expected django date format
       const dateValue = this.formRegister.get('date_of_birth')?.value;
         if (dateValue) {
@@ -87,20 +96,10 @@ export class RegisterComponent {
         formData.append('email', this.formRegister.get('email')?.value!);
         // password field
         formData.append('password', this.formRegister.get('password')?.value!);
-        
+
         // add student photos
-        /**
-         * We cast the input field contents into HTMLInputElement to capture the true file inside of it instead of the name of the file 
-         * also the [0] at the end is necessary because the .files property returns an array (FileList).
-         */
-        const studentIdFile = (document.getElementById('photo_student_id') as HTMLInputElement).files?.[0]; 
-        const selfieFile = (document.getElementById('photo_id_selfie') as HTMLInputElement).files?.[0];
-        if (studentIdFile) {
-          formData.append('photo_student_id', studentIdFile);
-        }
-         if (selfieFile) {
-          formData.append('photo_id_selfie', selfieFile);
-         }
+        formData.append('photo_student_id', this.studentIdFile!);
+        formData.append('photo_id_selfie', this.selfieFile!);
 
 
 

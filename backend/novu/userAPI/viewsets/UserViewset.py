@@ -22,7 +22,7 @@ class UserViewset(viewsets.ViewSet):
 # test function to try out the API functionality
     def test(self,request):
         testData = {"name": "Junior"}
-        return JsonResponse(testData)
+        return Response(testData)
     def test2(self,request):
         
         return JsonResponse(request, safe=False)
