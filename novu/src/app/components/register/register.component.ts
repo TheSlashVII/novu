@@ -63,7 +63,8 @@ export class RegisterComponent {
   }
 
   onFileChange(event: any, fieldName: string) {
-    const file = event.target.files[0];
+    const inputField = event.target as HTMLInputElement;
+    const file = inputField.files![0]
     if (file) {
       // check if the field is the student ID field or the selfie with the id field
       if (fieldName === "photo_student_id"){
@@ -98,12 +99,18 @@ export class RegisterComponent {
         formData.append('password', this.formRegister.get('password')?.value!);
 
         // add student photos
-        formData.append('photo_student_id', this.studentIdFile);
-        formData.append('photo_id_selfie', this.selfieFile);
+        formData.append('photo_student_id', this.studentIdFile!);
+        formData.append('photo_id_selfie', this.selfieFile!);
+        let dataToSend:Record<string, FormDataEntryValue> = {};
+
+        formData.forEach((value, key) => {
+          dataToSend[key] = value;
+        })
 
 
 
-      console.log('Formulario válido:', formData);
+
+      console.log('Formulario válido:', dataToSend);
       // this.userAPI.createRegisterRequest(this.formRegister.value)
       // alert('¡Registro exitoso! Revisa la consola para ver los datos.');
        this.userAPI.createRegisterRequest(formData).subscribe({
