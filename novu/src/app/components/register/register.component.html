@@ -32,28 +32,28 @@
         <div>
           <h2 class="text-sm font-semibold mb-3" style="color: #6B5AED;">Datos personales</h2>
           <div class="flex gap-3">
-            <!-- Nombre -->
+            <!-- name -->
             <div class="flex-1">
-              <input type="text" formControlName="nombre" placeholder="Tu nombre..."
+              <input type="text" formControlName="name" placeholder="Tu name..."
                      class="w-full px-4 py-2.5 rounded-full border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50">
-              @if(this.formRegister.get('nombre')?.touched){
-                @if(this.formRegister.get('nombre')?.errors?.['required']){
-                  <span class="text-red-500 text-xs block mt-1 ml-3">El nombre no puede quedar vacío</span>
+              @if(this.formRegister.get('name')?.touched){
+                @if(this.formRegister.get('name')?.errors?.['required']){
+                  <span class="text-red-500 text-xs block mt-1 ml-3">El name no puede quedar vacío</span>
                 }
-                @if(this.formRegister.get('nombre')?.errors?.['minlength']){
+                @if(this.formRegister.get('name')?.errors?.['minlength']){
                   <span class="text-red-500 text-xs block mt-1 ml-3">Mínimo 2 caracteres</span>
                 }
               }
             </div>
-            <!-- Apellidos -->
+            <!-- surname -->
             <div class="flex-1">
-              <input type="text" formControlName="apellidos" placeholder="Apellidos..."
+              <input type="text" formControlName="surname" placeholder="surname..."
                      class="w-full px-4 py-2.5 rounded-full border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50">
-              @if(this.formRegister.get('apellidos')?.touched){
-                @if(this.formRegister.get('apellidos')?.errors?.['required']){
-                  <span class="text-red-500 text-xs block mt-1 ml-3">Los apellidos no pueden quedar vacíos</span>
+              @if(this.formRegister.get('surname')?.touched){
+                @if(this.formRegister.get('surname')?.errors?.['required']){
+                  <span class="text-red-500 text-xs block mt-1 ml-3">Los surname no pueden quedar vacíos</span>
                 }
-                @if(this.formRegister.get('apellidos')?.errors?.['minlength']){
+                @if(this.formRegister.get('surname')?.errors?.['minlength']){
                   <span class="text-red-500 text-xs block mt-1 ml-3">Mínimo 2 caracteres</span>
                 }
               }
@@ -66,15 +66,15 @@
           <h2 class="text-sm font-semibold mb-3" style="color: #6B5AED;">Fecha de nacimiento</h2>
           <div class="relative">
             <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">📅</span>
-            <input type="text" formControlName="fechaNacimiento" placeholder="DD/MM/YYYY"
+            <input type="text" formControlName="date_of_birth" placeholder="DD/MM/YYYY"
                    class="w-full pl-10 pr-4 py-2.5 rounded-full border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50">
           </div>
-          @if(this.formRegister.get('fechaNacimiento')?.touched){
-            @if(this.formRegister.get('fechaNacimiento')?.errors?.['required']){
+          @if(this.formRegister.get('date_of_birth')?.touched){
+            @if(this.formRegister.get('date_of_birth')?.errors?.['required']){
               <span class="text-red-500 text-xs block mt-1 ml-3">La fecha de nacimiento no puede quedar vacía</span>
             }
           }
-          @if(this.formRegister.get('fechaNacimiento')?.touched && !this.isFechaValida() && this.formRegister.get('fechaNacimiento')?.value){
+          @if(this.formRegister.get('date_of_birth')?.touched && !this.isFechaValida() && this.formRegister.get('date_of_birth')?.value){
             <span class="text-red-500 text-xs block mt-1 ml-3">Fecha inválida. Debes ser mayor de 18 años (DD/MM/YYYY)</span>
           }
         </div>
@@ -151,9 +151,9 @@
               <p class="text-xs text-gray-400">Arrastra o sube una foto de tu carnet</p>
             </div>
             <span class="text-xs text-indigo-500 font-medium whitespace-nowrap">Elegir archivo</span>
-            <input type="file" (change)="onFileChange($event,'carnetEstudiante')" accept="image/*" class="hidden">
+            <input type="file" (change)="onFileChange($event,'photo_student_id')" accept="image/*" class="hidden">
           </label>
-          @if(this.formRegister.get('carnetEstudiante')?.touched && this.formRegister.get('carnetEstudiante')?.errors?.['required']){
+          @if(this.formRegister.get('photo_student_id')?.touched && this.formRegister.get('photo_student_id')?.errors?.['required']){
             <span class="text-red-500 text-xs block mb-2 ml-3">Debes subir una foto de tu carnet de estudiante</span>
           }
 
@@ -168,9 +168,9 @@
               <p class="text-xs text-gray-400">Tómate una foto sosteniendo tu carnet</p>
             </div>
             <span class="text-xs text-indigo-500 font-medium whitespace-nowrap">Elegir archivo</span>
-            <input type="file" (change)="onFileChange($event,'selfieCarnet')" accept="image/*" class="hidden">
+            <input type="file" (change)="onFileChange($event,'photo_id_selfie')" accept="image/*" class="hidden">
           </label>
-          @if(this.formRegister.get('selfieCarnet')?.touched && this.formRegister.get('selfieCarnet')?.errors?.['required']){
+          @if(this.formRegister.get('photo_id_selfie')?.touched && this.formRegister.get('photo_id_selfie')?.errors?.['required']){
             <span class="text-red-500 text-xs block mt-2 ml-3">Debes subir un selfie con tu carnet</span>
           }
         </div>

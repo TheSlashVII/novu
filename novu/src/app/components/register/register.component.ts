@@ -14,14 +14,14 @@ export class RegisterComponent {
 
   constructor(private userAPI: UserAPIService) {}
   formRegister = new FormGroup({
-    nombre: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
-    apellidos: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]),
-    fechaNacimiento: new FormControl('', [Validators.required]),
+    name: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
+    surname: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]),
+    date_of_birth: new FormControl('', [Validators.required]),
     email: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$')]),
     password: new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(20)]),
     confirmPassword: new FormControl('', [Validators.required]),
-    carnetEstudiante: new FormControl('', [Validators.required]),
-    selfieCarnet: new FormControl('', [Validators.required]),
+    photo_student_id: new FormControl('', [Validators.required]),
+    photo_id_selfie: new FormControl('', [Validators.required]),
   });
 
   // Getter que comprueba si el formulario está listo para enviar
@@ -38,7 +38,7 @@ export class RegisterComponent {
   }
 
   isFechaValida(): boolean {
-    const fecha = this.formRegister.get('fechaNacimiento')?.value;
+    const fecha = this.formRegister.get('date_of_birth')?.value;
     if (!fecha) return false;
 
     const fechaRegex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(19|20)\d{2}$/;
