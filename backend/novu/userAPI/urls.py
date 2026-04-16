@@ -7,7 +7,7 @@ from .viewsets import UserViewset, RegisterRequestViewset
 UserController=UserViewset.UserViewset
 RegisterRequestController=RegisterRequestViewset.RequestViewset
 
-list_test=UserController.as_view({ "post" : "test2" })
+list_test=UserController.as_view({ "get" : "test" })
 create_user=UserController.as_view({"post" : "create"})
 create_register_request=RegisterRequestController.as_view({"post" : "create"})
 list_register_requests=RegisterRequestController.as_view({"get" : "list"})
