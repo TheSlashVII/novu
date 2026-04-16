@@ -12,6 +12,6 @@ export class UserAPIService {
   createRegisterRequest(data:any){
     //const ROUTE:string = `${this.baseServerURL}/create/request`;
     const ROUTE:string = `${this.baseServerURL}/test/`;
-    this.http.post(ROUTE, data)
+    return this.http.post(ROUTE, data)
   }
 }

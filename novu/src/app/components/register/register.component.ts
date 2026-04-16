@@ -6,11 +6,13 @@ import { UserAPIService } from '../../services/user-api.service';
 @Component({
   selector: 'app-register',
   imports: [ReactiveFormsModule, CommonModule],
+  providers: [UserAPIService],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })
 export class RegisterComponent {
 
+  constructor(private userAPI: UserAPIService) {}
   formRegister = new FormGroup({
     nombre: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
     apellidos: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]),
@@ -71,7 +73,14 @@ export class RegisterComponent {
       console.log('Formulario válido:', this.formRegister.value);
       // this.userAPI.createRegisterRequest(this.formRegister.value)
       // alert('¡Registro exitoso! Revisa la consola para ver los datos.');
+       this.userAPI.createRegisterRequest(this.formRegister.value).subscribe({
+       next: (res) => console.log(res),
+      error: (err) => console.error(err)
+  });
 
     }
+
   }
+
+
 }
