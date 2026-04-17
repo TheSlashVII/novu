@@ -89,7 +89,7 @@
             @if (formRegister.get('date_of_birth')?.touched && formRegister.get('date_of_birth')?.errors?.['required']) {
               <span class="block ml-3 text-xs text-red-500">La fecha de nacimiento no puede quedar vacía</span>
             }
-            @if (formRegister.get('date_of_birth')?.touched && !isFechaValida() && formRegister.get('date_of_birth')?.value) {
+            @if (formRegister.get('date_of_birth')?.touched && !isDateValid() && formRegister.get('date_of_birth')?.value) {
               <span class="block ml-3 text-xs text-red-500">Fecha inválida. Debes ser mayor de 18 años (DD/MM/YYYY)</span>
             }
           </div>

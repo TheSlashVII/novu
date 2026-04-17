@@ -29,7 +29,7 @@ export class RegisterComponent {
   // Getter que comprueba si el formulario está listo para enviar
   get isFormReady(): boolean {
     return this.formRegister.valid &&
-           this.isFechaValida() &&
+           this.isDateValid() &&
            this.passwordsMatch();
   }
 
@@ -39,24 +39,24 @@ export class RegisterComponent {
     return password === confirmPassword;
   }
 
-  isFechaValida(): boolean {
-    const fecha = this.formRegister.get('date_of_birth')?.value;
-    if (!fecha) return false;
+  isDateValid(): boolean {
+    const date = this.formRegister.get('date_of_birth')?.value;
+    if (!date) return false;
 
-    const fechaRegex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(19|20)\d{2}$/;
-    if (!fechaRegex.test(fecha)) return false;
+    const dateRegex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(19|20)\d{2}$/;
+    if (!dateRegex.test(date)) return false;
 
-    const [dia, mes, anio] = fecha.split('/').map(Number);
-    const fechaObj = new Date(anio, mes - 1, dia);
+    const [day, month, year] = date.split('/').map(Number);
+    const dateObj = new Date(year, month - 1, day);
 
-    if (fechaObj.getFullYear() !== anio || fechaObj.getMonth() !== mes - 1 || fechaObj.getDate() !== dia) {
+    if (dateObj.getFullYear() !== year || dateObj.getMonth() !== month - 1 || dateObj.getDate() !== day) {
       return false;
     }
 
     const hoy = new Date();
-    let age = hoy.getFullYear() - anio;
-    const mesDiff = hoy.getMonth() - (mes - 1);
-    if (mesDiff < 0 || (mesDiff === 0 && hoy.getDate() < dia)) {
+    let age = hoy.getFullYear() - year;
+    const monthDiff = hoy.getMonth() - (month - 1);
+    if (monthDiff < 0 || (monthDiff === 0 && hoy.getDate() < day)) {
       age--;
     }
     return age >= 18;
@@ -89,8 +89,8 @@ export class RegisterComponent {
       // restructure the date field to be sent as the expected django date format
       const dateValue = this.formRegister.get('date_of_birth')?.value;
         if (dateValue) {
-          const [dia, mes, anio] = dateValue.split('/'); // Destructuring the date components into seperate variables
-          formData.append('date_of_birth', `${anio}-${mes}-${dia}`);
+          const [day, month, year] = dateValue.split('/'); // Destructuring the date components into seperate variables
+          formData.append('date_of_birth', `${year}-${month}-${day}`);
         }
 
         // email field
@@ -101,10 +101,11 @@ export class RegisterComponent {
         // add student photos
         formData.append('photo_student_id', this.studentIdFile!);
         formData.append('photo_id_selfie', this.selfieFile!);
-        let dataToSend:Record<string, FormDataEntryValue> = {};
+        
+        let dataToSend:Record<string, FormDataEntryValue> = {}; // Record is like an ArrayList or HashMap from Java. You can store key value pairs in objects
 
         formData.forEach((value, key) => {
-          dataToSend[key] = value;
+          dataToSend[key] = value; // this will generate a line of {"key" : "value"} inside the record
         })
 
 
