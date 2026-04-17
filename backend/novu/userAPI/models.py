@@ -141,7 +141,7 @@ class User_relation_preference(models.Model):
 class Photo(models.Model):
     id_photo=models.BigAutoField(primary_key=True)
     user_id=models.ForeignKey(User, db_column="user_id",on_delete=models.CASCADE)
-    url=models.TextField()
+    url=models.ImageField(upload_to=utilities.fileRename, max_length=200)
     visible=models.BooleanField()
 
     class Meta:
@@ -155,8 +155,8 @@ class Request(models.Model):
     email=models.CharField(max_length=100)
     password=models.TextField()
     date_of_birth=models.DateField()
-    photo_student_id=models.ImageField(upload_to=utilities.fileRename) # the url to the photo uploaded to the server
-    photo_id_selfie=models.ImageField(upload_to=utilities.fileRename) # the url to the photo with the student holding his id 
+    photo_student_id=models.ImageField(upload_to=utilities.fileRenameRegister, max_length=200) # the url to the photo uploaded to the server
+    photo_id_selfie=models.ImageField(upload_to=utilities.fileRenameRegister, max_length=200) # the url to the photo with the student holding his id 
     id_student=models.BigIntegerField(default='')
     
     # set status states

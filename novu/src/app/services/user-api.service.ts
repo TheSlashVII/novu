@@ -12,8 +12,8 @@ export class UserAPIService {
   createRegisterRequest(data:any){
     //const ROUTE:string = `${this.baseServerURL}/create/request`;
     let headers = new HttpHeaders();
-    headers = headers.append('enctype', 'multipart/form-data');
+    //headers = headers.append('enctype', 'multipart/form-data');
     const ROUTE:string = `${this.baseServerURL}/create/request`;
-    return this.http.post(ROUTE, data, {headers})
+    return this.http.post(ROUTE, data)
   }
 }
