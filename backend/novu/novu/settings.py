@@ -125,4 +125,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = 'photos/'
+
+# STATIC_ROOT = "/var/www/example.com/static/" # for deployment
+STATIC_ROOT = "/2526dawg4/backend/novu/photos/"
+STATICFILES_DIRS = [
+    BASE_DIR / "photos",
+    "/var/www/photos/",
+]
