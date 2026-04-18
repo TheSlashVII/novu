@@ -22,7 +22,7 @@ export class LoginComponent {
   }
 
   togglePassword() {
-    this.showPassword = !this.showPassword;
+    this.showPassword = !this.showPassword; // toggles between true and false. If it's true, it becomes false and viceversa.
   }
 
   submit(): void {

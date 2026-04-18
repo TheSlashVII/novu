@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule, formatCurrency } from '@angular/common';
 import { UserAPIService } from '../../services/user-api.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -14,7 +15,7 @@ export class RegisterComponent {
 
   private studentIdFile:File | null = null;
   private selfieFile:File | null = null;
-  constructor(private userAPI: UserAPIService) {}
+  constructor(private userAPI: UserAPIService, private router: Router) {}
   formRegister = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
     surnames: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]),
@@ -28,9 +29,7 @@ export class RegisterComponent {
 
   // Getter que comprueba si el formulario está listo para enviar
   get isFormReady(): boolean {
-    return this.formRegister.valid &&
-           this.isDateValid() &&
-           this.passwordsMatch();
+    return this.formRegister.valid && this.passwordsMatch();
   }
 
   passwordsMatch(): boolean {
@@ -87,11 +86,15 @@ export class RegisterComponent {
       formData.append("surnames", this.formRegister.get("surnames")?.value!)
 
       // restructure the date field to be sent as the expected django date format
+        /*
       const dateValue = this.formRegister.get('date_of_birth')?.value;
         if (dateValue) {
           const [day, month, year] = dateValue.split('/'); // Destructuring the date components into seperate variables
           formData.append('date_of_birth', `${year}-${month}-${day}`);
         }
+        */
+        formData.append('date_of_birth', this.formRegister.get("date_of_birth")?.value!)
+
 
         // email field
         formData.append('email', this.formRegister.get('email')?.value!);
@@ -101,7 +104,7 @@ export class RegisterComponent {
         // add student photos
         formData.append('photo_student_id', this.studentIdFile!);
         formData.append('photo_id_selfie', this.selfieFile!);
-        
+
         let dataToSend:Record<string, FormDataEntryValue> = {}; // Record is like an ArrayList or HashMap from Java. You can store key value pairs in objects
 
         formData.forEach((value, key) => {
@@ -115,7 +118,10 @@ export class RegisterComponent {
       // this.userAPI.createRegisterRequest(this.formRegister.value)
       // alert('¡Registro exitoso! Revisa la consola para ver los datos.');
        this.userAPI.createRegisterRequest(formData).subscribe({
-       next: (res) => console.log(res),
+       next: (res) => {
+         //console.log(res);
+         this.router.navigateByUrl("/postRegister");
+       },
       error: (err) => console.error(err)
   });
 

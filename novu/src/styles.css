@@ -1,9 +1,25 @@
 @import "tailwindcss";
+/*Fonts*/
+
+/*Poppins*/
+@font-face {
+    font-family: 'Poppins';
+    src: url("assets/Poppins/Poppins-Regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+/*Inter*/
+@font-face {
+    font-family: 'Inter';
+    src: url("assets/Inter/static/Inter_18pt-Regular.ttf") format("truetype");
+}
 
 * {
   box-sizing: border-box;
+/*
   margin: 0;
   padding: 0;
+ */
 }
 
 html {

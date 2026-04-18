@@ -1,16 +1,16 @@
 <div class="min-h-screen flex flex-col md:flex-row bg-white overflow-hidden">
 
   <!-- Left panel -->
-  <div class="hidden md:flex md:w-5/12 lg:w-2/5 flex-col justify-between p-8 lg:p-10 min-h-screen bg-gradient-to-br from-indigo-500 via-indigo-700 to-indigo-950">
+  <div class="hidden md:flex md:w-5/12 lg:w-2/5 flex-col justify-between p-8 lg:p-10 min-h-screen bg-gradient-to-b from-[#5872D4] to-[#471767]">
 
     <!-- Logo + Tagline -->
     <div class="flex flex-col gap-16">
       <div class="flex items-center gap-3">
-        <img src="Logo_Proyecto_final-removebg-preview_1.png" alt="Novu logo" class="w-11 h-11 object-contain">
-        <span class="text-white font-bold text-xl tracking-wide">Novu</span>
+        <img src="assets/Images/Novu_Logo.png" alt="Novu logo" class="w-11 h-11 object-contain">
+        <p class="text-white font-bold text-xl tracking-wide font-[Poppins]">novu</p>
       </div>
 
-      <h2 class="text-white font-extrabold leading-tight text-4xl lg:text-5xl">
+      <h2 class="text-white font-extrabold leading-tight text-3xl lg:text-4xl font-[Poppins]">
         Conecta con<br>estudiantes<br>cerca de ti
       </h2>
     </div>
@@ -23,16 +23,16 @@
   <div class="flex-1 flex flex-col min-h-screen">
 
     <!-- Mobile header -->
-    <div class="flex md:hidden items-center gap-3 px-6 py-4 border-b border-gray-100 bg-gradient-to-br from-indigo-500 via-indigo-700 to-indigo-950">
-      <img src="Logo_Proyecto_final-removebg-preview_1.png" alt="Novu logo" class="w-9 h-9 object-contain">
-      <span class="text-white font-bold text-lg tracking-wide">Novu</span>
+    <div class="flex md:hidden items-center gap-3 px-6 py-4">
+      <img src="assets/Images/Novu_Logo.png" alt="Novu logo" class="w-9 h-9 object-contain">
+      <span class="text-black font-bold text-lg font-[Poppins]">novu</span>
     </div>
 
     <!-- Form -->
     <div class="flex-1 flex items-center justify-center px-6 py-10">
       <div class="w-full max-w-md mx-auto">
 
-        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 text-center">Iniciar sesión</h1>
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 text-center font-[Poppins] ">Iniciar sesión</h1>
 
         <form [formGroup]="formLogin" (ngSubmit)="submit()" class="space-y-5">
 
