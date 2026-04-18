@@ -1,6 +1,6 @@
 <div class="min-h-screen flex bg-white overflow-hidden">
 
-  <!-- Panel izquierdo -->
+  <!-- Panel izquierdo hidden md:flex md:w-5/12 lg:w-2/5 flex-col -->
     <div class="hidden md:flex md:w-5/12 lg:w-2/5 flex-col justify-between p-8 lg:p-10 min-h-screen bg-gradient-to-b from-[#5872D4] to-[#471767]">
 
         <!-- Logo + Tagline -->
@@ -18,12 +18,16 @@
         <!-- Footer -->
         <p class="text-white/50 text-sm">© 2026 Novu. Todos los derechos reservados.</p>
     </div>
-
   <!-- Panel derecho -->
-  <main class="flex-1 flex justify-center items-center px-10 py-16">
-    <div class="w-full max-w-[720px]">
-
-      <h1 class="text-center text-4xl md:text-5xl font-black text-black mb-14 md:mb-16">
+  <main class="flex-1 flex justify-center items-center px-10 py-8 md:py-16">
+    <div class="w-full max-w-[720px] flex flex-col">
+        <div class="md:hidden mb-5">
+            <div class="flex items-center gap-3">
+                <img src="assets/Images/Novu_Logo.png" alt="Novu logo" class="w-11 h-11 object-contain">
+                <p class="text-black font-bold text-xl tracking-wide font-[Poppins]">novu</p>
+            </div>
+        </div>
+      <h1 class="text-center text-4xl md:text-5xl text-black mb-14 md:mb-16 font-[Poppins] font-bold">
         Crear cuenta
       </h1>
 
@@ -32,14 +36,14 @@
         <!-- Datos personales -->
         <section class="space-y-4">
           <h2 class="text-[15px] font-semibold text-[#5B8CD9]">Datos personales</h2>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div class="space-y-2">
+            <!--grid grid-cols-1 sm:grid-cols-2-->
+          <div class="flex flex-col sm:flex-row gap-6">
+            <div class="space-y-2 flex-grow">
               <input
                 type="text"
                 formControlName="name"
                 placeholder="Tu nombre..."
-                class="w-full h-9 rounded-full border-2 border-black bg-white px-4 text-[12px] outline-none placeholder:text-gray-400 focus:ring-0"
+                class="w-full h-9 rounded-full border-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50 px-4 text-[12px] outline-none placeholder:text-gray-400 focus:ring-0"
               />
               @if (formRegister.get('name')?.touched) {
                 @if (formRegister.get('name')?.errors?.['required']) {
@@ -51,12 +55,12 @@
               }
             </div>
 
-            <div class="space-y-2">
+            <div class="space-y-2 flex-grow">
               <input
                 type="text"
                 formControlName="surnames"
                 placeholder="Apellidos..."
-                class="w-full h-9 rounded-full border-2 border-black bg-white px-4 text-[12px] outline-none placeholder:text-gray-400 focus:ring-0"
+                class="w-full h-9 rounded-full border-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50 px-4 text-[12px] outline-none placeholder:text-gray-400 focus:ring-0"
               />
               @if (formRegister.get('surnames')?.touched) {
                 @if (formRegister.get('surnames')?.errors?.['required']) {
@@ -80,7 +84,7 @@
                 type="date"
                 formControlName="date_of_birth"
                 placeholder="DD/MM/YYYY"
-                class="w-full h-9 rounded-full border-2 border-black bg-white pl-8 pr-4 text-[12px] outline-none placeholder:text-gray-400 focus:ring-0"
+                class="w-full h-9 rounded-full border-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50 pl-8 pr-4 text-[12px] outline-none placeholder:text-gray-400 focus:ring-0"
               />
             </div>
 
@@ -92,17 +96,16 @@
 
         <!-- Cuenta -->
         <section class="space-y-4">
-          <h2 class="text-[15px] font-semibold text-[#5B8CD9]">Cuenta</h2>
+          <h2 class="text-[15px] font-semibold text-[#5B8CD9]">Email</h2>
 
           <div class="space-y-5">
             <div class="space-y-2">
               <div class="relative">
-                <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[12px] text-gray-500">✉️</span>
                 <input
                   type="email"
                   formControlName="email"
                   placeholder="example@gmail.com"
-                  class="w-full h-9 rounded-full border-2 border-black bg-white pl-8 pr-4 text-[12px] outline-none placeholder:text-gray-400 focus:ring-0"
+                  class="w-full h-9 rounded-full border-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50 pl-8 pr-4 text-[12px] outline-none placeholder:text-gray-400 focus:ring-0"
                 />
               </div>
 
@@ -115,16 +118,15 @@
                 }
               }
             </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div class="space-y-2">
+              <h2 class="text-[15px] font-semibold text-[#5B8CD9]">Contraseña</h2>
+            <div class="flex flex-col sm:flex-row  gap-6">
+              <div class="space-y-2 flex-grow">
                 <div class="relative">
-                  <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[12px] text-gray-500">🔒</span>
                   <input
                     type="password"
                     formControlName="password"
                     placeholder="Contraseña..."
-                    class="w-full h-9 rounded-full border-2 border-black bg-white pl-8 pr-4 text-[12px] outline-none placeholder:text-gray-400 focus:ring-0"
+                    class="w-full h-9 rounded-full border-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50 pl-8 pr-4 text-[12px] outline-none placeholder:text-gray-400 focus:ring-0"
                   />
                 </div>
                 @if (formRegister.get('password')?.touched) {
@@ -140,14 +142,13 @@
                 }
               </div>
 
-              <div class="space-y-2">
+              <div class="space-y-2 flex-grow">
                 <div class="relative">
-                  <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[12px] text-gray-500">🔒</span>
                   <input
                     type="password"
                     formControlName="confirmPassword"
                     placeholder="Confirmar contraseña..."
-                    class="w-full h-9 rounded-full border-2 border-black bg-white pl-8 pr-4 text-[12px] outline-none placeholder:text-gray-400 focus:ring-0"
+                    class="w-full h-9 rounded-full border-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50 pl-8 pr-4 text-[12px] outline-none placeholder:text-gray-400 "
                   />
                 </div>
                 @if (formRegister.get('confirmPassword')?.touched && formRegister.get('confirmPassword')?.errors?.['required']) {
@@ -167,7 +168,7 @@
 
           <div class="space-y-4">
             <label class="flex items-center gap-4 rounded-2xl bg-[#D9EEF8] px-4 py-3 cursor-pointer hover:opacity-95 transition">
-              <div class="w-8 h-8 shrink-0 rounded-lg flex items-center justify-center text-lg text-slate-700">🪪</div>
+                <img src="assets/Images/Id_card.svg" alt="Icono carnet" class="w-[1.5rem]">
               <div class="min-w-0 flex-1">
                 <p class="text-sm font-semibold text-slate-900 leading-tight">Carnet de estudiante</p>
                 <p class="text-[11px] text-slate-500 leading-tight">Arrastra o sube una foto de tu carnet</p>
@@ -177,7 +178,7 @@
             </label>
 
             <label class="flex items-center gap-4 rounded-2xl bg-[#D9EEF8] px-4 py-3 cursor-pointer hover:opacity-95 transition">
-              <div class="w-8 h-8 shrink-0 rounded-lg flex items-center justify-center text-lg text-slate-700">🤳</div>
+                <img src="assets/Images/Face_scan.svg" alt="Icono carnet" class="w-[1.5rem]">
               <div class="min-w-0 flex-1">
                 <p class="text-sm font-semibold text-slate-900 leading-tight">Selfie con tu carnet</p>
                 <p class="text-[11px] text-slate-500 leading-tight">Tómate una foto sosteniendo tu carnet</p>
