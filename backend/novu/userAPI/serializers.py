@@ -1,37 +1,11 @@
 from django.contrib.auth.models import *
 from rest_framework import serializers
 from .models import *
+from django.contrib.auth.hashers import make_password # make_password is to encrypt passwords
 
 # these Serializer Classes are used to simplify the process of serializing models
 # we would have to serialize manually each field.
-# by doing it this way we can avoid that. We also get the default implementations of the create and update methods
-"""
-class UserSeralizer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = [
-            "name",
-            "surnames",
-            "email",
-            "password",
-            "school_name",
-            "gender",
-            "biography",
-            "height", 
-            "date_of_birth",
-            "min_age",
-            "max_age",
-            "profile_pic",
-            "max_distance_km", 
-            "show_me", 
-            "likes", 
-            "restricted", 
-            "restricted_reason", 
-            "restricted_at"
-        ]
-
-"""
-
+# by doing it this way we can avoid that. We also get the default implementations of the create and update methods (using ModelSerializer)
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model=User
@@ -101,6 +75,14 @@ class RequestSerializer(serializers.ModelSerializer):
     class Meta:
         model=Request
         fields='__all__'
+    def create(self, validated_data):
+        validated_data['password'] = make_password(str(validated_data['password']))
+        return super().create(validated_data)
+    
+    def update(self, instance, validated_data):
+        if 'password' in validated_data:
+            validated_data['password'] = make_password(str(validated_data['password']))
+        return super().update(instance, validated_data)
 
 
 

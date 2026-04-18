@@ -24,13 +24,15 @@ class RequestViewset(viewsets.ViewSet):
 
     # to get a specific request based on primary key
     def retrieve(self,request,pk=None):
-        queryset = Request.objects.all()
-        register_request = get_object_or_404(queryset, pk=pk)
+        queryset = Request.objects.all() # gets all Register Requests from the database
+        register_request = get_object_or_404(queryset, pk=pk) # searches for a specific register request
         serializer = RequestSerializer(register_request)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     # to fully update a specific request
-    def update(self,request,pk=None):
+    def update(self,request):
+        data = request.data
+        pk = int(data.pk) 
         register_request = get_object_or_404(Request, pk=pk)
         serializer = RequestSerializer(register_request, data=request.data)
         if serializer.is_valid():

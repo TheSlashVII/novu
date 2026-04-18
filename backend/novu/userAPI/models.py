@@ -7,7 +7,7 @@ class User(models.Model):
     # basic fields
     name=models.CharField(max_length=200)
     surnames=models.CharField(max_length=200)
-    email=models.CharField(max_length=200)
+    email=models.CharField(max_length=200, unique=True)
     password=models.CharField(max_length=500)
     # preferences fields
     school_name=models.CharField(max_length=150)
@@ -25,6 +25,7 @@ class User(models.Model):
     restricted=models.BooleanField(default=False)
     restricted_reason=models.CharField(max_length=100)
     restricted_at=models.DateField()
+    admin=models.BooleanField(default=0)
 
     # VERY IMPORTANT! This subclass is used to rename the table. 
     # By default this model would be named users_user. By doing this we avoid that
@@ -152,13 +153,14 @@ class Request(models.Model):
     id_request=models.BigAutoField(primary_key=True)
     name=models.CharField(max_length=100)
     surnames=models.CharField(max_length=150)
-    email=models.CharField(max_length=100)
+    email=models.CharField(max_length=100, unique=True)
     password=models.TextField()
     date_of_birth=models.DateField()
     photo_student_id=models.ImageField(upload_to=utilities.fileRenameRegister, max_length=200) # the url to the photo uploaded to the server
     photo_id_selfie=models.ImageField(upload_to=utilities.fileRenameRegister, max_length=200) # the url to the photo with the student holding his id 
     id_student=models.BigIntegerField()
     id_student.null = True
+    
     
     # set status states
     # this is for setting a list of available choices when writing to this column. Only these options are valid
@@ -172,7 +174,6 @@ class Request(models.Model):
     }
     status=models.CharField(max_length=15, choices=status_choices, default=PENDING)
     submitted_at=models.DateTimeField(auto_now_add=True)
-
     class Meta:
         db_table='Request'
 

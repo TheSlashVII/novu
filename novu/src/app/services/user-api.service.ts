@@ -10,10 +10,12 @@ export class UserAPIService {
   constructor(private http:HttpClient) { }
 
   createRegisterRequest(data:any){
-    //const ROUTE:string = `${this.baseServerURL}/create/request`;
-    let headers = new HttpHeaders();
     //headers = headers.append('enctype', 'multipart/form-data');
     const ROUTE:string = `${this.baseServerURL}/create/request`;
+    return this.http.post(ROUTE, data)
+  }
+  login(data:any){
+    const ROUTE:string = `${this.baseServerURL}/login`;
     return this.http.post(ROUTE, data)
   }
 }
