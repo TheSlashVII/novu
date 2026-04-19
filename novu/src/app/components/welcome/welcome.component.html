@@ -77,7 +77,7 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        @for (step of steps(); track step.number) {
+        @for (step of steps; track step.number) {
           <div class="rounded-2xl border border-gray-100 p-8 hover:shadow-md
                       transition-all duration-300 hover:-translate-y-1">
             <p class="font-poppins font-bold text-sm text-gray-300 mb-4">{{ step.number }}</p>
@@ -102,7 +102,7 @@
 
       <!-- Grid 2x2 + 1 centrada -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        @for (feature of features().slice(0, 4); track feature.title) {
+        @for (feature of features; track feature.title) {
           <div class="flex items-start gap-4 rounded-2xl border border-gray-100 p-6
                       hover:shadow-md transition-all duration-300">
             <div class="shrink-0 w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center">
@@ -146,9 +146,9 @@
           </div>
           <div>
             <h3 class="font-poppins font-bold text-sm text-gray-900 mb-1">
-              {{ features()[4].title }}
+              {{ features[4].title }}
             </h3>
-            <p class="text-sm text-gray-400 leading-relaxed">{{ features()[4].description }}</p>
+            <p class="text-sm text-gray-400 leading-relaxed">{{ features[4].description }}</p>
           </div>
         </div>
       </div>
