@@ -8,9 +8,12 @@ import {
     AdminRegisterRequestListComponent
 } from './components/admin-register-request-list/admin-register-request-list.component';
 import {AdminComponent} from './components/admin/admin.component';
-import {
-    AdminRegisterRequestDetailComponent
-} from './components/admin-register-request-detail/admin-register-request-detail.component';
+
+import { StudiesComponent } from './components/studies/studies.component';
+
+import { InterestsComponent } from './components/interests/interests.component';
+import {AdminRegisterRequestDetailComponent} from './components/admin-register-request-detail/admin-register-request-detail.component'
+
 
 export const routes: Routes = [
     {
@@ -24,10 +27,20 @@ export const routes: Routes = [
         path: 'login',
         component: LoginComponent,
         title: "Novu - Login"
-    }, {
+    }, 
+    {
         path: 'postRegister',
         component: PostRegisterComponent
-  }, {
+    },
+    {
+        path: 'studies',
+        component: StudiesComponent
+    }, 
+    {
+        path: 'interests',
+        component: InterestsComponent
+    },
+    {
     path: 'admin',
         component: AdminComponent,
         title: "Admin Panel",

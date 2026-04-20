@@ -5,7 +5,6 @@ interface Feature {
   icon: string;
   title: string;
   description: string;
-  iconBg: string;
 }
 
 interface Step {
@@ -42,41 +41,41 @@ export class WelcomeComponent {
       title: 'Descubre perfiles y queda en persona',
       description: 'Desliza, conecta y organiza quedadas. El match sucede cuando hay interés mutuo.',
     },
-  ]);
+  ];
 
-  features = signal<Feature[]>([
+  features: Feature[] = [
     {
       icon: 'check',
       title: '100% verificado',
       description: 'Solo estudiantes con carnet de estudiante válido. Sin bots, sin cuentas falsas. Una comunidad real y de confianza.',
-      iconBg: 'violet',
     },
     {
       icon: 'users',
       title: '100% conexiones reales',
       description: 'Novu fomenta el encuentro en persona. El chat es el puente, el café es el destino.',
-      iconBg: 'violet',
     },
     {
       icon: 'shield',
       title: 'Privacidad primero',
       description: 'Controla qué compartes y con quién. Tu información no se vende ni se usa para publicidad.',
-      iconBg: 'violet',
     },
     {
       icon: 'chat',
       title: 'Chat integrado',
       description: 'Cuando hay match, podéis hablar directamente desde la app. Sencillo y sin fricciones.',
-      iconBg: 'violet',
     },
     {
       icon: 'filter',
       title: 'Filtra por instituto, estudios o intereses',
       description: 'Encuentra estudiantes de tu misma universidad o de otras ciudades. Novu adapta los perfiles a tu contexto.',
-      iconBg: 'violet',
     },
-  ]);
+  ];
 
-  goToLogin():    void { this.router.navigate(['/login']); }
-  goToRegister(): void { this.router.navigate(['/register']); }
+  goToLogin(): void {
+    this.router.navigate(['/login']);
+  }
+
+  goToRegister(): void {
+    this.router.navigate(['/register']);
+  }
 }
