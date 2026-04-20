@@ -25,7 +25,7 @@ export class WelcomeComponent {
 
   currentYear = new Date().getFullYear();
   // signals are like a record to save stuff inside of them. Is like an object
-  steps = signal<Step[]>([
+  steps:Step[] = [
     {
       number: '01',
       title: 'Regístrate con tu correo universitario',
