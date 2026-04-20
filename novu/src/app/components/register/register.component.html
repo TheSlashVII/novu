@@ -5,7 +5,7 @@
 
         <!-- Logo + Tagline -->
         <div class="flex flex-col gap-16">
-            <div class="flex items-center gap-3">
+            <div (click)="goToWelcome()" class="flex items-center gap-3 hover:cursor-pointer">
                 <img src="assets/Images/Novu_Logo.png" alt="Novu logo" class="w-11 h-11 object-contain">
                 <p class="text-white font-bold text-xl tracking-wide font-[Poppins]">novu</p>
             </div>
@@ -22,8 +22,8 @@
   <main class="flex-1 flex justify-center items-center px-10 py-8 md:py-16">
     <div class="w-full max-w-[720px] flex flex-col">
         <div class="md:hidden mb-5">
-            <div class="flex items-center gap-3">
-                <img src="assets/Images/Novu_Logo.png" alt="Novu logo" class="w-11 h-11 object-contain">
+            <div (click)="goToWelcome()" class="flex items-center gap-3">
+                <img src="assets/Images/Novu_logo.svg" alt="Novu logo" class="w-11 h-11 object-contain">
                 <p class="text-black font-bold text-xl tracking-wide font-[Poppins]">novu</p>
             </div>
         </div>
@@ -203,7 +203,7 @@
 
           <p class="mt-3 text-center text-[11px] text-gray-500">
             ¿Ya tienes cuenta?
-            <a href="#" class="font-semibold text-[#5B8CD9] hover:underline">Inicia sesión</a>
+            <a (click)="goToLogin()" class="font-semibold text-[#5B8CD9] hover:underline hover:cursor-pointer">Inicia sesión</a>
           </p>
         </section>
 

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -11,7 +12,8 @@ import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angula
 export class LoginComponent {
   showPassword = false;
   loading = false;
-
+    constructor(private router: Router) {
+    }
   formLogin = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')]),
     password: new FormControl('', [Validators.required, Validators.minLength(6)]),
@@ -24,6 +26,9 @@ export class LoginComponent {
   togglePassword() {
     this.showPassword = !this.showPassword; // toggles between true and false. If it's true, it becomes false and viceversa.
   }
+
+  goToWelcome() {this.router.navigateByUrl('')}
+  goToRegister() {this.router.navigateByUrl('/register')}
 
   submit(): void {
     if (!this.isFormReady) {

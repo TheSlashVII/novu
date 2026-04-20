@@ -76,7 +76,12 @@ export class RegisterComponent {
       this.formRegister.get(fieldName)?.markAsTouched();
     }
   }
-
+    goToLogin(){
+      this.router.navigateByUrl("/login").catch((error: Error) => {console.log(`Something went wrong: ${error.message}`)});
+    }
+    goToWelcome(){
+      this.router.navigateByUrl("").catch((error: Error) => {console.log(`Something went wrong: ${error.message}`)});
+    }
   submit(): void {
     if (this.isFormReady) {
       const formData= new FormData(); // new empty object to colect the form data since the formRegister.value only returns strings

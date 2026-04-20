@@ -15,17 +15,22 @@ class User(models.Model):
     biography=models.CharField(max_length=150)
     height=models.CharField(max_length=5,default='')
     date_of_birth=models.DateField()
-    min_age=models.IntegerField()
+    min_age=models.IntegerField(default=0)
     max_age=models.IntegerField()
     profile_pic=models.TextField()
-    max_distance_km=models.IntegerField(default='')
+    max_distance_km=models.IntegerField()
     show_me=models.BooleanField(default=True)
     likes=models.IntegerField(default=0)
     # acces management fields
     restricted=models.BooleanField(default=False)
     restricted_reason=models.CharField(max_length=100)
-    restricted_at=models.DateField()
+    restricted_at=models.DateField(auto_now_add=True)
     admin=models.BooleanField(default=0)
+    # Constraints and other conditions
+    max_age.null = True
+    profile_pic.null = True
+    max_distance_km = True
+
 
     # VERY IMPORTANT! This subclass is used to rename the table. 
     # By default this model would be named users_user. By doing this we avoid that
@@ -42,7 +47,8 @@ class UserCard(models.Model):
         db_table='User_card'
 
 
-
+# card_tab table
+# it represents each tab for an user card
 class CardTab(models.Model):
     card=models.ForeignKey(UserCard, on_delete=models.CASCADE)
     body=models.CharField(max_length=200)
@@ -54,7 +60,8 @@ class CardTab(models.Model):
     class Meta:
         db_table='Card_tab'
 
-
+# study table
+# represents the studies of the user
 class Study(models.Model):
     user=models.ForeignKey(User, models.CASCADE)
     name=models.CharField(max_length=100) # name of the study
@@ -62,7 +69,9 @@ class Study(models.Model):
     pk=models.CompositePrimaryKey("user_id", "name") # Fix to define multiple columns as primary keys
     class Meta:
         db_table='Study'
-    
+
+# Block table
+# it is for blocking unwanted users from interacting with others
 class Block(models.Model):
     # db_column is for changing the name of the column at the database. 
     # mainly is for it not to append _id at the end of the Foreign Keys
@@ -74,7 +83,8 @@ class Block(models.Model):
     # table name 
     class Meta:
         db_table='Block'
-
+# Match table
+# this is the table that will track whenever two users have liked eachother
 class Match(models.Model):
     # columns
     user1_id=models.ForeignKey(User, related_name="user1_id", db_column="user1_id", on_delete=models.CASCADE)
@@ -84,6 +94,8 @@ class Match(models.Model):
     class Meta:
         db_table='Match'
 
+# Message table
+# this table is for having a record on messages being sent 
 class Message(models.Model):
     # Columns
     id_message=models.BigAutoField(primary_key=True)
