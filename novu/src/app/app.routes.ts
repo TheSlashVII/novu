@@ -13,6 +13,7 @@ import { StudiesComponent } from './components/studies/studies.component';
 
 import { InterestsComponent } from './components/interests/interests.component';
 import {AdminRegisterRequestDetailComponent} from './components/admin-register-request-detail/admin-register-request-detail.component'
+import { HomeComponent } from './components/home/home.component';
 
 
 export const routes: Routes = [
@@ -53,6 +54,10 @@ export const routes: Routes = [
                 title: "Admin - Register Request",
             }
         ]
+    },
+    {
+        path: 'home',
+        component: HomeComponent
     }
 
 

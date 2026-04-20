@@ -1,0 +1,168 @@
+<div class="min-h-screen bg-white flex flex-col font-poppins select-none"
+     (mousemove)="onMouseMove($event)"
+     (mouseup)="onMouseUp()">
+
+  <!-- NAVBAR TOP -->
+  <nav class="flex items-center justify-between px-6 py-3 border-b border-gray-100">
+
+    <button (click)="goToProfile()"
+            class="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-200
+                   hover:border-violet-400 transition-colors">
+      <img src="assets/me.jpg"
+           alt="Mi perfil"
+           class="w-full h-full object-cover"
+           onerror="this.src='https://ui-avatars.com/api/?name=Yo&background=7c3aed&color=fff'"/>
+    </button>
+
+    <img src="assets/Images/Novu_logo.svg" alt="Novu Logo" class="w-10 h-10 object-contain"/>
+
+  </nav>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="flex-1 flex items-center justify-center px-4 py-6">
+
+    @if (loading) {
+      <div class="flex flex-col items-center gap-4">
+        <div class="w-16 h-16 rounded-full border-4 border-violet-200
+                    border-t-violet-600 animate-spin"></div>
+        <p class="text-gray-400 text-sm">Cargando perfiles...</p>
+      </div>
+
+    } @else if (error) {
+      <div class="text-center space-y-3">
+        <p class="text-rose-500 font-semibold">{{ error }}</p>
+        <button (click)="ngOnInit()"
+                class="px-6 py-2 rounded-full bg-violet-600 text-white text-sm
+                       font-semibold hover:bg-violet-700 transition-colors">
+          Reintentar
+        </button>
+      </div>
+
+    } @else if (getCurrentProfile()) {
+
+      <div class="relative w-full max-w-sm">
+
+        <!-- Indicador LIKE -->
+        <div class="absolute top-6 left-6 z-20 border-4 border-blue-500
+                    rounded-lg px-3 py-1 -rotate-12 transition-opacity duration-150"
+             [class.opacity-100]="isLiking()"
+             [class.opacity-0]="!isLiking()">
+          <span class="text-blue-500 font-extrabold text-2xl tracking-widest">LIKE</span>
+        </div>
+
+        <!-- Indicador NOPE -->
+        <div class="absolute top-6 right-6 z-20 border-4 border-rose-500
+                    rounded-lg px-3 py-1 rotate-12 transition-opacity duration-150"
+             [class.opacity-100]="isDisliking()"
+             [class.opacity-0]="!isDisliking()">
+          <span class="text-rose-500 font-extrabold text-2xl tracking-widest">NOPE</span>
+        </div>
+
+        <!-- TARJETA -->
+        <div class="relative rounded-3xl overflow-hidden shadow-xl
+                    cursor-grab active:cursor-grabbing"
+             [style.transform]="getCardRotation()"
+             [class.transition-transform]="!isDragging"
+             [class.duration-300]="!isDragging"
+             (mousedown)="onMouseDown($event)"
+             (touchstart)="onTouchStart($event)"
+             (touchmove)="onTouchMove($event)"
+             (touchend)="onTouchEnd()">
+
+          <!-- Foto -->
+          <img [src]="getCurrentProfile()!.image"
+               [alt]="getCurrentProfile()!.name"
+               class="w-full h-[480px] object-cover pointer-events-none"
+               onerror="this.src='https://ui-avatars.com/api/?name=Perfil&background=7c3aed&color=fff&size=400'"/>
+
+          <!-- Gradiente encima de la foto -->
+          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent
+                      flex flex-col justify-between p-5">
+
+            <!-- Nombre y bio arriba -->
+            <div>
+              <h2 class="text-white font-poppins font-bold text-2xl">
+                {{ getCurrentProfile()!.name }} {{ getCurrentProfile()!.age }}
+              </h2>
+              <p class="text-white/80 text-sm mt-1">
+                {{ getCurrentProfile()!.bio }}
+              </p>
+            </div>
+
+            <!-- Botones dislike / like -->
+            <div class="flex justify-center gap-10 pb-2">
+
+              <button (click)="dislike()"
+                      class="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm
+                             flex items-center justify-center
+                             hover:bg-rose-500/80 hover:scale-110
+                             transition-all duration-200">
+                <svg class="w-7 h-7 text-rose-400" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor" stroke-width="3">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+
+              <button (click)="like()"
+                      class="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm
+                             flex items-center justify-center
+                             hover:bg-blue-500/80 hover:scale-110
+                             transition-all duration-200">
+                <svg class="w-7 h-7 text-blue-400" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor" stroke-width="3">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M5 13l4 4L19 7"/>
+                </svg>
+              </button>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    } @else {
+      <div class="text-center space-y-4">
+        <h3 class="font-poppins font-bold text-xl text-gray-700">No hay más perfiles</h3>
+        <p class="text-gray-400 text-sm">Vuelve más tarde para ver nuevas personas</p>
+      </div>
+    }
+
+  </main>
+
+  <!-- NAVBAR BOTTOM -->
+  <nav class="border-t border-gray-100 px-6 py-4 flex justify-around items-center">
+
+    <button (click)="goToProfile()"
+            class="p-2 rounded-xl text-gray-400 hover:text-violet-600 transition-colors">
+      <img src="assets/Images/Bookmark_all_likes_given.svg"
+           alt="Likes" class="w-7 h-7"/>
+    </button>
+
+    <button (click)="goToChat()"
+            class="p-2 rounded-xl text-gray-400 hover:text-violet-600 transition-colors">
+      <img src="assets/Images/Messages.svg"
+           alt="Mensajes" class="w-7 h-7"/>
+    </button>
+
+    <button (click)="goToDiscover()"
+            class="p-2 rounded-xl text-gray-400 hover:text-violet-600 transition-colors">
+      <img src="assets/Images/Return_back_once.svg"
+           alt="Volver" class="w-7 h-7"/>
+    </button>
+
+    <!-- Separador vertical -->
+    <img src="assets/Images/Vector.svg" alt="" class="h-8 opacity-20"/>
+
+    <button (click)="goToSearch()"
+            class="p-2 rounded-xl text-gray-400 hover:text-violet-600 transition-colors">
+      <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24"
+           stroke="currentColor" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+    </button>
+
+  </nav>
+
+</div>
