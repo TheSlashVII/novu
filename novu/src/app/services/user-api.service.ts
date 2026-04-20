@@ -18,4 +18,23 @@ export class UserAPIService {
     const ROUTE:string = `${this.baseServerURL}/login`;
     return this.http.post(ROUTE, data)
   }
+  getStudentIdPhoto(photoUrl:any){
+      const ROUTE:string = photoUrl;
+      return this.http.get(ROUTE)
+  }
+  /*
+  * function used to list register requests
+   */
+  listRegisterRequests(){
+      const ROUTE:string = `${this.baseServerURL}/list/request`;
+      return this.http.get(ROUTE)
+  }
+    /**
+     * Function used to get the details of a register request
+     * @param id
+     */
+  retrieveRegisterRequestDetails(id:any){
+    const ROUTE:string = `${this.baseServerURL}/detail/request/${id}`;
+    return this.http.get(ROUTE)
+  }
 }

@@ -1,4 +1,20 @@
 import { Component } from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {UserAPIService} from '../../services/user-api.service';
+
+export interface registerRequestInterface {
+    id_request:number,
+    name:string,
+    surnames:string,
+    email:string,
+    password:string,
+    date_of_birth:number,
+    photo_student_id:string,
+    photo_id_selfie:string,
+    id_student:string | null,
+    status:string,
+    submitted_at:string,
+}
 
 @Component({
   selector: 'app-admin-register-request-detail',
@@ -6,7 +22,75 @@ import { Component } from '@angular/core';
   templateUrl: './admin-register-request-detail.component.html',
   styleUrl: './admin-register-request-detail.component.css'
 })
+/*
+* {
+    "id_request": 3,
+    "name": "Jr1",
+    "surnames": "Kr2",
+    "email": "jjsi@gmail.com",
+    "password": "123456789",
+    "date_of_birth": "2008-05-21",
+    "photo_student_id": "http://localhost:8000/photos/register_request/cbcb53b0-745f-4a67-8c84-ffc3afa10395.png",
+    "photo_id_selfie": "http://localhost:8000/photos/register_request/ad8e2a3a-0132-497d-97d5-94d34385b658.png",
+    "id_student": null,
+    "status": "Pending",
+    "submitted_at": "2026-04-18T16:52:14.188056Z"
+}
+* */
 export class AdminRegisterRequestDetailComponent {
     email:string="user@example.com";
+    registerRequest:registerRequestInterface;
+    constructor(private router: Router, activatedRoute: ActivatedRoute, private userAPI:UserAPIService) {
+        // to get the id inserted by the route on the get request
+        this.registerRequest = this.requestInitializer()
+
+        activatedRoute.paramMap.subscribe(param => {
+            const id = param.get("id");
+            userAPI.retrieveRegisterRequestDetails(id).subscribe(res => {
+                this.setRegisterRequest(res)
+            })
+        })
+
+    }
+    setRegisterRequest(registerRequest:any){
+        this.registerRequest = registerRequest;
+        console.log(this.registerRequest)
+    }
+    /*
+    * This function is to manage in the case where the OCR can't read the student ID
+    * */
+    getStudentId(){
+        if(this.registerRequest.id_student == null){
+            return "unavailable";
+        }
+        return this.registerRequest.id_student;
+    }
+
+    checkStudentIdImage(){
+        window.open(this.registerRequest.photo_student_id, "_blank");
+    }
+    checkStudentIdSelfieImage(){
+        window.open(this.registerRequest.photo_id_selfie, "_blank");
+    }
+
+    requestInitializer(){
+        return {
+            id_request:-1,
+            name:"",
+            surnames:"",
+            email:"",
+            password:"",
+            date_of_birth:0,
+            photo_student_id:"",
+            photo_id_selfie:"",
+            id_student:null,
+            status:"",
+            submitted_at:"",
+        }
+    }
+    goToRequests(){
+        this.router.navigateByUrl('/admin/request');
+    }
+
 
 }

@@ -1,10 +1,8 @@
 import { Component } from '@angular/core';
+import {registerRequestInterface} from "../admin-register-request-detail/admin-register-request-detail.component"
+import {Router} from '@angular/router';
+import {UserAPIService} from '../../services/user-api.service';
 
-export interface RegisterRequest {
-    id: number;
-    username: string;
-    date: string;
-}
 
 @Component({
   selector: 'app-admin-register-request-list',
@@ -14,23 +12,43 @@ export interface RegisterRequest {
     standalone: true,
 })
 export class AdminRegisterRequestListComponent {
-    requests: RegisterRequest[] = [
-        { id: 1, username: 'User 2', date: 'Date' },
-        { id: 2, username: 'User 3', date: 'Date' },
-        { id: 3, username: 'User 4', date: 'Date' },
-        { id: 4, username: 'User 5', date: 'Date' },
-        { id: 5, username: 'User 6', date: 'Date' },
-    ];
+    requests: registerRequestInterface[];
 
-    onLogout(): void {
-        console.log('Logout clicked');
+    constructor(private route:Router, private userAPI:UserAPIService) {
+        this.requests = [this.requestInitializer()] // done to initialize the list
+        userAPI.listRegisterRequests().subscribe(response => {
+            this.requestlistSetter(response);
+        })
+
     }
 
-    onViewDetails(request: RegisterRequest): void {
-        console.log('View details for:', request);
-    }
+    /**
+     * Function used to transform the dates to readable formats
+     * @param date the date inserted by each iteration or requests
+     */
+    splitDate(date:string){
+        let formatedDate: Date;
+        formatedDate = new Date(date);
+        return formatedDate.toLocaleDateString("es-ES");
 
-    onBackToPanel(): void {
-        console.log('Back to panel clicked');
+    }
+    requestInitializer(){
+        return {
+            id_request:-1,
+            name:"",
+            surnames:"",
+            email:"",
+            password:"",
+            date_of_birth:0,
+            photo_student_id:"",
+            photo_id_selfie:"",
+            id_student:null,
+            status:"",
+            submitted_at:"",
+        }
+    }
+    requestlistSetter(data:any){
+        this.requests = data
+        // console.log(this.requests);
     }
 }
