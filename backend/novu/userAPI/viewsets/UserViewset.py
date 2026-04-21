@@ -54,9 +54,13 @@ class UserViewset(viewsets.ViewSet):
             except Http404:
                 return JsonResponse({"errorMessage": "No user with the same credentials was found"})
             if check_password(password=password, encoded=user.password):
-                serializer = UserSerializer(user) # transform the django user model into json
+                # serializer = UserSerializer(user) # transform the django user model into json
                 #login(request=request, user=user)
-                return JsonResponse(serializer.data, status=status.HTTP_200_OK)
+                refresh = RefreshToken.for_user(user)
+                return JsonResponse({
+                    "access": str(refresh.access_token),
+                    "refresh" : str(refresh),
+                }, status=status.HTTP_200_OK)
             return JsonResponse({"error": "Something went wrong"}, status=status.HTTP_401_UNAUTHORIZED)
         return JsonResponse({"error": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST)
         

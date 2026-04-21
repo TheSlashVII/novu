@@ -43,6 +43,12 @@ export class LoginComponent {
       console.log(this.formLogin.value);
     }, 2000);
      */
-      this.userAPI.login(this.formLogin.value).subscribe(res=>console.log(res));
+
+      this.userAPI.login(this.formLogin.value).subscribe( res => {
+          console.log(res)
+          const token:any = res
+          this.userAPI.saveToken(token.access) // save the token inside the browser
+          }
+      );
   }
 }
