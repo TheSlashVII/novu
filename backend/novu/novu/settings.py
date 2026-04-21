@@ -54,6 +54,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware'
 ]
 # JWT Authentication
+"""
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -68,7 +69,7 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # increase this
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
-
+"""
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:4200',
 ]
