@@ -9,6 +9,7 @@ RegisterRequestController=RegisterRequestViewset.RequestViewset
 
 login=UserController.as_view({"post" : "retrieveByEmail"})
 create_user=UserController.as_view({"post" : "create"})
+admin_create_user=UserController.as_view({"post" : "createFromAdmin"})
 retrieve_user=UserController.as_view({"get" : "retrieve"})
 delete_request=RegisterRequestController.as_view({"delete" : "destroy"})
 register_request_count=RegisterRequestController.as_view({"get" : "countRequests"})
@@ -25,7 +26,8 @@ urlpatterns = [
     path("detail/request/<int:id>/", register_request_detail), # retrieves a specific register request
     path("count/request/", register_request_count), # counts the amount of active register requests
     path("delete/request/<int:id>/", delete_request), # deletes a register request
-    path("retrieve/<int:id>/", retrieve_user)
+    path("retrieve/<int:id>/", retrieve_user),
+    path("admin/create/", admin_create_user) # creates user from admin panel 
 
     
     

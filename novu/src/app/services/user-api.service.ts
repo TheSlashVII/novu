@@ -27,10 +27,27 @@ export class UserAPIService {
       return this.http.get(ROUTE)
 
   }
+
+    /**
+     * Function to create users
+     * @param name user's name
+     * @param surnames user's surname
+     * @param email user's email
+     * @param password user's password
+     * @param date_of_birth user's date of birth
+     */
   createUser(name:string, surnames:string, email:string, password:string, date_of_birth:string){
       const ROUTE:string = `${this.baseServerURL}/create/`;
       return this.http.post(ROUTE, {name:name, surnames:surnames, email:email, password:password, date_of_birth:date_of_birth})
+  }
+  adminCreateUser(data:any){
+      const ROUTE:string = `${this.baseServerURL}/admin/create/`;
+      return this.http.post(ROUTE, data)
+  }
 
+  getUserById(id:number | string){
+      const ROUTE:string = `${this.baseServerURL}/retrieve/${id}/`;
+      return this.http.get(ROUTE)
   }
   /*
   * function used to list register requests
@@ -59,6 +76,7 @@ export class UserAPIService {
     logoutJWT() {
         localStorage.removeItem('access_token');
     }
+
 
     isLoggedIn(): boolean {
         return !!this.getToken();
