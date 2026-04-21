@@ -73,6 +73,17 @@ export class AdminRegisterRequestDetailComponent {
         window.open(this.registerRequest.photo_id_selfie, "_blank");
     }
 
+    createUser(){
+        let data = {
+            name:this.registerRequest.name,
+            surnames:this.registerRequest.surnames,
+            email:this.registerRequest.email,
+            password:this.registerRequest.password,
+            date_of_birth:this.registerRequest.date_of_birth
+        }
+        this.userAPI.createUser(data.name, data.surnames, data.email, data.password, data.date_of_birth).subscribe((res) => console.log(res))
+    }
+
     requestInitializer(){
         return {
             id_request:-1,

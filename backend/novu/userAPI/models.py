@@ -10,7 +10,7 @@ class User(models.Model):
     email=models.CharField(max_length=200, unique=True)
     password=models.CharField(max_length=500)
     # preferences fields
-    school_name=models.CharField(max_length=150)
+    school_name=models.CharField(max_length=150, default='')
     gender=models.CharField(max_length=10, default='') # on django '' is equal to NULL
     biography=models.CharField(max_length=150, default='')
     height=models.CharField(max_length=5,default='')
