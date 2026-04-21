@@ -1,48 +1,44 @@
-<div class="flex h-screen w-full font-black">
+<div class="flex h-screen w-full font-poppins">
 
-  <!-- Sidebar izquierdo -->
-  <aside class="w-[340px] min-h-screen flex flex-col bg-gradient-to-b from-[#4a3d7a] via-[#3d2e6e] to-[#2a1a52] px-8 py-6 flex-shrink-0">
-    <!-- Logo -->
+  <aside class="w-80 min-h-screen flex flex-col bg-gradient-to-b from-violet-800 via-violet-900 to-indigo-950 px-8 py-6 flex-shrink-0">
     <div class="flex items-center gap-2 mb-16">
-      <div class="w-9 h-9 rounded-full bg-gradient-to-br from-pink-400 via-purple-400 to-blue-400 flex items-center justify-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-        </svg>
-      </div>
-      <span class="text-white text-xl font-black tracking-tight">novu</span>
+      <img src="assets/Images/Novu_logo.svg" alt="Novu" class="w-9 h-9 object-contain"/>
+      <span class="text-white text-xl font-bold tracking-tight">Novu</span>
     </div>
-
-    <!-- Texto descriptivo -->
     <div class="mt-4">
-      <p class="text-white text-[1.05rem] font-black leading-snug">
+      <p class="text-white text-lg font-bold leading-snug">
         Selecciona tus intereses para poder conectarte con las personas indicadas
       </p>
     </div>
   </aside>
 
-  <!-- Panel derecho -->
-  <main class="flex-1 min-h-screen bg-[#7b8fe8] flex flex-col items-center relative">
+  <main class="flex-1 min-h-screen bg-indigo-400 flex flex-col items-center relative">
 
-    <!-- Título -->
-    <h1 class="text-white text-[2rem] font-black mt-10 tracking-tight">Elige tus intereses</h1>
+    <h1 class="text-white text-4xl font-bold mt-10 tracking-tight">
+      Elige tus intereses
+    </h1>
 
-    <!-- Chips de intereses -->
-    <div class="flex flex-wrap justify-center gap-x-6 gap-y-4 mt-auto mb-auto px-16 max-w-[780px]">
+    <div class="flex flex-wrap justify-center gap-x-6 gap-y-4 mt-auto mb-auto px-16 max-w-3xl">
       @for (interest of interests; track interest.label) {
         <button
           (click)="toggleInterest(interest)"
-          [class]="getChipClass(interest)"
-        >
+          [ngClass]="interest.selected
+            ? 'bg-violet-900 text-white border-violet-900'
+            : 'bg-white text-gray-900 border-white'"
+          class="px-8 py-3 rounded-full font-bold text-base cursor-pointer transition-all duration-200 border-2">
           {{ interest.label }}
         </button>
       }
     </div>
 
-    <!-- Botón Siguiente -->
     <div class="absolute bottom-10 right-10">
       <button
-        class="bg-white text-black font-black text-base px-10 py-3 rounded-full shadow-lg hover:bg-gray-100 transition-colors duration-200 tracking-tight"
-      >
+        (click)="goNext()"
+        [disabled]="!hasSelection()"
+        [ngClass]="hasSelection()
+          ? 'bg-white text-gray-900 cursor-pointer hover:bg-gray-100'
+          : 'bg-white/40 text-white/60 cursor-not-allowed'"
+        class="font-bold text-base px-10 py-3 rounded-full shadow-lg transition-all duration-200">
         Siguiente
       </button>
     </div>

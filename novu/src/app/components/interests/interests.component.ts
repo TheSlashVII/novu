@@ -1,12 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-interests',
-  imports: [],
+  standalone: true,
+  imports: [NgClass],
   templateUrl: './interests.component.html',
   styleUrl: './interests.component.css'
 })
 export class InterestsComponent {
+  private router = inject(Router);
 
   interests: { label: string; selected: boolean }[] = [
     { label: 'Ingenieria', selected: false },
@@ -21,16 +25,15 @@ export class InterestsComponent {
     { label: 'Social Media', selected: false },
   ];
 
+  hasSelection(): boolean {
+    return this.interests.some(i => i.selected);
+  }
+
   toggleInterest(interest: { label: string; selected: boolean }): void {
     interest.selected = !interest.selected;
   }
 
-  getChipClass(interest: { label: string; selected: boolean }): string {
-    const base =
-      'px-8 py-3 rounded-full font-black text-base cursor-pointer transition-all duration-200 shadow-sm border-2 tracking-tight';
-    if (interest.selected) {
-      return `${base} bg-[#4a3d7a] text-white border-[#4a3d7a]`;
-    }
-    return `${base} bg-white text-black border-white hover:border-[#4a3d7a] hover:shadow-md`;
+  goNext(): void {
+    this.router.navigate(['/home']);
   }
 }

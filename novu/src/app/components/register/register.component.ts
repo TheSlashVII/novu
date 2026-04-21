@@ -125,7 +125,7 @@ export class RegisterComponent {
        this.userAPI.createRegisterRequest(formData).subscribe({
        next: (res) => {
          //console.log(res);
-         this.router.navigateByUrl("/postRegister");
+         this.router.navigateByUrl("/post-register");
        },
       error: (err) => console.error(err)
   });

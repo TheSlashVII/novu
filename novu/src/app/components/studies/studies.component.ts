@@ -18,6 +18,6 @@ export class StudiesComponent {
   studiesName: string = '';
 
   goNext(): void {
-    this.router.navigate(['/']); 
+    this.router.navigate(['/interests']); 
   }
 }
