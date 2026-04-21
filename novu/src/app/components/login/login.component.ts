@@ -13,7 +13,13 @@ import {UserAPIService} from '../../services/user-api.service';
 export class LoginComponent {
   showPassword = false;
   loading = false;
+  isLoggedIn:boolean;
     constructor(private router: Router, private userAPI:UserAPIService) {
+        this.isLoggedIn = this.userAPI.isLoggedIn();
+        if (this.userAPI.isLoggedIn()) {
+            // this.router.navigateByUrl('interests');
+
+        }
     }
   formLogin = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')]),
