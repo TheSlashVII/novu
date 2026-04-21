@@ -14,6 +14,7 @@ import { StudiesComponent } from './components/studies/studies.component';
 import { InterestsComponent } from './components/interests/interests.component';
 import {AdminRegisterRequestDetailComponent} from './components/admin-register-request-detail/admin-register-request-detail.component'
 import { HomeComponent } from './components/home/home.component';
+import {AdminPostAcceptRequest} from './components/admin-post-accept-request/admin-post-accept-request';
 
 
 export const routes: Routes = [
@@ -52,6 +53,8 @@ export const routes: Routes = [
                 path: 'detail/request/:id',
                 component: AdminRegisterRequestDetailComponent,
                 title: "Admin - Register Request",
+            },{
+                path:"post/accept", component: AdminPostAcceptRequest,
             }
         ]
     },

@@ -7,9 +7,10 @@ from .viewsets import UserViewset, RegisterRequestViewset
 UserController=UserViewset.UserViewset
 RegisterRequestController=RegisterRequestViewset.RequestViewset
 
-list_test=UserController.as_view({ "get" : "test" })
 login=UserController.as_view({"post" : "retrieveByEmail"})
 create_user=UserController.as_view({"post" : "create"})
+delete_request=RegisterRequestController.as_view({"delete" : "destroy"})
+register_request_count=RegisterRequestController.as_view({"get" : "countRequests"})
 create_register_request=RegisterRequestController.as_view({"post" : "create"})
 list_register_requests=RegisterRequestController.as_view({"get" : "list"})
 register_request_detail=RegisterRequestController.as_view({"get" : "retrieve"})
@@ -21,5 +22,7 @@ urlpatterns = [
     path("create/", create_user),
     path("create/request", create_register_request),
     path("login/", login),
-    path("detail/request/<int:id>/", register_request_detail)
+    path("detail/request/<int:id>/", register_request_detail),
+    path("count/request/", register_request_count),
+    path("delete/request/<int:id>/", delete_request)
 ]

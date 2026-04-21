@@ -39,7 +39,7 @@ export class AdminRegisterRequestListComponent {
             surnames:"",
             email:"",
             password:"",
-            date_of_birth:0,
+            date_of_birth:"",
             photo_student_id:"",
             photo_id_selfie:"",
             id_student:null,
@@ -50,5 +50,11 @@ export class AdminRegisterRequestListComponent {
     requestlistSetter(data:any){
         this.requests = data
         // console.log(this.requests);
+    }
+    goToAdminPanel(){
+        this.route.navigateByUrl("admin")
+    }
+    checkRegisterRequestDetail(id:number){
+        this.route.navigateByUrl(`admin/detail/request/${id}`)
     }
 }

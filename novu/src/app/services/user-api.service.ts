@@ -14,15 +14,20 @@ export class UserAPIService {
     const ROUTE:string = `${this.baseServerURL}/create/request`;
     return this.http.post(ROUTE, data)
   }
+  deleteRegisterRequest(id:number){
+      const ROUTE:string = `${this.baseServerURL}/delete/request/${id}/`;
+      return this.http.delete(ROUTE)
+  }
   login(data:any){
     const ROUTE:string = `${this.baseServerURL}/login/`;
     return this.http.post(ROUTE, data)
   }
-  getStudentIdPhoto(photoUrl:any){
-      const ROUTE:string = photoUrl;
+  getRegisterRequestCount(){
+      const ROUTE:string = `${this.baseServerURL}/count/request/`;
       return this.http.get(ROUTE)
+
   }
-  createUser(name:string, surnames:string, email:string, password:string, date_of_birth:number){
+  createUser(name:string, surnames:string, email:string, password:string, date_of_birth:string){
       const ROUTE:string = `${this.baseServerURL}/create/`;
       return this.http.post(ROUTE, {name:name, surnames:surnames, email:email, password:password, date_of_birth:date_of_birth})
 

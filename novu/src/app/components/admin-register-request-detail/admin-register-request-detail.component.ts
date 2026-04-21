@@ -8,7 +8,7 @@ export interface registerRequestInterface {
     surnames:string,
     email:string,
     password:string,
-    date_of_birth:number,
+    date_of_birth:string,
     photo_student_id:string,
     photo_id_selfie:string,
     id_student:string | null,
@@ -72,6 +72,9 @@ export class AdminRegisterRequestDetailComponent {
     checkStudentIdSelfieImage(){
         window.open(this.registerRequest.photo_id_selfie, "_blank");
     }
+    deleteRequest(id:number){
+        return this.userAPI.deleteRegisterRequest(id).subscribe(res => console.log(res))
+    }
 
     createUser(){
         let data = {
@@ -91,7 +94,7 @@ export class AdminRegisterRequestDetailComponent {
             surnames:"",
             email:"",
             password:"",
-            date_of_birth:0,
+            date_of_birth:"",
             photo_student_id:"",
             photo_id_selfie:"",
             id_student:null,
@@ -99,7 +102,7 @@ export class AdminRegisterRequestDetailComponent {
             submitted_at:"",
         }
     }
-    goToRequests(){
+    goToRequestList(){
         this.router.navigateByUrl('/admin/request');
     }
 
