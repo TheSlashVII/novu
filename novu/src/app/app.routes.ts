@@ -28,7 +28,7 @@ export const routes: Routes = [
         path: 'login',
         component: LoginComponent,
         title: "Novu - Login"
-    }, 
+    },
     {
         path: 'postRegister',
         component: PostRegisterComponent
@@ -36,7 +36,7 @@ export const routes: Routes = [
     {
         path: 'studies',
         component: StudiesComponent
-    }, 
+    },
     {
         path: 'interests',
         component: InterestsComponent
@@ -47,13 +47,13 @@ export const routes: Routes = [
         title: "Admin Panel",
         children: [
             {path:'', component: AdminPanelComponent, pathMatch: 'full'},
-            {path:'request', component: AdminRegisterRequestListComponent}
+            {path:'request', component: AdminRegisterRequestListComponent},
+            {
+                path: 'detail/request/:id',
+                component: AdminRegisterRequestDetailComponent,
+                title: "Admin - Register Request",
+            }
         ]
-    },{
-        path: 'detail',
-        component: AdminRegisterRequestDetailComponent,
-        title: "Admin - Register Request",
-
     },
     {
         path: 'home',

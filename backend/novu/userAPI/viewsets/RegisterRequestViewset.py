@@ -6,7 +6,11 @@ from django.http import JsonResponse
 from ..models import Request
 
 # Register request controller
-class RequestViewset(viewsets.ViewSet):
+class RequestViewset(viewsets.ModelViewSet):
+    queryset = Request.objects.all()
+    serializer_class = RequestSerializer
+    lookup_field = "id_request"
+    lookup_url_kwarg = "id"
     
     # to list every request
     def list(self,request):
@@ -23,12 +27,19 @@ class RequestViewset(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # to get a specific request based on primary key
+    """
+    
     def retrieve(self,request,pk=None):
         queryset = Request.objects.all() # gets all Register Requests from the database
         register_request = get_object_or_404(queryset, pk=pk) # searches for a specific register request
         serializer = RequestSerializer(register_request)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    """
+    # to get a specific request based on primary key. (But cleaner)
+
+
     
+
     # to fully update a specific request
     def update(self,request):
         data = request.data

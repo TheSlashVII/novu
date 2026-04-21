@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import {Router} from '@angular/router';
+import {UserAPIService} from '../../services/user-api.service';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +13,7 @@ import {Router} from '@angular/router';
 export class LoginComponent {
   showPassword = false;
   loading = false;
-    constructor(private router: Router) {
+    constructor(private router: Router, private userAPI:UserAPIService) {
     }
   formLogin = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')]),
@@ -36,9 +37,12 @@ export class LoginComponent {
       return;
     }
     this.loading = true;
+    /*
     setTimeout(() => {
       this.loading = false;
       console.log(this.formLogin.value);
     }, 2000);
+     */
+      this.userAPI.login(this.formLogin.value).subscribe(res=>console.log(res));
   }
 }

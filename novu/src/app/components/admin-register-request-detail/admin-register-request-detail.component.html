@@ -1,50 +1,56 @@
 <main class="bg-[#f0e9e9] min-h-screen flex font-[Poppins] flex-col justify-center">
     <!--User info-->
-    <div class="flex flex-col justify-start xl:mx-80 mx-10 bg-[#87A0FF] p-10 rounded-2xl gap-5">
-        <div class="flex flex-row justify-start w-full gap-10 items-center">
-            <div class="bg-white w-[10rem] h-[10rem] flex justify-center items-center">image</div>
-            <p class="font-bold text-white md:text-xl">Data for user placeholder</p>
+    <div class="flex flex-col justify-start xl:mx-60 mx-10 bg-[#87A0FF] p-10 rounded-2xl gap-5">
+        <div class="flex flex-col sm:flex-row justify-start w-full gap-10 items-center">
+            @if (registerRequest.photo_id_selfie.length > 1) {
+                <img (click)="checkStudentIdSelfieImage()" src="{{registerRequest.photo_id_selfie}}" alt="photo selfie" class="w-[10rem] h-[10rem]">
+            } @else {
+                <div class="bg-white flex items-center w-[10rem] h-[10rem]">Image <br>Unavailable</div>
+            }
+
+            <p class="font-bold text-white md:text-xl">Request detail for {{registerRequest.name}} {{registerRequest.surnames}}</p>
         </div>
         <!--row 1-->
         <div class="flex flex-col sm:flex-row gap-10 sm:justify-start w-full">
             <!--Name & surnames field-->
             <div class="flex flex-col font-bold justify-start gap-2">
                 <p class="text-white ">Name & Surnames</p>
-                <p class="bg-white rounded-2xl text-center py-2 sm:px-5 md:px-14 text-[0.6rem] lg:text-[1rem]">Max anderson</p>
+                <p class="bg-white rounded-2xl text-center py-2 sm:px-5 md:px-10 lg:px-15 text-[0.65rem] lg:text-[1rem]">{{registerRequest.name}} {{registerRequest.surnames}}</p>
             </div>
             <!--Email field-->
             <div class="flex flex-col font-bold justify-start gap-2">
                 <p class="text-white ">Email</p>
-                <p class="bg-white rounded-2xl text-center py-2 sm:px-5 md:px-15 text-[0.8rem] lg:text-[1rem]">{{email}}</p>
+                <p class="bg-white rounded-2xl text-center py-2 sm:px-5 lg:px-15 text-[0.7rem] lg:text-[1rem]">{{registerRequest.email}}</p>
             </div>
             <!--Date of birth field-->
             <div class="flex flex-col font-bold justify-start gap-2">
                 <p class="text-white ">Date of Birth</p>
-                <p class="bg-white rounded-2xl text-center py-2 sm:px-5 md:px-15 text-[0.8rem] md:text-[1rem]">10/09/2007</p>
+                <p class="bg-white rounded-2xl text-center py-2 sm:px-5 md:px-15 text-[0.7rem] lg:text-[1rem]">{{registerRequest.date_of_birth}}</p>
             </div>
         </div>
         <div class="flex flex-col sm:flex-row gap-10 sm:justify-start w-full">
             <!--Name & surnames field-->
             <div class="flex flex-col font-bold justify-start gap-2">
-                <p class="text-white ">Name & Surnames</p>
-                <p class="bg-white rounded-2xl text-center py-2 sm:px-5 md:px-14 text-[0.6rem] lg:text-[1rem]">Max anderson</p>
+                <p class="text-white ">Student ID</p>
+                <input class="bg-white rounded-2xl sm:min-w-[12.5rem] sm:max-w-[17rem] text-center py-2 sm:px-5 md:px-15 text-[0.8rem] lg:text-[1rem]" value="{{this.getStudentId()}}"/>
             </div>
-            <!--Email field-->
+            <!--Student ID upload field-->
             <div class="flex flex-col font-bold justify-start gap-2">
-                <p class="text-white ">Email</p>
-                <p class="bg-white rounded-2xl text-center py-2 sm:px-5 md:px-15 text-[0.8rem] lg:text-[1rem]">{{email}}</p>
+                <p class="text-white ">Student ID Upload</p>
+                <p (click)="checkStudentIdImage()"  class="bg-white rounded-2xl text-center py-2 sm:px-5 md:px-15 text-[0.8rem] lg:text-[1rem]">Check</p>
             </div>
+
         </div>
         <div class="flex flex-col sm:flex-row gap-10  w-full mt-5">
-            <!--Name & surnames field-->
+
             <div class="flex flex-col flex-grow font-bold justify-start gap-2">
                 <p class="bg-white rounded-2xl text-center py-2 sm:px-5 md:px-14 text-[0.6rem] lg:text-[1rem]">Back to Requests</p>
             </div>
-            <!--Email field-->
+
             <div class="flex flex-col flex-grow font-bold justify-start gap-2">
-                <p class="bg-white rounded-2xl text-center py-2 sm:px-5 md:px-15 text-[0.8rem] lg:text-[1rem]">Accept</p>
+                <p (click)="createUser()" class="hover:cursor-pointer bg-white rounded-2xl text-center py-2 sm:px-5 md:px-15 text-[0.8rem] lg:text-[1rem]">Accept</p>
             </div>
-            <!--Date of birth field-->
+
             <div class="flex flex-col flex-grow font-bold justify-start gap-2">
                 <p class="bg-white rounded-2xl text-center py-2 sm:px-5 md:px-15 text-[0.8rem] md:text-[1rem]">Deny</p>
             </div>

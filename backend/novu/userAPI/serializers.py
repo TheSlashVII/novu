@@ -83,6 +83,10 @@ class RequestSerializer(serializers.ModelSerializer):
         if 'password' in validated_data:
             validated_data['password'] = make_password(str(validated_data['password']))
         return super().update(instance, validated_data)
+    
+class LoginSerializer(serializers.Serializer):
+    email=serializers.EmailField()
+    password=serializers.CharField()
 
 
 

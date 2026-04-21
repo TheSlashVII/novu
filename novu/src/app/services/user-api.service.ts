@@ -15,7 +15,31 @@ export class UserAPIService {
     return this.http.post(ROUTE, data)
   }
   login(data:any){
-    const ROUTE:string = `${this.baseServerURL}/login`;
+    const ROUTE:string = `${this.baseServerURL}/login/`;
     return this.http.post(ROUTE, data)
+  }
+  getStudentIdPhoto(photoUrl:any){
+      const ROUTE:string = photoUrl;
+      return this.http.get(ROUTE)
+  }
+  createUser(name:string, surnames:string, email:string, password:string, date_of_birth:number){
+      const ROUTE:string = `${this.baseServerURL}/create/`;
+      return this.http.post(ROUTE, {name:name, surnames:surnames, email:email, password:password, date_of_birth:date_of_birth})
+
+  }
+  /*
+  * function used to list register requests
+   */
+  listRegisterRequests(){
+      const ROUTE:string = `${this.baseServerURL}/list/request`;
+      return this.http.get(ROUTE)
+  }
+    /**
+     * Function used to get the details of a register request
+     * @param id
+     */
+  retrieveRegisterRequestDetails(id:any){
+    const ROUTE:string = `${this.baseServerURL}/detail/request/${id}`;
+    return this.http.get(ROUTE)
   }
 }
