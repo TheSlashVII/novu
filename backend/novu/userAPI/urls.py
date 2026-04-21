@@ -24,5 +24,7 @@ urlpatterns = [
     path("login/", login),
     path("detail/request/<int:id>/", register_request_detail),
     path("count/request/", register_request_count),
-    path("delete/request/<int:id>/", delete_request)
+    path("delete/request/<int:id>/", delete_request),
+    # JWT authentication urls
+    
 ]

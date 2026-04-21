@@ -8,6 +8,7 @@ from django.http import JsonResponse, Http404
 from ..models import User
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth import login, logout 
+from rest_framework_simplejwt.tokens import RefreshToken
 # this is the equivalent to a controller
 """
 Documentation for viewsets: https://www.django-rest-framework.org/api-guide/viewsets/#example
