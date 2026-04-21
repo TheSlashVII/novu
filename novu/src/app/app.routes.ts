@@ -15,6 +15,7 @@ import { InterestsComponent } from './components/interests/interests.component';
 import {AdminRegisterRequestDetailComponent} from './components/admin-register-request-detail/admin-register-request-detail.component'
 import { HomeComponent } from './components/home/home.component';
 import {AdminPostAcceptRequest} from './components/admin-post-accept-request/admin-post-accept-request';
+import {NotFoundComponent} from './components/not-found/not-found.component';
 
 
 export const routes: Routes = [
@@ -61,6 +62,9 @@ export const routes: Routes = [
     {
         path: 'home',
         component: HomeComponent
+    },{
+    path: '**',
+        component: NotFoundComponent
     }
 
 
