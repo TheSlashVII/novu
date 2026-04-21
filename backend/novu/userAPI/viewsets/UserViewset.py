@@ -7,7 +7,6 @@ from rest_framework.decorators import action
 from django.http import JsonResponse, Http404
 from ..models import User
 from django.contrib.auth.hashers import check_password
-from django.contrib.auth import login, logout 
 from rest_framework_simplejwt.tokens import RefreshToken
 # this is the equivalent to a controller
 """
@@ -34,9 +33,9 @@ class UserViewset(viewsets.ViewSet):
         
 
     # to get a specific user based on primary key (To be confirmed)
-    def retrieve(self, request, pk=None):
+    def retrieve(self, request, id=None):
         try:
-            user = get_object_or_404(User, pk=pk)
+            user = get_object_or_404(User, pk=id)
         except Http404 :
             return JsonResponse({"errorMessage": "No user was found"})
         except:
@@ -45,24 +44,26 @@ class UserViewset(viewsets.ViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
     # use Post for login functionality.
     def retrieveByEmail(self, request):
-        loginSerializer= LoginSerializer(data=request.data)
+        loginSerializer= LoginSerializer(data=request.data) # serialize the login form data
         if loginSerializer.is_valid():
-            email = loginSerializer.validated_data["email"]
+            # retrieve the form field data
+            email = loginSerializer.validated_data["email"] 
             password = loginSerializer.validated_data["password"]
             try:
-                user = get_object_or_404(User, email=email)
+                user = get_object_or_404(User, email=email) # user search
             except Http404:
+                # catch the error in case of the user not being found
                 return JsonResponse({"errorMessage": "No user with the same credentials was found"})
+            # compare the passwords inserted into the database and the ones queried by the user
             if check_password(password=password, encoded=user.password):
-                # serializer = UserSerializer(user) # transform the django user model into json
-                #login(request=request, user=user)
-                refresh = RefreshToken.for_user(user)
+                refresh = RefreshToken.for_user(user) # generate tokens for the user
+                # send the tokens to the user
                 return JsonResponse({
                     "access": str(refresh.access_token),
-                    "refresh" : str(refresh),
+                    "refresh" : str(refresh)
                 }, status=status.HTTP_200_OK)
-            return JsonResponse({"error": "Something went wrong"}, status=status.HTTP_401_UNAUTHORIZED)
-        return JsonResponse({"error": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({"error": "No user with the same credentials was found"}, status=status.HTTP_401_UNAUTHORIZED)
+        return JsonResponse({"error": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
         
 
     # to update a specific model 
@@ -79,12 +80,15 @@ class UserViewset(viewsets.ViewSet):
     def partial_update(self, request, pk=None):
         pass
 
-    # to eliminate a model
-    def destroy(self, request, pk=None):
-        user = get_object_or_404(User, pk=pk)
+    # to eliminate a user
+    def destroy(self, request, id=None):
+        try:
+            user = get_object_or_404(User, pk=id)
+        except Http404:
+            return JsonResponse({"error": "User Not found"}, status=status.HTTP_400_BAD_REQUEST)
         user.delete()
         return Response(
-            {"message": "Usuario eliminado correctamente"},
+            {"message": "User deleted"},
             status=status.HTTP_204_NO_CONTENT
         )
 
