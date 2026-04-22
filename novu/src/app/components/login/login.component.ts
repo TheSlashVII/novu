@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import {Router} from '@angular/router';
 import {UserAPIService} from '../../services/user-api.service';
+// import {HttpResponse} from '@angular/common/module.d-CnjH8Dlt';
 
 @Component({
   selector: 'app-login',
@@ -51,10 +52,14 @@ export class LoginComponent {
      */
 
       this.userAPI.login(this.formLogin.value).subscribe( res => {
+          // let response = new HttpResponse()
           console.log(res)
           const token:any = res
           this.userAPI.saveToken(token.access) // save the token inside the browser
-          }
+          this.loading = false;
+        }
       );
+    this.router.navigateByUrl("/studies")
   }
+
 }

@@ -29,6 +29,10 @@ export class InterestsComponent {
     return this.interests.some(i => i.selected);
   }
 
+  getSelections(){
+      return this.interests.filter(interests=> interests.selected == true);
+  }
+
   toggleInterest(interest: { label: string; selected: boolean }): void {
     interest.selected = !interest.selected;
   }

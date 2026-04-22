@@ -1,4 +1,4 @@
-<main class="flex flex-col min-w-screen bg-[#F0E9E9] min-h-screen">
+<main class="flex flex-col bg-[#F0E9E9] min-h-screen">
     <nav class="flex flex-row justify-between px-5 py-3 bg-[#2f3a63]">
         <!--Logo section-->
         <div class="inline-flex justify-around items-center gap-3">
@@ -8,11 +8,11 @@
                 <p class="text-white font-light text-lg">Admin</p>
             </div>
         </div>
-        <button class="hover:cursor-pointer hidden sm:block bg-[#4a90e2] font-[Inter] py-3 px-10 rounded-3xl text-white">Logout</button>
-        <img class="hover:cursor-pointer block sm:hidden" src="assets/Images/Logout_admin.svg" alt="Logout">
+        <button (click)="logout()" class="hover:cursor-pointer hidden sm:block bg-[#4a90e2] font-[Inter] py-3 px-10 rounded-3xl text-white">Logout</button>
+        <img (click)="logout()" class="hover:cursor-pointer block sm:hidden" src="assets/Images/Logout_admin.svg" alt="Logout">
     </nav>
 
-    <div class="flex justify-center flex-col lg:mx-10 lg:px-10 lg:py-5 gap-10">
+    <div class="flex justify-center flex-col lg:px-20 lg:py-10 px-10 py-5 gap-10">
         <div class="flex justify-start"><h2 class="font-[Poppins] md:text-lg lg:text-4xl font-bold">Create User</h2></div>
         <form [formGroup]="userForm" (ngSubmit)="Submit()" class="font-[Inter] flex flex-col gap-3 border-2 rounded md:px-30 py-15">
             <!--Names & surnames-->

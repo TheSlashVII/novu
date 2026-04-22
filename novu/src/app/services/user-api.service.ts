@@ -76,7 +76,12 @@ export class UserAPIService {
     logoutJWT() {
         localStorage.removeItem('access_token');
     }
-
+    decodeToken(): any {
+        const token = this.getToken();
+        if (!token) return null;
+        // JWT payload is the middle part, Base64 decoded
+        return JSON.parse(atob(token.split('.')[1]));
+    }
 
     isLoggedIn(): boolean {
         return !!this.getToken();

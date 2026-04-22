@@ -28,7 +28,16 @@ export class AdminPanelComponent {
     setRegisterRequestCount(data:any){
         this.registerRequestsCount = data.request_count;
     }
-
+    goToCreateUser(){
+        this.router.navigateByUrl("/admin/create_user");
+    }
+    /**
+     * Function used to close out sessions
+     */
+    logout(){
+        this.userAPI.logoutJWT();
+        this.router.navigateByUrl("");
+    }
 
 
 

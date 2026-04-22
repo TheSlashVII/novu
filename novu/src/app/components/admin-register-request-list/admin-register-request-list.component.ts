@@ -57,4 +57,11 @@ export class AdminRegisterRequestListComponent {
     checkRegisterRequestDetail(id:number){
         this.route.navigateByUrl(`admin/detail/request/${id}`)
     }
+    /**
+     * Function used to close out sessions
+     */
+    logout(){
+        this.userAPI.logoutJWT();
+        this.route.navigateByUrl("");
+    }
 }

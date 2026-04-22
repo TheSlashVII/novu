@@ -77,8 +77,15 @@ export class AdminCreateUsersComponent {
                 new Date(f.restricted_at).toISOString().split('T')[0]
             );
         }
-
         this.userAPIService.adminCreateUser(formData).subscribe((res) => console.log(res))
+    }
+
+    /**
+     * Function used to close out sessions
+     */
+    logout(){
+        this.userAPIService.logoutJWT();
+        this.router.navigateByUrl("");
     }
 
 }
