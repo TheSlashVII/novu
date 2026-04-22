@@ -1,11 +1,12 @@
 # from django.contrib import admin
 from django.urls import path, include
-from .viewsets import UserViewset, RegisterRequestViewset
+from .viewsets import UserViewset, RegisterRequestViewset, InterestViewset
 # the UserViewset is duplicated because the first one is the file name
 # and the second one is tha actual class
 # controller Lists
 UserController=UserViewset.UserViewset
 RegisterRequestController=RegisterRequestViewset.RequestViewset
+InterestController = InterestViewset.InterestViewset
 
 login=UserController.as_view({"post" : "retrieveByEmail"})
 create_user=UserController.as_view({"post" : "create"})
@@ -16,6 +17,8 @@ register_request_count=RegisterRequestController.as_view({"get" : "countRequests
 create_register_request=RegisterRequestController.as_view({"post" : "create"})
 list_register_requests=RegisterRequestController.as_view({"get" : "list"})
 register_request_detail=RegisterRequestController.as_view({"get" : "retrieve"})
+save_interests = InterestController.as_view({"post": "create"})
+list_interests = InterestController.as_view({"get": "list"})
 
 
 urlpatterns = [
@@ -27,8 +30,7 @@ urlpatterns = [
     path("count/request/", register_request_count), # counts the amount of active register requests
     path("delete/request/<int:id>/", delete_request), # deletes a register request
     path("retrieve/<int:id>/", retrieve_user),
-    path("admin/create/", admin_create_user) # creates user from admin panel 
-
-    
-    
+    path("admin/create/", admin_create_user), # creates user from admin panel
+    path('interests/', list_interests), #Lists the interests
+    path('interests/save/', save_interests) # Save the interests
 ]
