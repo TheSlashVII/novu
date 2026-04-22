@@ -19,7 +19,7 @@ list_register_requests=RegisterRequestController.as_view({"get" : "list"})
 register_request_detail=RegisterRequestController.as_view({"get" : "retrieve"})
 save_interests = InterestController.as_view({"post": "create"})
 list_interests = InterestController.as_view({"get": "list"})
-
+retrieve_interest = InterestController.as_view({"get": "retrieve"})
 
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
@@ -31,6 +31,7 @@ urlpatterns = [
     path("delete/request/<int:id>/", delete_request), # deletes a register request
     path("retrieve/<int:id>/", retrieve_user),
     path("admin/create/", admin_create_user), # creates user from admin panel
-    path('interests/', list_interests), #Lists the interests
-    path('interests/save/', save_interests) # Save the interests
+    path("interests/", list_interests), #Lists the interests
+    path("interests/save/", save_interests), # Save the interests
+    path("interests/retrieve/<int:pk>/", retrieve_interest)
 ]

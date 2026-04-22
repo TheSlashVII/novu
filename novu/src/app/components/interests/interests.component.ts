@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgClass } from '@angular/common';
+import { InterestApiService } from '../../services/interest-api.service';
 
 @Component({
   selector: 'app-interests',
@@ -11,33 +12,43 @@ import { NgClass } from '@angular/common';
 })
 export class InterestsComponent {
   private router = inject(Router);
+  private interestApi = inject(InterestApiService);
 
-  interests: { label: string; selected: boolean }[] = [
-    { label: 'Ingenieria', selected: false },
-    { label: 'Tecnologia', selected: false },
-    { label: 'Videojuegos', selected: false },
-    { label: 'Viajar', selected: false },
-    { label: 'Coches', selected: false },
-    { label: 'Lifestyle', selected: false },
-    { label: 'Musica', selected: false },
-    { label: 'Deportes', selected: false },
-    { label: 'Pet lover', selected: false },
-    { label: 'Social Media', selected: false },
+  interests: { id: number; label: string; selected: boolean }[] = [
+    { id: 1, label: 'Ingenieria', selected: false },
+    { id: 2, label: 'Tecnologia', selected: false },
+    { id: 3, label: 'Videojuegos', selected: false },
+    { id: 4, label: 'Viajar', selected: false },
+    { id: 5, label: 'Coches', selected: false },
+    { id: 6, label: 'Lifestyle', selected: false },
+    { id: 7, label: 'Musica', selected: false },
+    { id: 8, label: 'Deportes', selected: false },
+    { id: 9, label: 'Pet lover', selected: false },
+    { id: 10, label: 'Social Media', selected: false },
   ];
 
   hasSelection(): boolean {
     return this.interests.some(i => i.selected);
   }
 
-  getSelections(){
-      return this.interests.filter(interests=> interests.selected == true);
-  }
-
-  toggleInterest(interest: { label: string; selected: boolean }): void {
+  toggleInterest(interest: { id: number; label: string; selected: boolean }): void {
     interest.selected = !interest.selected;
   }
 
   goNext(): void {
-    this.router.navigate(['/home']);
+    const selectedIds = this.interests
+      .filter(i => i.selected)
+      .map(i => i.id);
+
+    const userId = 1; 
+
+    this.interestApi.saveUserInterests(userId, selectedIds).subscribe({
+      next: () => {
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        console.error('Error guardando intereses:', err);
+      }
+    });
   }
 }

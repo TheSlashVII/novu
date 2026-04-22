@@ -7,7 +7,10 @@ from ..models import Interest
 
 
 class InterestViewset(viewsets.ModelViewSet):
-    
+    queryset = Interest.objects.all()
+    serializer_class = InterestSerializer
+    lookup_field = "user_id"
+    lookup_url_kwarg = "pk"
 
     #GET /api/interests/?user_id=1
     def list(self, request):
@@ -50,6 +53,10 @@ class InterestViewset(viewsets.ModelViewSet):
             {'message': 'Intereses guardados correctamente'},
             status=status.HTTP_201_CREATED
         )
+    def retrieve(self, request,pk=None):
+        interests = Interest.objects.filter(user_id=pk)
+        serializer = InterestSerializer(interests, many=True)
+        return JsonResponse(serializer.data,safe=False)
     
 
 
