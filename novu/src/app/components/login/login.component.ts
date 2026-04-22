@@ -54,7 +54,10 @@ export class LoginComponent {
           console.log(res)
           const token:any = res
           this.userAPI.saveToken(token.access) // save the token inside the browser
-          }
+          this.loading = false;
+        }
       );
+    this.router.navigateByUrl("/interests")
   }
+
 }

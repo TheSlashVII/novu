@@ -28,6 +28,9 @@ export class AdminPanelComponent {
     setRegisterRequestCount(data:any){
         this.registerRequestsCount = data.request_count;
     }
+    goToCreateUser(){
+        this.router.navigateByUrl("/admin/create_user");
+    }
 
 
 

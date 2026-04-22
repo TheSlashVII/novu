@@ -76,6 +76,9 @@ class User(models.Model):
     max_age.null = True
     profile_pic.null = True
     max_distance_km.null = True
+    
+    class Meta:
+        db_table='User'
 
 # user_card table
 # this is to represent the user presentation card
