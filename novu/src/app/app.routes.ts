@@ -14,6 +14,10 @@ import { StudiesComponent } from './components/studies/studies.component';
 import { InterestsComponent } from './components/interests/interests.component';
 import {AdminRegisterRequestDetailComponent} from './components/admin-register-request-detail/admin-register-request-detail.component'
 import { HomeComponent } from './components/home/home.component';
+import {AdminPostAcceptRequest} from './components/admin-post-accept-request/admin-post-accept-request';
+import {NotFoundComponent} from './components/not-found/not-found.component';
+import {UnauthorizedComponent} from './components/unauthorized/unauthorized';
+import {AdminCreateUsersComponent} from './components/admin-create-users/admin-create-users.component';
 
 
 export const routes: Routes = [
@@ -52,12 +56,22 @@ export const routes: Routes = [
                 path: 'detail/request/:id',
                 component: AdminRegisterRequestDetailComponent,
                 title: "Admin - Register Request",
+            },{
+                path:"post/accept", component: AdminPostAcceptRequest,
+            }, {
+                path:"create_user", component: AdminCreateUsersComponent
             }
         ]
     },
     {
         path: 'home',
         component: HomeComponent
+    },{
+        path:'unauthorized',
+        component: UnauthorizedComponent
+    },{
+    path: '**',
+        component: NotFoundComponent
     }
 
 

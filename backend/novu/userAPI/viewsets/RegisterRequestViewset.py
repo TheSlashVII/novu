@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from ..serializers import RequestSerializer
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from ..models import Request
 
 # Register request controller
@@ -17,6 +17,10 @@ class RequestViewset(viewsets.ModelViewSet):
         queryset = Request.objects.all()
         serializer = RequestSerializer(queryset, many=True)
         return JsonResponse(serializer.data,status=status.HTTP_200_OK, safe=False) # false parameter permits us to convert other items to json. Not exclusively Dictionaries (Json)
+    
+    def countRequests(self, request):
+        numRegisterRequest = self.queryset.count()
+        return JsonResponse({"request_count": numRegisterRequest})
 
     # to create a new request inisde the database
     def create(self,request):
@@ -61,10 +65,13 @@ class RequestViewset(viewsets.ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     # to delete a specific request
-    def destroy(self,request,pk=None):
-        register_request = get_object_or_404(Request, pk=pk)
+    def destroy(self,request,id=None):
+        try:
+            register_request = get_object_or_404(Request, pk=id)
+        except Http404:
+            return JsonResponse({"Error": "Error while processing the endpoint"}, status=status.HTTP_400_BAD_REQUEST)
         register_request.delete()
-        return Response(
-            {"message": f"Request {pk} deleted successfully."},
+        return JsonResponse(
+            {"message": f"Request {id} deleted successfully."},
             status = status.HTTP_204_NO_CONTENT
         )

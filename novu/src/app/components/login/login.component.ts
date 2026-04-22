@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import {Router} from '@angular/router';
 import {UserAPIService} from '../../services/user-api.service';
+// import {HttpResponse} from '@angular/common/module.d-CnjH8Dlt';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +14,13 @@ import {UserAPIService} from '../../services/user-api.service';
 export class LoginComponent {
   showPassword = false;
   loading = false;
+  isLoggedIn:boolean;
     constructor(private router: Router, private userAPI:UserAPIService) {
+        this.isLoggedIn = this.userAPI.isLoggedIn();
+        if (this.userAPI.isLoggedIn()) {
+            // this.router.navigateByUrl('interests');
+
+        }
     }
   formLogin = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')]),
@@ -43,6 +50,16 @@ export class LoginComponent {
       console.log(this.formLogin.value);
     }, 2000);
      */
-      this.userAPI.login(this.formLogin.value).subscribe(res=>console.log(res));
+
+      this.userAPI.login(this.formLogin.value).subscribe( res => {
+          // let response = new HttpResponse()
+          console.log(res)
+          const token:any = res
+          this.userAPI.saveToken(token.access) // save the token inside the browser
+          this.loading = false;
+        }
+      );
+    this.router.navigateByUrl("/studies")
   }
+
 }

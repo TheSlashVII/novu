@@ -9,5 +9,6 @@ from ..models import Interest
 class InterestViewset(viewsets.ModelViewSet):
     queryset = Interest.objects.all()
     serializer_class = InterestSerializer
+    
 
 
