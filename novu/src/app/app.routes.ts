@@ -18,6 +18,7 @@ import {AdminPostAcceptRequest} from './components/admin-post-accept-request/adm
 import {NotFoundComponent} from './components/not-found/not-found.component';
 import {UnauthorizedComponent} from './components/unauthorized/unauthorized';
 import {AdminCreateUsersComponent} from './components/admin-create-users/admin-create-users.component';
+import {AdminPostDenyRequestComponent} from './components/admin-post-deny-request/admin-post-deny-request.component';
 
 
 export const routes: Routes = [
@@ -57,9 +58,11 @@ export const routes: Routes = [
                 component: AdminRegisterRequestDetailComponent,
                 title: "Admin - Register Request",
             },{
-                path:"post/accept", component: AdminPostAcceptRequest,
+                path:"post_accept", component: AdminPostAcceptRequest,
             }, {
                 path:"create_user", component: AdminCreateUsersComponent
+            }, {
+                path:"post_deny", component: AdminPostDenyRequestComponent
             }
         ]
     },

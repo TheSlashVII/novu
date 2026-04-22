@@ -8,16 +8,16 @@ UserController=UserViewset.UserViewset
 RegisterRequestController=RegisterRequestViewset.RequestViewset
 
 login=UserController.as_view({"post" : "retrieveByEmail"})
-create_user=UserController.as_view({"post" : "create"})
+create_user=UserController.as_view({"post" : "createFromUser"})
 admin_create_user=UserController.as_view({"post" : "createFromAdmin"})
-retrieve_user=UserController.as_view({"get" : "retrieve"})
-delete_request=RegisterRequestController.as_view({"delete" : "destroy"})
+retrieve_user=UserController.as_view({"get" : "retrieveUserById"})
+delete_request=RegisterRequestController.as_view({"delete" : "deleteRequest"})
 register_request_count=RegisterRequestController.as_view({"get" : "countRequests"})
 create_register_request=RegisterRequestController.as_view({"post" : "create"})
-list_register_requests=RegisterRequestController.as_view({"get" : "list"})
-register_request_detail=RegisterRequestController.as_view({"get" : "retrieve"})
+list_register_requests=RegisterRequestController.as_view({"get" : "listRequests"})
+register_request_detail=RegisterRequestController.as_view({"get" : "retrieveRequest"})
 
-
+test_api = UserController.as_view({"post" : "test"})
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
     path("create/", create_user), # creates a user 
@@ -27,8 +27,10 @@ urlpatterns = [
     path("count/request/", register_request_count), # counts the amount of active register requests
     path("delete/request/<int:id>/", delete_request), # deletes a register request
     path("retrieve/<int:id>/", retrieve_user),
-    path("admin/create/", admin_create_user) # creates user from admin panel 
+    path("admin/create/", admin_create_user), # creates user from admin panel 
 
     
     
+
+    path("test/", test_api)
 ]

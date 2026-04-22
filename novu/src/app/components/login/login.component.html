@@ -72,6 +72,9 @@
               @if(formLogin.get('password')?.errors?.['minlength']){
                 <span class="text-red-500 text-xs block mt-1 ml-3">Mínimo 6 caracteres</span>
               }
+                @if (this.error != null) {
+                    <span class="text-red-500 text-xs block mt-1 ml-3">{{this.error}}</span>
+                }
             }
           </div>
 
