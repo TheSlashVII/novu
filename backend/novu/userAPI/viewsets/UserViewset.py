@@ -98,16 +98,15 @@ class UserViewset(viewsets.ViewSet):
     #function used to search the name of the user
     @action(methods=["post"], detail=False)
     def retrieveByName(self, request):
-        # 1. get all users
-        # 2. be able to filter those users by name
-        serializer =UserSearchSerializer(data=request.data) 
+        serializer = UserSearchSerializer(data=request.data) # serialize the HTTP request body
         if serializer.is_valid():
             userList = User.objects.all()
             # filtering process | filter by name field
-            userSearchResultList = userList.filter(name=serializer.validated_data["name"])
-            return JsonResponse({UserSerializer(userSearchResultList, many=True).data}, safe=False)
+            userSearchResultList = userList.filter(name=serializer.validated_data["name"]) # get fields with 
+            results = UserSerializer(userSearchResultList, many=True) # serialize the data to be able to be parsed as json
+            return JsonResponse(list(results.data), safe=False)   # list function transforms data into a list. (Inserts the data inside an array)
         else:
-            return JsonResponse({"error" : "Bad Request"}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({"error" : "Bad Request"}, status=status.HTTP_400_BAD_REQUEST) # returns this if the data inserted was incorrect
         
     @action(methods=["post"], detail=False)
     def test(self, request):

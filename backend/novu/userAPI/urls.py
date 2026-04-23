@@ -22,6 +22,7 @@ list_interests = InterestController.as_view({"get": "list"})
 retrieve_interest = InterestController.as_view({"get": "retrieve"})
 list_users = UserController.as_view({"get": "list"})
 test_api = UserController.as_view({"post" : "test"})
+admin_search_user = UserController.as_view({"post" : "retrieveByName"}) # functionality to search users by name
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
     path("create/", create_user), # creates a user 
@@ -34,7 +35,9 @@ urlpatterns = [
     path("admin/create/", admin_create_user), # creates user from admin panel
     path("interests/", list_interests), #Lists the interests
     path("interests/save/", save_interests), # Save the interests
-    path("interests/retrieve/<int:pk>/", retrieve_interest),
-    path("list/", list_users),
-    path("test/", test_api)
+    path("interests/retrieve/<int:pk>/", retrieve_interest), # gets a list of interests based on the user
+    path("list/", list_users), 
+    path("test/", test_api),
+    path("admin/user/search/", admin_search_user)
+
 ]

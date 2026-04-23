@@ -56,6 +56,14 @@ export class UserAPIService {
       const ROUTE:string = `${this.baseServerURL}/retrieve/${id}/`;
       return this.http.get(ROUTE, this.authHeaders())
   }
+
+    /**
+     * Function used to search users
+     */
+  getUserByName(){
+      const ROUTE:string = `${this.baseServerURL}/admin/user/search/`;
+      return this.http.post(ROUTE, this.authHeaders());
+  }
   isTokenExpired(token: string): boolean {
         const payload = JSON.parse(atob(token.split('.')[1]));
         return payload.exp < Date.now() / 1000;
