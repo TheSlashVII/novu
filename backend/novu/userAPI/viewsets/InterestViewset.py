@@ -43,12 +43,18 @@ class InterestViewset(viewsets.ModelViewSet):
                 status=status.HTTP_404_NOT_FOUND
             )
         
-        #Delete the previous and save the news
+        #Delete the previous and save the new ones
         Interest.objects.filter(user_id=user_id).delete()
 
         for name in interest_names:
             Interest.objects.create(user_id_id=user_id, name=name)
-
+        
+        # set is_new to false
+        user = User.objects.get(user_id=user_id)
+        if(user.is_new):
+            user.is_new = False
+            user.save()
+        
         return Response(
             {'message': 'Intereses guardados correctamente'},
             status=status.HTTP_201_CREATED
