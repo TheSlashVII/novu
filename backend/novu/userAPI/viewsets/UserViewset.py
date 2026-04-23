@@ -1,6 +1,6 @@
 
 from django.shortcuts import get_object_or_404
-from ..serializers import UserSerializer, LoginSerializer
+from ..serializers import UserSerializer, LoginSerializer, UserSearchSerializer
 from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -25,9 +25,9 @@ class UserViewset(viewsets.ViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def get_permissions(self):
-        if self.action in ['createFromUser', 'list', 'retrieveByEmail', "createFromAdmin"]:   # POST /users/, GET /users/
+        if self.action in ['createFromUser', 'list', 'retrieveByEmail', "createFromAdmin"]:   # public routes | create Admin is Public for now 
             permission_classes = [permissions.AllowAny]
-        elif self.action in ['retrieve',"retrieveUserById", 'test']:        # GET /users/{id}/
+        elif self.action in ['retrieve', "retrieveUserById", 'test', "retrieveByName"]:        
             permission_classes = [permissions.IsAuthenticated]
         else:                                    # PUT, PATCH, DELETE
             permission_classes = [permissions.IsAuthenticated]
@@ -66,8 +66,8 @@ class UserViewset(viewsets.ViewSet):
             return JsonResponse({"error": "Something went wrong"})
         serializer = UserSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    # use Post for login functionality.
     
+    # use Post for login functionality.
     @action(methods=["post"], detail=False)
     def retrieveByEmail(self, request):
         loginSerializer= LoginSerializer(data=request.data) # serialize the login form data
@@ -90,6 +90,20 @@ class UserViewset(viewsets.ViewSet):
                 }, status=status.HTTP_200_OK)
             return JsonResponse({"error": "No user with the same credentials was found"}, status=status.HTTP_401_UNAUTHORIZED)
         return JsonResponse({"error": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    #function used to search the name of the user
+    @action(methods=["post"], detail=False)
+    def retrieveByName(self, request):
+        # 1. get all users
+        # 2. be able to filter those users by name
+        serializer =UserSearchSerializer(data=request.data) 
+        if serializer.is_valid():
+            userList = User.objects.all()
+            # filtering process | filter by name field
+            userSearchResultList = userList.filter(name=serializer.validated_data["name"])
+            return JsonResponse({UserSerializer(userSearchResultList, many=True).data}, safe=False)
+        else:
+            return JsonResponse({"error" : "Bad Request"}, status=status.HTTP_400_BAD_REQUEST)
         
     @action(methods=["post"], detail=False)
     def test(self, request):
