@@ -17,9 +17,10 @@ register_request_count=RegisterRequestController.as_view({"get" : "countRequests
 create_register_request=RegisterRequestController.as_view({"post" : "create"})
 list_register_requests=RegisterRequestController.as_view({"get" : "list"})
 register_request_detail=RegisterRequestController.as_view({"get" : "retrieve"})
-save_interests = InterestController.as_view({"post": "create"})
+save_interests = InterestController.as_view({"post": "saveInterest"})
 list_interests = InterestController.as_view({"get": "list"})
 retrieve_interest = InterestController.as_view({"get": "retrieve"})
+list_users = UserController.as_view({"get": "list"})
 
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
@@ -33,5 +34,6 @@ urlpatterns = [
     path("admin/create/", admin_create_user), # creates user from admin panel
     path("interests/", list_interests), #Lists the interests
     path("interests/save/", save_interests), # Save the interests
-    path("interests/retrieve/<int:pk>/", retrieve_interest)
+    path("interests/retrieve/<int:pk>/", retrieve_interest),
+    path("list/", list_users)
 ]

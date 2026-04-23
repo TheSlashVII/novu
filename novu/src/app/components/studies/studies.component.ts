@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
+import { UserAPIService } from '../../services/user-api.service';
 
 @Component({
   selector: 'app-studies',
@@ -11,13 +12,14 @@ import { NgClass } from '@angular/common';
   styleUrl: './studies.component.css'
 })
 export class StudiesComponent {
-  private router = inject(Router);
+  constructor(private router:Router){}
 
   currentYear: number = new Date().getFullYear();
 
   studiesName: string = '';
 
   goNext(): void {
+    
     this.router.navigate(['/interests']); 
   }
 }

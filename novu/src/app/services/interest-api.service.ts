@@ -18,10 +18,10 @@ export class InterestApiService {
     }
 
     //Save the interests selected by the user
-    saveUserInterests(userId: number, interestIds: number[]): Observable<any> {
-        return this.http.post(`${this.baseServerURL}/interests/save_user_interests/`, {
+    saveUserInterests(userId: number, interestIds: string[]): Observable<any> {
+        return this.http.post(`${this.baseServerURL}/interests/save/`, {
             user_id: userId,
-            interest_ids: interestIds
+            interests: interestIds
         });
     }
 }
