@@ -1,6 +1,7 @@
 import { Component, inject, afterNextRender } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import {UserAPIService} from '../../services/user-api.service';
 
 interface Profile {
   id: number;
@@ -18,7 +19,6 @@ interface Profile {
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
-  private router = inject(Router);
   private http = inject(HttpClient);
 
   profiles: Profile[] = [];
@@ -29,8 +29,12 @@ export class HomeComponent {
   isDragging: boolean = false;
   dragX: number = 0;
   dragStartX: number = 0;
-
-  constructor() {
+    isLoggedIn: boolean;
+  constructor(private userAPI:UserAPIService, private router:Router) {
+      this.isLoggedIn = this.userAPI.isLoggedIn();
+      if (!this.isLoggedIn){
+          this.router.navigateByUrl('');
+      }
     afterNextRender(() => {
       this.http.get<Profile[]>('http://localhost:8000/api/users/list/').subscribe({
         next: (data) => {

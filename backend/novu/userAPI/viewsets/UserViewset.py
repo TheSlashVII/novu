@@ -83,10 +83,14 @@ class UserViewset(viewsets.ViewSet):
             # compare the passwords inserted into the database and the ones queried by the user
             if check_password(password=password, encoded=user.password):
                 refresh = RefreshToken.for_user(user) # generate tokens for the user
+                # serialize the user
+                
+                
                 # send the tokens to the user
                 return JsonResponse({
-                    "access": str(refresh.access_token),
-                    "refresh" : str(refresh)
+                    "access": str(refresh.access_token), # JWT Access token
+                    "refresh" : str(refresh), # JWT Refresh Token
+                    "is_new" : user.is_new # send the boolean value of is new to skip the login process
                 }, status=status.HTTP_200_OK)
             return JsonResponse({"error": "No user with the same credentials was found"}, status=status.HTTP_401_UNAUTHORIZED)
         return JsonResponse({"error": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)

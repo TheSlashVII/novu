@@ -18,9 +18,9 @@ export class LoginComponent {
   error: string | null = null;
     constructor(private router: Router, private userAPI:UserAPIService) {
         this.isLoggedIn = this.userAPI.isLoggedIn();
-        if (this.userAPI.isLoggedIn()) {
-            // this.router.navigateByUrl('interests');
 
+        if (this.userAPI.isLoggedIn()) {
+            this.router.navigateByUrl('home');
         }
     }
   formLogin = new FormGroup({
@@ -58,7 +58,9 @@ export class LoginComponent {
           this.loading = false;
           if(token.access !=null){
               this.userAPI.saveToken(token.access) // save the token inside the browser
-              this.router.navigateByUrl("/studies")
+              let route:string = token.is_new == true ? "/studies" : "/home";
+
+              this.router.navigateByUrl(route)
           }
           else {
               this.error = "No account was found"

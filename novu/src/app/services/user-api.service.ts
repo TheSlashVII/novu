@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http"
+import {Observable} from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
@@ -22,7 +23,7 @@ export class UserAPIService {
   }
   deleteRegisterRequest(id:number){
       const ROUTE:string = `${this.baseServerURL}/delete/request/${id}/`;
-      return this.http.delete(ROUTE)
+      return this.http.delete(ROUTE, this.authHeaders())
   }
   login(data:any){
     const ROUTE:string = `${this.baseServerURL}/login/`;
@@ -30,7 +31,7 @@ export class UserAPIService {
   }
   getRegisterRequestCount(){
       const ROUTE:string = `${this.baseServerURL}/count/request/`;
-      return this.http.get(ROUTE)
+      return this.http.get(ROUTE, this.authHeaders())
 
   }
 
@@ -74,7 +75,7 @@ export class UserAPIService {
      */
   retrieveRegisterRequestDetails(id:any){
     const ROUTE:string = `${this.baseServerURL}/detail/request/${id}`;
-    return this.http.get(ROUTE)
+    return this.http.get(ROUTE, this.authHeaders())
   }
   // JWT
     saveToken(token: string) {

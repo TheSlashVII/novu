@@ -15,9 +15,9 @@ class RequestViewset(viewsets.ModelViewSet):
     lookup_url_kwarg = "id"
     authentication_classes = [JWTAuthentication]
     def get_permissions(self):
-        if self.action in ['create', 'test1', "countRequests", "retrieveRequest", "deleteRequest"]:   # POST /users/, GET /users/
+        if self.action in ['create', 'test1']:   # POST /users/, GET /users/
             permission_classes = [permissions.AllowAny]
-        elif self.action in ['retrieve',"listRequests"]:        # GET /users/{id}/
+        elif self.action in ['retrieve',"listRequests", "countRequests", "deleteRequest", "retrieveRequest"]:        # GET /users/{id}/
             permission_classes = [permissions.IsAuthenticated]
         else:                                    # PUT, PATCH, DELETE
             permission_classes = [permissions.IsAuthenticated]
