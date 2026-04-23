@@ -25,7 +25,7 @@ class InterestViewset(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     #POST /api/interests
-    def create(self, request):
+    def saveInterest(self, request):
         user_id = request.data.get('user_id')
         interest_names = request.data.get('interests', [])
 
@@ -53,6 +53,8 @@ class InterestViewset(viewsets.ModelViewSet):
             {'message': 'Intereses guardados correctamente'},
             status=status.HTTP_201_CREATED
         )
+
+    
     def retrieve(self, request,pk=None):
         interests = Interest.objects.filter(user_id=pk)
         serializer = InterestSerializer(interests, many=True)

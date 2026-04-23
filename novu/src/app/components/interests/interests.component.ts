@@ -1,12 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgClass } from '@angular/common';
 import { InterestApiService } from '../../services/interest-api.service';
 
 @Component({
   selector: 'app-interests',
   standalone: true,
-  imports: [NgClass],
+  imports: [],
   templateUrl: './interests.component.html',
   styleUrl: './interests.component.css'
 })
@@ -38,12 +37,13 @@ export class InterestsComponent {
   goNext(): void {
     const selectedIds = this.interests
       .filter(i => i.selected)
-      .map(i => i.id);
+      .map(i => i.label);
 
     const userId = 1; 
 
     this.interestApi.saveUserInterests(userId, selectedIds).subscribe({
       next: () => {
+      
         this.router.navigate(['/home']);
       },
       error: (err) => {
