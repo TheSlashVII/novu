@@ -9,7 +9,13 @@ export class UserAPIService {
   baseServerURL:string = `http://localhost:${this.PORT}/api/users`;
   constructor(private http:HttpClient) { }
 
-  createRegisterRequest(data:any){
+    private authHeaders(): { headers: HttpHeaders } {
+        return {
+            headers: new HttpHeaders({ "Authorization": "Bearer " + this.getToken() })
+        };
+    }
+
+    createRegisterRequest(data:any){
     //headers = headers.append('enctype', 'multipart/form-data');
     const ROUTE:string = `${this.baseServerURL}/create/request`;
     return this.http.post(ROUTE, data)
@@ -47,14 +53,20 @@ export class UserAPIService {
 
   getUserById(id:number | string){
       const ROUTE:string = `${this.baseServerURL}/retrieve/${id}/`;
-      return this.http.get(ROUTE)
+      return this.http.get(ROUTE, this.authHeaders())
+  }
+  isTokenExpired(token: string): boolean {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.exp < Date.now() / 1000;
   }
   /*
   * function used to list register requests
    */
   listRegisterRequests(){
-      const ROUTE:string = `${this.baseServerURL}/list/request`;
-      return this.http.get(ROUTE)
+      const ROUTE:string = `${this.baseServerURL}/list/request/`;
+      console.log(localStorage.getItem("access_token"));
+      // console.log(this.isTokenExpired(localStorage.getItem("access_token")!));
+      return this.http.get(ROUTE, this.authHeaders())
   }
     /**
      * Function used to get the details of a register request

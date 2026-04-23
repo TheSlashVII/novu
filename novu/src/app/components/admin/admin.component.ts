@@ -13,7 +13,7 @@ import {LoginComponent} from '../login/login.component';
     standalone: true
 })
 export class AdminComponent {
-    /*
+
     // this allows for only authenticated users with admin privilege  to enter this
     isLoggedIn: boolean;
     isAdmin: boolean = false;
@@ -21,11 +21,11 @@ export class AdminComponent {
         this.isLoggedIn = this.userAPI.isLoggedIn();
         if (this.isLoggedIn) {
             const token = this.decodeToken()
-            this.isAdmin = this.getAdminStatus(Number(token.user_id))
-        }
-        if (!this.isAdmin) {
+            this.getAdminStatus(Number(token.user_id))
+        } else{
             this.router.navigateByUrl('/unauthorized');
         }
+
     }
 
     decodeToken(): any {
@@ -35,18 +35,14 @@ export class AdminComponent {
         return JSON.parse(atob(token.split('.')[1]));
     }
     getAdminStatus(id:number){
-        let status:boolean = false; // admin status
         this.userAPI.getUserById(id).subscribe((res:any) => {
-            let token = this.decodeToken();
-            console.log(res);
-            if (res.admin){
-                status = true;
-            } else {
-                status = false;
+            this.isAdmin = res.admin;
+            if (!this.isAdmin) {
+                this.router.navigateByUrl('/unauthorized');
             }
         })
-        return status;
+
     }
 
-     */
+
 }

@@ -65,15 +65,25 @@ export class AdminRegisterRequestDetailComponent {
         }
         return this.registerRequest.id_student;
     }
-
+    getStudentIdImage(){
+        const server = "http://localhost:8000/";
+        const path = `${server}${this.registerRequest.photo_student_id}`;
+        return path;
+    }
+    getStudentSelfieImage(){
+        const server = "http://localhost:8000/";
+        const path = `${server}${this.registerRequest.photo_id_selfie}`;
+        return path;
+    }
     checkStudentIdImage(){
-        window.open(this.registerRequest.photo_student_id, "_blank");
+        window.open(this.getStudentSelfieImage(), "_blank");
     }
     checkStudentIdSelfieImage(){
         window.open(this.registerRequest.photo_id_selfie, "_blank");
     }
     deleteRequest(id:number){
-        return this.userAPI.deleteRegisterRequest(id).subscribe(res => console.log(res))
+        this.userAPI.deleteRegisterRequest(id).subscribe()
+        this.goToDeniedRequest()
     }
 
     createUser(){
@@ -84,7 +94,8 @@ export class AdminRegisterRequestDetailComponent {
             password:this.registerRequest.password,
             date_of_birth:this.registerRequest.date_of_birth
         }
-        this.userAPI.createUser(data.name, data.surnames, data.email, data.password, data.date_of_birth).subscribe((res) => console.log(res))
+        this.userAPI.createUser(data.name, data.surnames, data.email, data.password, data.date_of_birth).subscribe()
+        this.goToDeniedRequest()
     }
 
     requestInitializer(){
@@ -104,6 +115,12 @@ export class AdminRegisterRequestDetailComponent {
     }
     goToRequestList(){
         this.router.navigateByUrl('/admin/request');
+    }
+    goToAcceptedRequest(){
+        this.router.navigateByUrl('/admin/post_accept');
+    }
+    goToDeniedRequest(){
+        this.router.navigateByUrl('/admin/post_deny');
     }
 
 

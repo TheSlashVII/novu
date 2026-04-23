@@ -1,7 +1,7 @@
 
 from django.shortcuts import get_object_or_404
-from ..serializers import UserSerializer, LoginSerializer
-from rest_framework import viewsets, status
+from ..serializers import UserSerializer, LoginSerializer, UserSearchSerializer
+from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.http import JsonResponse, Http404
@@ -9,6 +9,7 @@ from ..models import User
 from django.contrib.auth.hashers import check_password, make_password
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework_simplejwt.authentication import JWTAuthentication
 # this is the equivalent to a controller
 """
 Documentation for viewsets: https://www.django-rest-framework.org/api-guide/viewsets/#example
@@ -17,32 +18,46 @@ Documentation for viewsets: https://www.django-rest-framework.org/api-guide/view
 class UserViewset(viewsets.ViewSet):
     # methods of a viewset
     # to list every model
+    authentication_classes = [JWTAuthentication]
     def list(self, request):
         queryset = User.objects.all()
         serializer = UserSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def get_permissions(self):
+        if self.action in ['createFromUser', 'list', 'retrieveByEmail', "createFromAdmin"]:   # public routes | create Admin is Public for now 
+            permission_classes = [permissions.AllowAny]
+        elif self.action in ['retrieve', "retrieveUserById", 'test', "retrieveByName"]:        
+            permission_classes = [permissions.IsAuthenticated]
+        else:                                    # PUT, PATCH, DELETE
+            permission_classes = [permissions.IsAuthenticated]
+        return [permission() for permission in permission_classes]
+    
 
     # to create a new model inside the database
-    def create(self, request):
+    @action(methods=["post"], detail=False)
+    def createFromUser(self, request):
         serializer = UserSerializer(data=request.data)
-        self.permission_classes = [AllowAny]
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     # separate user creation for admins
+    @action(methods=["post"], detail=False)
     def createFromAdmin(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.validated_data["password"] = make_password(serializer.validated_data["password"]) # overrides the plain text password inserted by the admin
+            serializer.validated_data["is_active"] = True # to enforce that the session is created correctly
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 
     # to get a specific user based on primary key (To be confirmed)
-    def retrieve(self, request, id=None):
+    @action(methods=["get", "post"], detail=False)
+    def retrieveUserById(self, request, id=None):
         try:
             user = get_object_or_404(User, pk=id)
         except Http404 :
@@ -51,7 +66,9 @@ class UserViewset(viewsets.ViewSet):
             return JsonResponse({"error": "Something went wrong"})
         serializer = UserSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
     # use Post for login functionality.
+    @action(methods=["post"], detail=False)
     def retrieveByEmail(self, request):
         loginSerializer= LoginSerializer(data=request.data) # serialize the login form data
         if loginSerializer.is_valid():
@@ -62,7 +79,7 @@ class UserViewset(viewsets.ViewSet):
                 user = get_object_or_404(User, email=email) # user search
             except Http404:
                 # catch the error in case of the user not being found
-                return JsonResponse({"errorMessage": "No user with the same credentials was found"})
+                return JsonResponse({"error": "No user with the same credentials was found"}, status=status.HTTP_404_NOT_FOUND)
             # compare the passwords inserted into the database and the ones queried by the user
             if check_password(password=password, encoded=user.password):
                 refresh = RefreshToken.for_user(user) # generate tokens for the user
@@ -73,8 +90,30 @@ class UserViewset(viewsets.ViewSet):
                 }, status=status.HTTP_200_OK)
             return JsonResponse({"error": "No user with the same credentials was found"}, status=status.HTTP_401_UNAUTHORIZED)
         return JsonResponse({"error": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    #function used to search the name of the user
+    @action(methods=["post"], detail=False)
+    def retrieveByName(self, request):
+        # 1. get all users
+        # 2. be able to filter those users by name
+        serializer =UserSearchSerializer(data=request.data) 
+        if serializer.is_valid():
+            userList = User.objects.all()
+            # filtering process | filter by name field
+            userSearchResultList = userList.filter(name=serializer.validated_data["name"])
+            return JsonResponse({UserSerializer(userSearchResultList, many=True).data}, safe=False)
+        else:
+            return JsonResponse({"error" : "Bad Request"}, status=status.HTTP_400_BAD_REQUEST)
         
+    @action(methods=["post"], detail=False)
+    def test(self, request):
+        return JsonResponse({"Authenticated" : True})
+    
+    @action(methods=["get"], detail=False)
+    def test2(self,request):
+        return JsonResponse({"Auth2":True})
 
+        
     # to update a specific model 
     def update(self, request, pk=None):
         user = get_object_or_404(User, pk=pk)

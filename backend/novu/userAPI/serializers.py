@@ -87,6 +87,10 @@ class RequestSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     email=serializers.EmailField()
     password=serializers.CharField()
+# for the search bar functionality in the restrict users section
+class UserSearchSerializer(serializers.Serializer):
+    name=serializers.CharField()
+
 
 
 

@@ -1,10 +1,11 @@
 from django.db import models
 from . import utilities
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser
+from . import userManagers
 # Create your models here.
 # this file is used to create the models for the database
 # by default the id field is created so no need to declare it 
-"""
+
 class User(AbstractBaseUser):
     # basic fields
     name=models.CharField(max_length=200)
@@ -30,13 +31,15 @@ class User(AbstractBaseUser):
     restricted_reason=models.CharField(max_length=100, default='')
     restricted_at=models.DateField(null=True)
     admin=models.BooleanField(default=0)
-    is_active = models.BooleanField(default=True) 
+    is_active = models.BooleanField(default=True, db_default=True) # must be true for the sessions to work 
+    last_login = models.DateTimeField(blank=True, null=True)
     # Constraints and other conditions
     max_age.null = True
     profile_pic.null = True
     max_distance_km.null = True
     REQUIRED_FIELDS = []
     USERNAME_FIELD = 'email' 
+    objects = userManagers.UserManager() # used to manage the user sess
 
 
     # VERY IMPORTANT! This subclass is used to rename the table. 
@@ -46,7 +49,8 @@ class User(AbstractBaseUser):
     
     def __str__(self):
         return self.email
-""" 
+
+"""
 class User(models.Model):
     # basic fields
     name=models.CharField(max_length=200)
@@ -80,6 +84,7 @@ class User(models.Model):
     class Meta:
         db_table='User'
 
+"""
 # user_card table
 # this is to represent the user presentation card
 class UserCard(models.Model):

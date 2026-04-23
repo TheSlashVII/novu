@@ -9,19 +9,19 @@ RegisterRequestController=RegisterRequestViewset.RequestViewset
 InterestController = InterestViewset.InterestViewset
 
 login=UserController.as_view({"post" : "retrieveByEmail"})
-create_user=UserController.as_view({"post" : "create"})
+create_user=UserController.as_view({"post" : "createFromUser"})
 admin_create_user=UserController.as_view({"post" : "createFromAdmin"})
-retrieve_user=UserController.as_view({"get" : "retrieve"})
-delete_request=RegisterRequestController.as_view({"delete" : "destroy"})
+retrieve_user=UserController.as_view({"get" : "retrieveUserById"})
+delete_request=RegisterRequestController.as_view({"delete" : "deleteRequest"})
 register_request_count=RegisterRequestController.as_view({"get" : "countRequests"})
 create_register_request=RegisterRequestController.as_view({"post" : "create"})
-list_register_requests=RegisterRequestController.as_view({"get" : "list"})
-register_request_detail=RegisterRequestController.as_view({"get" : "retrieve"})
+list_register_requests=RegisterRequestController.as_view({"get" : "listRequests"})
+register_request_detail=RegisterRequestController.as_view({"get" : "retrieveRequest"})
 save_interests = InterestController.as_view({"post": "saveInterest"})
 list_interests = InterestController.as_view({"get": "list"})
 retrieve_interest = InterestController.as_view({"get": "retrieve"})
 list_users = UserController.as_view({"get": "list"})
-
+test_api = UserController.as_view({"post" : "test"})
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
     path("create/", create_user), # creates a user 
@@ -35,5 +35,6 @@ urlpatterns = [
     path("interests/", list_interests), #Lists the interests
     path("interests/save/", save_interests), # Save the interests
     path("interests/retrieve/<int:pk>/", retrieve_interest),
-    path("list/", list_users)
+    path("list/", list_users),
+    path("test/", test_api)
 ]
