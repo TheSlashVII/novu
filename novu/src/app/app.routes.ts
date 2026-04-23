@@ -19,6 +19,7 @@ import {NotFoundComponent} from './components/not-found/not-found.component';
 import {UnauthorizedComponent} from './components/unauthorized/unauthorized';
 import {AdminCreateUsersComponent} from './components/admin-create-users/admin-create-users.component';
 import {AdminPostDenyRequestComponent} from './components/admin-post-deny-request/admin-post-deny-request.component';
+import {AdminRestrictUserComponent} from './components/admin-restrict-user/admin-restrict-user.component';
 
 
 export const routes: Routes = [
@@ -72,6 +73,9 @@ export const routes: Routes = [
     },{
         path:'unauthorized',
         component: UnauthorizedComponent
+    },{
+        path:'restrict_user',
+        component: AdminRestrictUserComponent
     },{
     path: '**',
         component: NotFoundComponent
