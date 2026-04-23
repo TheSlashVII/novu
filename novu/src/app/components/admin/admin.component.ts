@@ -17,18 +17,15 @@ export class AdminComponent {
     // this allows for only authenticated users with admin privilege  to enter this
     isLoggedIn: boolean;
     isAdmin: boolean = false;
-    responseStatus:boolean = false;
     constructor(private userAPI:UserAPIService, private router: Router) {
         this.isLoggedIn = this.userAPI.isLoggedIn();
         if (this.isLoggedIn) {
             const token = this.decodeToken()
-            this.isAdmin = this.getAdminStatus(Number(token.user_id))
-            console.log(this.getAdminStatus(Number(token.user_id)));
-        }
-        console.log(this.isAdmin);
-        if (!this.isAdmin) {
+            this.getAdminStatus(Number(token.user_id))
+        } else{
             this.router.navigateByUrl('/unauthorized');
         }
+
     }
 
     decodeToken(): any {
@@ -38,20 +35,12 @@ export class AdminComponent {
         return JSON.parse(atob(token.split('.')[1]));
     }
     getAdminStatus(id:number){
-         // admin status
-
         this.userAPI.getUserById(id).subscribe((res:any) => {
-            let token = this.decodeToken();
-            console.log(res);
-            console.log(res.admin);
-            let st:boolean = res.admin;
-            if(st){
-                this.responseStatus = true;
+            this.isAdmin = res.admin;
+            if (!this.isAdmin) {
+                this.router.navigateByUrl('/unauthorized');
             }
         })
-        console.log("status final getAdmin "+ this.responseStatus);
-        return this.responseStatus;
-
 
     }
 
