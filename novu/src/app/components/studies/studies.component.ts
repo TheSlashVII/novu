@@ -5,6 +5,7 @@ import { StudiesApiServiceService } from '../../services/studies-api-service.ser
 import { UserAPIService } from '../../services/user-api.service';
 import { CommonModule } from '@angular/common';
 
+
 @Component({
   selector: 'app-studies',
   standalone: true,
@@ -27,6 +28,7 @@ export class StudiesComponent {
   }
 
   goNext(): void {
+    
     const token = this.userAPIService.decodeToken();
     this.saveUserStudy(token.user_id, this.studiesName);
     //this.router.navigate(['/interests']); 

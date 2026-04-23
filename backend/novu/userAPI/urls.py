@@ -18,13 +18,14 @@ register_request_count=RegisterRequestController.as_view({"get" : "countRequests
 create_register_request=RegisterRequestController.as_view({"post" : "create"})
 list_register_requests=RegisterRequestController.as_view({"get" : "list"})
 register_request_detail=RegisterRequestController.as_view({"get" : "retrieve"})
-save_interests = InterestController.as_view({"post": "create"})
+save_interests = InterestController.as_view({"post": "saveInterest"})
 list_interests = InterestController.as_view({"get": "list"})
 retrieve_interest = InterestController.as_view({"get": "retrieve"})
 save_study = StudiesController.as_view({"post":"create"})
 list_studies = StudiesController.as_view({"get":"list"})
 retrieve_study = StudiesController.as_view({"get":"retrieve"})
 update_study = StudiesController.as_view({"put":"update"})
+list_users = UserController.as_view({"get": "list"})
 
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
@@ -39,6 +40,7 @@ urlpatterns = [
     path("interests/", list_interests), #Lists the interests
     path("interests/save/", save_interests), # Save the interests
     path("interests/retrieve/<int:pk>/", retrieve_interest),
+    path("list/", list_users),
     path("studies/", list_studies), #Lists the studies of a user
     path("studies/save/", save_study), #Save or update user's study
     path("studies/retrieve/<int:pk>/", retrieve_study), #Retrieve study by user_id

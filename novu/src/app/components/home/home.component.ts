@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject, afterNextRender } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
@@ -30,16 +30,18 @@ export class HomeComponent {
   dragX: number = 0;
   dragStartX: number = 0;
 
-  ngOnInit(): void {
-    this.http.get<Profile[]>('http://localhost:8000/api/users').subscribe({
-      next: (data) => {
-        this.profiles = data;
-        this.loading = false;
-      },
-      error: () => {
-        this.error = 'No se pudieron cargar los perfiles.';
-        this.loading = false;
-      }
+  constructor() {
+    afterNextRender(() => {
+      this.http.get<Profile[]>('http://localhost:8000/api/users/list/').subscribe({
+        next: (data) => {
+          this.profiles = data;
+          this.loading = false;
+        },
+        error: () => {
+          this.error = 'No se pudieron cargar los perfiles.';
+          this.loading = false;
+        }
+      });
     });
   }
 
@@ -113,6 +115,21 @@ export class HomeComponent {
       this.currentIndex++;
       this.dragX = 0;
     }, 350);
+  }
+
+  reloadProfiles(): void {
+    this.loading = true;
+    this.error = '';
+    this.http.get<Profile[]>('http://localhost:8000/api/users/list/').subscribe({
+      next: (data) => {
+        this.profiles = data;
+        this.loading = false;
+      },
+      error: () => {
+        this.error = 'No se pudieron cargar los perfiles.';
+        this.loading = false;
+      }
+    });
   }
 
   goToChat(): void { this.router.navigate(['/chat']); }
