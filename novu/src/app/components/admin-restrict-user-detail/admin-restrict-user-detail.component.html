@@ -1,0 +1,37 @@
+<main class="bg-[#f0e9e9] min-h-screen">
+    <nav class="flex flex-row justify-between px-5 py-3 bg-[#2f3a63]">
+        <!--Logo section-->
+        <div class="inline-flex justify-around items-center gap-3">
+            <img src="assets/Images/Novu_logo.svg" alt="Novu logo" class="max-h-10">
+            <div class="flex flex-row gap-1 items-center">
+                <p class="font-[Poppins] font-bold text-white text-lg">Novu</p>
+                <p class="text-white font-light text-lg">Admin</p>
+                <p class="font-[Poppins] font-bold text-white text-lg"> - Restrict Users</p>
+            </div>
+        </div>
+        <button class="hidden sm:block bg-[#4a90e2] font-[Inter] py-3 px-10 rounded-3xl text-white">Logout</button>
+        <img class="block sm:hidden" src="assets/Images/Logout_admin.svg" alt="Logout">
+    </nav>
+
+    <form [formGroup]="userForm" (ngSubmit)="submit()"  class="flex flex-col justify-start xl:mx-60 mx-10 bg-[#87A0FF] p-10 rounded-2xl gap-5 mt-30 font-[Poppins]">
+
+        <div><p class="font-black text-[1.5rem]">Restriction form for {{this.userRestrictedStatusInfo.name}} {{this.userRestrictedStatusInfo.surnames}}</p></div>
+        <div class="flex flex-col justify-start">
+            <label>Restrict <input type="checkbox" formControlName="restricted" [checked]="false">
+            </label>
+
+        </div>
+        <div class="flex flex-col justify-start sm:max-w-[50rem]">
+            <p>Restricted At</p>
+            <input type="datetime-local" class="sm:max-w-[15rem] bg-white p-2 rounded hover:cursor-pointer" [value]="this.userRestrictedStatusInfo.restricted_at"  formControlName="restricted_at" />
+        </div>
+
+        <div>
+            <p>Restricted Reason</p>
+            <input type="text" class="w-100 rounded bg-white p-2" formControlName="restricted_reason" placeholder="Type a reason">
+        </div>
+        <div class="flex flex-row justify-end px-10">
+            <button type="submit" class="rounded-2xl bg-white transform hover:text-[#61646b] py-2 px-5 hover:cursor-pointer">Submit changes</button>
+        </div>
+    </form>
+</main>

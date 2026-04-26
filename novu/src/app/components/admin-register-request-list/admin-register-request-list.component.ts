@@ -64,4 +64,5 @@ export class AdminRegisterRequestListComponent {
         this.userAPI.logoutJWT();
         this.route.navigateByUrl("");
     }
+
 }

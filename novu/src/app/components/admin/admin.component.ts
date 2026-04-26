@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import {Router, RouterOutlet} from "@angular/router";
 import {UserAPIService} from '../../services/user-api.service';
-import {LoginComponent} from '../login/login.component';
 
 @Component({
   selector: 'app-admin',
@@ -14,16 +13,23 @@ import {LoginComponent} from '../login/login.component';
 })
 export class AdminComponent {
 
-    // this allows for only authenticated users with admin privilege  to enter this
+    // this allows for only authenticated users with admin privilege to enter the admin panel its child sites
     isLoggedIn: boolean;
     isAdmin: boolean = false;
     constructor(private userAPI:UserAPIService, private router: Router) {
         this.isLoggedIn = this.userAPI.isLoggedIn();
         if (this.isLoggedIn) {
             const token = this.decodeToken()
+            const isTokenExpired = this.isTokenExpired(this.userAPI.getToken()!); // will check if the token is expired
             this.getAdminStatus(Number(token.user_id))
+            // will deny access if you are not an authorized admin
+            if (isTokenExpired || !this.isAdmin) {
+                this.router.navigateByUrl('/unauthorized');
+                localStorage.removeItem('access_token');
+            }
         } else{
             this.router.navigateByUrl('/unauthorized');
+            localStorage.removeItem('access_token');
         }
 
     }
@@ -42,6 +48,10 @@ export class AdminComponent {
             }
         })
 
+    }
+    isTokenExpired(token: string): boolean {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.exp < Date.now() / 1000;
     }
 
 

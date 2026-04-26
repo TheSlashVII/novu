@@ -20,6 +20,9 @@ import {UnauthorizedComponent} from './components/unauthorized/unauthorized';
 import {AdminCreateUsersComponent} from './components/admin-create-users/admin-create-users.component';
 import {AdminPostDenyRequestComponent} from './components/admin-post-deny-request/admin-post-deny-request.component';
 import {AdminRestrictUserComponent} from './components/admin-restrict-user/admin-restrict-user.component';
+import {
+    AdminRestrictUserDetailComponent
+} from './components/admin-restrict-user-detail/admin-restrict-user-detail.component';
 
 
 export const routes: Routes = [
@@ -64,12 +67,17 @@ export const routes: Routes = [
                 path:"create_user", component: AdminCreateUsersComponent
             }, {
                 path:"post_deny", component: AdminPostDenyRequestComponent
+            },
+            {
+                path:'restrict_user/detail/:id',
+                component: AdminRestrictUserDetailComponent,
             }
         ]
     },
     {
         path: 'home',
-        component: HomeComponent
+        component: HomeComponent,
+        title: "Novu - Home",
     },{
         path:'unauthorized',
         component: UnauthorizedComponent

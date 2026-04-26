@@ -1,4 +1,4 @@
-import { Component, inject, afterNextRender } from '@angular/core';
+import {Component, inject, afterNextRender, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import {UserAPIService} from '../../services/user-api.service';
@@ -32,8 +32,10 @@ export class HomeComponent {
     isLoggedIn: boolean;
   constructor(private userAPI:UserAPIService, private router:Router) {
       this.isLoggedIn = this.userAPI.isLoggedIn();
-      if (!this.isLoggedIn){
+      const isTokenExpired = this.userAPI.isTokenExpired(this.userAPI.getToken()!);
+      if (!this.isLoggedIn || isTokenExpired){
           this.router.navigateByUrl('');
+          localStorage.removeItem('access_token');
       }
     afterNextRender(() => {
       this.http.get<Profile[]>('http://localhost:8000/api/users/list/').subscribe({
@@ -140,4 +142,6 @@ export class HomeComponent {
   goToProfile(): void { this.router.navigate(['/profile']); }
   goToDiscover(): void { this.router.navigate(['/discover']); }
   goToSearch(): void { this.router.navigate(['/search']); }
+
+
 }

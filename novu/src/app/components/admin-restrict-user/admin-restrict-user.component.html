@@ -15,14 +15,62 @@
 
     <div class="w-full flex justify-center ">
         <div class="flex flex-col gap-8 sm:mx-20 md:mx-30 mt-30 lg:max-w-[80rem] min-w-[20rem] sm:min-w-[30rem] md:min-w-[40rem] lg:min-w-[60rem]">
-            <div class="flex flex-row bg-white py-5 px-5 sm:px-10 rounded-2xl">
-                <input class="flex-grow-2" placeholder="Search users by name"/>
-                <div class="min-w-[8rem] md:min-w-[10rem] flex flex-row justify-between">
-                    <p class="font-extrabold font-[Inter] text-sm sm:text-[18px]">Date</p>
-                    <p class="font-extrabold  font-[Inter] text-sm sm:text-[18px]">Details</p>
-                </div>
+            <div class="flex flex-row gap-4 bg-white py-5 px-5 sm:px-10 rounded-2xl">
+                <form [formGroup]="searchBar" (ngSubmit)="submit()" class="flex flex-row flex-grow-2">
+                    <input (search)="submit()" formControlName="name" class="flex-grow-2 focus:outline-0" placeholder="Search users by name" />
+                    <button type="submit" class="hover:cursor-pointer border-2 rounded border-[#ff6b6b] bg-[#ff6b6b] transition hover:text-white p-1 ">Search</button>
+                </form>
             </div>
+            @if (results.length < 1) {
+                <div class="flex flex-row gap-4 bg-white py-5 px-5 sm:px-10 rounded-2xlflex flex-row gap-4 bg-white py-5 px-5 sm:px-10 rounded-2xl">
+                    <h4>No users available at this moment or match the criteria</h4>
+                </div>
+            } @else {
+                <div class="font-bold grid grid-cols-[5rem_10rem_minmax(500px,1fr)_10rem_5rem_5rem] gap-5 bg-white py-5 px-5 sm:px-10 rounded-2xl bg-white py-5 px-5 sm:px-10 rounded-2xl">
 
+                    <p>Name</p>
+                    <p>Surnames</p>
+                    <p>Reason</p>
+                    <div class="inline-flex justify-center"><p class="">Restricted Date</p></div>
+                    <div class="inline-flex items-center"><p>Restricted</p></div>
+                    <p>Actions</p>
+
+
+                </div>
+                @for (user of results; track user.id) {
+                    <div class="bg-white py-5 px-5 sm:px-10 rounded-2xl">
+                        <div class="grid grid-cols-[5rem_10rem_minmax(500px,1fr)_10rem_5rem_5rem] gap-5">
+                            <!--Name-->
+                            <div class="inline-flex items-center">
+                                <p>{{user.name}}</p>
+                            </div>
+                            <!--Surnames-->
+                            <div class="inline-flex items-center">
+                                <p>{{ user.surnames }}</p>
+                            </div>
+                            <!--Restricted reason-->
+                            <div class="inline-flex items-center italic">
+                                <p>{{user.restricted_reason}}</p>
+                            </div>
+
+                            <div class="inline-flex items-center justify-center">
+                                <p>{{user.restricted_at != null  ? this.splitDate(user.restricted_at) : "Date"}}</p>
+                            </div>
+
+                            <div class="inline-flex items-center justify-center">
+                                <input type="checkbox" [checked]="user.restricted" [disabled]="true" />
+                            </div>
+
+                            <div class="inline-flex items-center">
+                                <button type="button" class="bg-blue-400 p-1 transition rounded hover:cursor-pointer hover:text-white">
+                                    Update
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                }
+            }
 
         </div>
     </div>
