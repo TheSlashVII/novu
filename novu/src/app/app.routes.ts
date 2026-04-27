@@ -67,6 +67,9 @@ export const routes: Routes = [
                 path:"create_user", component: AdminCreateUsersComponent
             }, {
                 path:"post_deny", component: AdminPostDenyRequestComponent
+            },{
+                path:'restrict_user',
+                component: AdminRestrictUserComponent
             },
             {
                 path:'restrict_user/detail/:id',
@@ -81,9 +84,6 @@ export const routes: Routes = [
     },{
         path:'unauthorized',
         component: UnauthorizedComponent
-    },{
-        path:'restrict_user',
-        component: AdminRestrictUserComponent
     },{
     path: '**',
         component: NotFoundComponent

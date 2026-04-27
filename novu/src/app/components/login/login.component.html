@@ -77,7 +77,9 @@
                 }
             }
           </div>
-
+            @if (this.isRestricted) {
+                <span class="text-red-500 text-xs block mt-1 ml-3">This account is restricted. </span>
+            }
           <!-- Submit button -->
           <div class="pt-2">
             <button type="submit" [disabled]="!isFormReady || loading"

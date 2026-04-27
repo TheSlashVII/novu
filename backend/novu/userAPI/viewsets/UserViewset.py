@@ -85,12 +85,14 @@ class UserViewset(viewsets.ViewSet):
                 refresh = RefreshToken.for_user(user) # generate tokens for the user
                 # serialize the user
                 
-                
+                isUserRestricted = not user.restricted
+                isUserNew = not user.is_new
                 # send the tokens to the user
                 return JsonResponse({
                     "access": str(refresh.access_token), # JWT Access token
                     "refresh" : str(refresh), # JWT Refresh Token
-                    "is_new" : user.is_new # send the boolean value of is new to skip the login process
+                    "is_new" : isUserNew, # send the boolean value of is new to skip the login process
+                    "is_restricted" : isUserRestricted # sends a boolean of the status of the user if he is restricted to access the app
                 }, status=status.HTTP_200_OK)
             return JsonResponse({"error": "No user with the same credentials was found"}, status=status.HTTP_401_UNAUTHORIZED)
         return JsonResponse({"error": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
@@ -109,12 +111,13 @@ class UserViewset(viewsets.ViewSet):
         else:
             return JsonResponse({"error" : "Bad Request"}, status=status.HTTP_400_BAD_REQUEST) # returns this if the data inserted was incorrect
         
-    @action(methods=["post"], detail=False)
+    @action(methods=["put"], detail=False)
     def modifyUserAccess(self, request):
         serializer = UserSerializer(data=request.data, partial=True) # serialize the HTTP request body
         if serializer.is_valid():
+            user_id = request.data.get("id")
             try:
-                user = get_object_or_404(User, pk=serializer.validated_data["id"]) # search the user
+                user = get_object_or_404(User, pk=user_id) # search the user
             except Http404:
                 return JsonResponse({"message": "User not found"}, status=status.HTTP_404_NOT_FOUND) 
             user.restricted = serializer.validated_data["restricted"]
@@ -124,7 +127,7 @@ class UserViewset(viewsets.ViewSet):
             # filtering process | filter by name field
             return JsonResponse({"message": "User was updated successfuly"})   # list function transforms data into a list. (Inserts the data inside an array)
         else:
-            return JsonResponse({"error" : "Bad Request"}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({"error" : "Bad Request","message" : serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
     @action(methods=["post"], detail=False)
     def test(self, request):

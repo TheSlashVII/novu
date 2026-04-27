@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ReactiveFormsModule, FormGroup, Validators, FormControl} from '@angular/forms';
 import {UserAPIService} from '../../services/user-api.service';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 @Component({
   selector: 'app-admin-restrict-user-detail',
     imports: [
@@ -19,7 +19,7 @@ export class AdminRestrictUserDetailComponent implements OnInit {
         restricted_reason: new FormControl('', [Validators.required])
 
     })
-    constructor(private userAPI:UserAPIService, private activatedRoute:ActivatedRoute) {
+    constructor(private userAPI:UserAPIService, private activatedRoute:ActivatedRoute, private router:Router) {
     }
     splitDate(date:string){
         let formatedDate: Date;
@@ -33,13 +33,36 @@ export class AdminRestrictUserDetailComponent implements OnInit {
         formData.append('restricted_reason', this.userForm.value.restricted_reason!);
         formData.append('restricted', String(this.userForm.value.restricted!)); // must reconvert later to boolean
         // console.log(new Date(this.userForm.value.restricted_at!).toISOString());
-        formData.append('restricted_at', new Date(this.userForm.value.restricted_at!).toISOString());
+        const date = this.userForm.value.restricted_at!.split('T')[0];
+        console.log(date);
+        /*
+        const [year, month, day] = date.split("-")
+        const normalizedDate = `${year}-${month}-${day}`;
+
+         */
+        formData.append('restricted_at', this.normalizeDate(date));
         let dataToSend: Record<string, any> = {}
         formData.forEach((value,key) => {
             dataToSend[key] = value;
         })
         console.log(dataToSend);
-        this.userAPI.adminModifyRestrictedStatus(dataToSend);
+        this.userAPI.adminModifyRestrictedStatus(dataToSend).subscribe({
+            next: (res)=> {
+                console.log(res);
+            }, error: err => {
+                console.log(err);
+            }
+        });
+    }
+
+    /**
+     * Function used to normalize dates. Reformatting them into the format that Django awaits
+     * @param ISOdate Date in ISO format
+     */
+    normalizeDate(ISOdate:string):string{
+        const date = ISOdate.split('T')[0];
+        const [year, month, day] = date.split("-")
+        return `${year}-${month}-${day}`;
     }
 
     /**
@@ -55,5 +78,12 @@ export class AdminRestrictUserDetailComponent implements OnInit {
             })
 
         })
+    }
+    goToList(){
+        this.router.navigateByUrl("/admin/restrict_user")
+    }
+    logout(){
+        this.userAPI.logoutJWT();
+        this.router.navigateByUrl("");
     }
 }

@@ -32,6 +32,7 @@ export class AdminRegisterRequestListComponent {
         return formatedDate.toLocaleDateString("es-ES");
 
     }
+
     requestInitializer(){
         return {
             id_request:-1,

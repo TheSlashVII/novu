@@ -32,7 +32,7 @@ export class HomeComponent {
     isLoggedIn: boolean;
   constructor(private userAPI:UserAPIService, private router:Router) {
       this.isLoggedIn = this.userAPI.isLoggedIn();
-      const isTokenExpired = this.userAPI.isTokenExpired(this.userAPI.getToken()!);
+      const isTokenExpired = this.userAPI.isTokenExpired(this.userAPI.getToken()!) ? this.userAPI.isTokenExpired(this.userAPI.getToken()!) : true;
       if (!this.isLoggedIn || isTokenExpired){
           this.router.navigateByUrl('');
           localStorage.removeItem('access_token');

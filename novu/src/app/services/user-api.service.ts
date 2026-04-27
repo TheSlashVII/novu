@@ -93,7 +93,7 @@ export class UserAPIService {
      */
   adminModifyRestrictedStatus(data:any){
     const ROUTE:string = `${this.baseServerURL}/admin/user/modify/access/`;
-    return this.http.post(ROUTE, data, this.authHeaders())
+    return this.http.put(ROUTE, data, this.authHeaders())
   }
 
     /**

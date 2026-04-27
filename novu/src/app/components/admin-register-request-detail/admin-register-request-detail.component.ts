@@ -94,8 +94,15 @@ export class AdminRegisterRequestDetailComponent {
             password:this.registerRequest.password,
             date_of_birth:this.registerRequest.date_of_birth
         }
-        this.userAPI.createUser(data.name, data.surnames, data.email, data.password, data.date_of_birth).subscribe()
-        this.goToDeniedRequest()
+        this.userAPI.createUser(data.name, data.surnames, data.email, data.password, data.date_of_birth).subscribe({
+            next: ()=>{
+                this.goToAcceptedRequest()
+            },
+            error: ()=>{
+                console.log("error creating user");
+            }
+        })
+
     }
 
     requestInitializer(){
@@ -122,6 +129,7 @@ export class AdminRegisterRequestDetailComponent {
     goToDeniedRequest(){
         this.router.navigateByUrl('/admin/post_deny');
     }
+
 
 
 }

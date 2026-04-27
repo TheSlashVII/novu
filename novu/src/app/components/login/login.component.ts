@@ -15,6 +15,7 @@ export class LoginComponent {
   showPassword = false;
   loading = false;
   isLoggedIn:boolean;
+  isRestricted:boolean = false;
   error: string | null = null;
     constructor(private router: Router, private userAPI:UserAPIService) {
         this.isLoggedIn = this.userAPI.isLoggedIn();
@@ -58,10 +59,18 @@ export class LoginComponent {
           this.loading = false;
           if(token.access !=null){
               this.userAPI.saveToken(token.access) // save the token inside the browser
-              console.log(token.is_new)
+              // console.log(token)
               let route:string = token.is_new == true ? "/studies" : "/home";
+                this.isRestricted = token.is_restricted;
+              console.log(this.isRestricted);
+              if(!this.isRestricted){
+                  this.isRestricted = false;
+                  this.router.navigateByUrl(route)
+              } else {
+                  // console.log(`this account is restricted. Status: ${this.isRestricted}`);
+                  localStorage.removeItem("access_token")
+              }
 
-              this.router.navigateByUrl(route)
           }
           else {
               this.error = "No account was found"

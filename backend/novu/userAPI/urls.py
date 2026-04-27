@@ -23,7 +23,7 @@ retrieve_interest = InterestController.as_view({"get": "retrieve"})
 list_users = UserController.as_view({"get": "list"})
 test_api = UserController.as_view({"post" : "test"})
 admin_search_user = UserController.as_view({"post" : "retrieveByName"}) # functionality to search users by name
-admin_modify_access = UserController.as_view({"post" : "modifyUserAccess"})
+admin_modify_access = UserController.as_view({"put" : "modifyUserAccess"})
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
     path("create/", create_user), # creates a user 

@@ -9,28 +9,29 @@
                 <p class="font-[Poppins] font-bold text-white text-lg"> - Restrict Users</p>
             </div>
         </div>
-        <button class="hidden sm:block bg-[#4a90e2] font-[Inter] py-3 px-10 rounded-3xl text-white">Logout</button>
-        <img class="block sm:hidden" src="assets/Images/Logout_admin.svg" alt="Logout">
+        <button (click)="logout()" class="hover:cursor-pointer hidden sm:block bg-[#4a90e2] font-[Inter] py-3 px-10 rounded-3xl text-white">Logout</button>
+        <img (click)="logout()" class="hover:cursor-pointer block sm:hidden" src="assets/Images/Logout_admin.svg" alt="Logout">
     </nav>
 
     <form [formGroup]="userForm" (ngSubmit)="submit()"  class="flex flex-col justify-start xl:mx-60 mx-10 bg-[#87A0FF] p-10 rounded-2xl gap-5 mt-30 font-[Poppins]">
 
         <div><p class="font-black text-[1.5rem]">Restriction form for {{this.userRestrictedStatusInfo.name}} {{this.userRestrictedStatusInfo.surnames}}</p></div>
         <div class="flex flex-col justify-start">
-            <label>Restrict <input type="checkbox" formControlName="restricted" [checked]="false">
+            <label>Restrict <input type="checkbox" formControlName="restricted" [checked]="this.userRestrictedStatusInfo.restricted">
             </label>
 
         </div>
         <div class="flex flex-col justify-start sm:max-w-[50rem]">
             <p>Restricted At</p>
-            <input type="datetime-local" class="sm:max-w-[15rem] bg-white p-2 rounded hover:cursor-pointer" [value]="this.userRestrictedStatusInfo.restricted_at"  formControlName="restricted_at" />
+            <input type="date" class="sm:max-w-[15rem] bg-white p-2 rounded hover:cursor-pointer" [value]="this.userRestrictedStatusInfo.restricted_at"  formControlName="restricted_at" />
         </div>
 
         <div>
             <p>Restricted Reason</p>
-            <input type="text" class="w-100 rounded bg-white p-2" formControlName="restricted_reason" placeholder="Type a reason">
+            <input type="text" class="w-100 rounded bg-white p-2" [value]="this.userRestrictedStatusInfo.restricted_reason" formControlName="restricted_reason" placeholder="Type a reason">
         </div>
-        <div class="flex flex-row justify-end px-10">
+        <div class="flex flex-row gap-5 justify-end px-10">
+            <button (click)="goToList()" type="button" class="rounded-2xl bg-white transform hover:text-[#61646b] py-2 px-5 hover:cursor-pointer">Back to List</button>
             <button type="submit" class="rounded-2xl bg-white transform hover:text-[#61646b] py-2 px-5 hover:cursor-pointer">Submit changes</button>
         </div>
     </form>

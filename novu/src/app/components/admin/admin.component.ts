@@ -21,11 +21,14 @@ export class AdminComponent {
         if (this.isLoggedIn) {
             const token = this.decodeToken()
             const isTokenExpired = this.isTokenExpired(this.userAPI.getToken()!); // will check if the token is expired
+            console.log(isTokenExpired)
+
             this.getAdminStatus(Number(token.user_id))
+            console.log(this.isAdmin)
             // will deny access if you are not an authorized admin
-            if (isTokenExpired || !this.isAdmin) {
+            if (isTokenExpired) {
                 this.router.navigateByUrl('/unauthorized');
-                localStorage.removeItem('access_token');
+
             }
         } else{
             this.router.navigateByUrl('/unauthorized');

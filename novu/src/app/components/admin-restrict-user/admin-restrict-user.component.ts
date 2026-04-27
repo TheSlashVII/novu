@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {UserAPIService} from '../../services/user-api.service';
 import {ReactiveFormsModule, FormGroup, Validators, FormControl, FormBuilder, FormArray} from '@angular/forms';
+import {Router} from '@angular/router';
 
 /**
  * {
@@ -44,7 +45,7 @@ export class AdminRestrictUserComponent {
     results:{id:number,name:string, surnames:string, restricted_reason:string, restricted:boolean, restricted_at:string}[] = []
 
 
-    constructor(private userAPI: UserAPIService, private fb: FormBuilder) {
+    constructor(private userAPI: UserAPIService, private router: Router) {
         this.userAPI.listAllUsers().subscribe((res:any) => {
             this.results = res;
         })
@@ -72,4 +73,12 @@ export class AdminRestrictUserComponent {
         return formatedDate.toLocaleDateString("es-ES");
 
     }
+    goToDetail(id:number){
+        this.router.navigateByUrl(`/admin/restrict_user/detail/${id}`)
+    }
+    logout(){
+        this.userAPI.logoutJWT();
+        this.router.navigateByUrl("");
+    }
+
 }

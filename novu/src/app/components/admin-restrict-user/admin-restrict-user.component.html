@@ -9,8 +9,8 @@
                 <p class="font-[Poppins] font-bold text-white text-lg"> - Restrict Users</p>
             </div>
         </div>
-        <button class="hidden sm:block bg-[#4a90e2] font-[Inter] py-3 px-10 rounded-3xl text-white">Logout</button>
-        <img class="block sm:hidden" src="assets/Images/Logout_admin.svg" alt="Logout">
+        <button (click)="logout()" class="hidden sm:block bg-[#4a90e2] font-[Inter] py-3 px-10 rounded-3xl text-white">Logout</button>
+        <img (click)="logout()" class="block sm:hidden" src="assets/Images/Logout_admin.svg" alt="Logout">
     </nav>
 
     <div class="w-full flex justify-center ">
@@ -62,7 +62,7 @@
                             </div>
 
                             <div class="inline-flex items-center">
-                                <button type="button" class="bg-blue-400 p-1 transition rounded hover:cursor-pointer hover:text-white">
+                                <button (click)="goToDetail(user.id)" type="button" class="bg-blue-400 p-1 transition rounded hover:cursor-pointer hover:text-white">
                                     Update
                                 </button>
                             </div>
