@@ -65,6 +65,8 @@ class InterestViewset(viewsets.ModelViewSet):
         interests = Interest.objects.filter(user_id=pk)
         serializer = InterestSerializer(interests, many=True)
         return JsonResponse(serializer.data,safe=False)
+
+        # Hacer que el feed del usuario se actualice cada vez que se actualicen sus intereses, que la funcion compare con todo los usuarios y sus intereses, y que recomiende sus cards de usuarios con intereses similares, .
     
 
 

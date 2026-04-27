@@ -1,0 +1,91 @@
+from django.shortcuts import get_object_or_404
+from ..serializers import StudySerializer
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+from django.http import JsonResponse
+from ..models import Study
+from ..models import User
+
+class StudyViewset(viewsets.ModelViewSet):
+    queryset = Study.objects.all()
+    serializer_class = StudySerializer
+    lookup_field = "user_id"
+    lookup_url_kwarg = "pk"
+
+    #GET /api/studies/?user_id=1
+    def list(self, request):
+        user_id = request.query_params.get('user_id')
+        if not user_id:
+            return Response(
+                {'error': 'Falta el user_id'},
+                status = status.HTTP_400_BAD_REQUEST
+            )
+        studies = Study.objects.filter(user_id=user_id)
+        serializer = StudySerializer(studies, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    #POST /api/studies/save/
+    def create(self, request):
+        user_id = request.data.get('user_id')
+        study_name = request.data.get('study_name')
+
+        if not user_id or not study_name:
+            return Response(
+                {'error': 'Faltan datos: se requiere user_id y study_name'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Verify that user exists
+        from ..models import User
+        if not User.objects.filter(id=user_id).exists():
+            return Response(
+                {'error': f'No existe ningun usuario con id {user_id}'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Delete the previous study and save the new one (user only has one current study)
+        Study.objects.filter(user_id=user_id).delete()
+
+        # Create the new study
+        Study.objects.create(user_id=user_id, name=study_name)
+
+        return Response(
+            {'message': 'Estudio guardado correctamente'},
+            status=status.HTTP_201_CREATED
+        )
+
+    # GET /api/studies/retrieve/<user_id>/
+    def retrieve(self, request, pk=None):
+        studies = Study.objects.filter(user_id=pk)
+        serializer = StudySerializer(studies, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+    # PUT /api/studies/update/
+    def update(self, request, pk=None):
+        user_id = request.data.get('user_id')
+        study_name = request.data.get('study_name')
+
+        if not user_id or not study_name:
+            return Response(
+                {'error': 'Faltan datos: se requiere user_id y study_name'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    # Verify that user exists
+
+        if not User.objects.filter(id=user_id).exists():
+            return Response(
+                {'error': f'No existe ninugn usuario con id {user_id}'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Update or create the study
+        study, created = Study.objects.update_or_create(
+            user_id_id=user_id,
+            defaults={'name': study_name}
+        )
+
+        return Response(
+            {'message':'Estudio actualizado correctamente'},
+            status=status.HTTP_200_OK
+        )
