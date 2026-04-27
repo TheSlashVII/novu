@@ -1,6 +1,6 @@
 # from django.contrib import admin
 from django.urls import path, include
-from .viewsets import UserViewset, RegisterRequestViewset, InterestViewset, StudiesViewset
+from .viewsets import UserViewset, RegisterRequestViewset, InterestViewset, StudiesViewset, SwipeViewset, MatchViewset
 # the UserViewset is duplicated because the first one is the file name
 # and the second one is tha actual class
 # controller Lists
@@ -8,6 +8,8 @@ UserController=UserViewset.UserViewset
 RegisterRequestController=RegisterRequestViewset.RequestViewset
 InterestController = InterestViewset.InterestViewset
 StudiesController = StudiesViewset.StudyViewset
+SwipeController = SwipeViewset.SwipeViewset
+MatchController = MatchViewset.MatchViewset
 
 login=UserController.as_view({"post" : "retrieveByEmail"})
 create_user=UserController.as_view({"post" : "create"})
@@ -26,6 +28,10 @@ list_studies = StudiesController.as_view({"get":"list"})
 retrieve_study = StudiesController.as_view({"get":"retrieve"})
 update_study = StudiesController.as_view({"put":"update"})
 list_users = UserController.as_view({"get": "list"})
+register_swipe = SwipeController.as_view({'post': 'register_swipe'})
+check_match = SwipeController.as_view({'get': 'check_match'})
+get_user_swipes = SwipeController.as_view({'get': 'get_user_swipes'})
+get_user_matches = MatchController.as_view({'get': 'get_user_matches'})
 
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
@@ -45,4 +51,8 @@ urlpatterns = [
     path("studies/save/", save_study), #Save or update user's study
     path("studies/retrieve/<int:pk>/", retrieve_study), #Retrieve study by user_id
     path("studies/update/", update_study), #Update user's study
+    path("swipes/register/", register_swipe),
+    path("swipes/check-match/", check_match),
+    path("swipes/user/<int:user_id>/", get_user_swipes),
+    path("matches/user/<int:user_id>/", get_user_matches),
 ]

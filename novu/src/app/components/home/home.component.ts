@@ -1,6 +1,7 @@
 import { Component, inject, afterNextRender } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { UserAPIService } from '../../services/user-api.service';
 
 interface Profile {
   id: number;
@@ -30,7 +31,11 @@ export class HomeComponent {
   dragX: number = 0;
   dragStartX: number = 0;
 
-  constructor() {
+  private likeAnimation: boolean = false;
+  private dislikeAnimation: boolean = false;
+
+
+  constructor(private userAPIService: UserAPIService) {
     afterNextRender(() => {
       this.http.get<Profile[]>('http://localhost:8000/api/users/list/').subscribe({
         next: (data) => {
@@ -54,8 +59,8 @@ export class HomeComponent {
     return `translateX(${this.dragX}px) rotate(${deg}deg)`;
   }
 
-  isLiking(): boolean { return this.dragX > 40; }
-  isDisliking(): boolean { return this.dragX < -40; }
+  isLiking(): boolean { return this.likeAnimation || this.dragX > 40; }
+  isDisliking(): boolean { return this.dislikeAnimation || this.dragX < -40; }
 
   onMouseDown(e: MouseEvent): void {
     this.isDragging = true;
@@ -101,20 +106,97 @@ export class HomeComponent {
     }
   }
 
-  like(): void {
-    this.dragX = 500;
+   like(): void {
+    const currentProfile = this.getCurrentProfile();
+    if(!currentProfile) return;
+
+    // Mostrar animación de like
+    this.likeAnimation = true;
     setTimeout(() => {
-      this.currentIndex++;
-      this.dragX = 0;
-    }, 350);
+      this.likeAnimation = false;
+    }, 300);
+
+    // Registrar el like en la base de datos
+    const token = this.userAPIService.decodeToken();
+    const originUserId = Number(token?.user_id);
+    const targetUserId = currentProfile.id;
+
+    if(originUserId){
+      this.userAPIService.registerSwipe(originUserId, targetUserId, true).subscribe({
+        next: (response: any) => {
+          console.log('Like registrado:', response);
+
+          // Si hay match, mostrar notificación
+          if(response.match_created){
+            this.showMatchNotification(currentProfile);
+          }
+          
+          // Resetear dragX y pasar al siguiente perfil
+          this.resetAndNext();
+        },
+        error: (err) => {
+          console.error('Error al registrar like:', err);
+          this.resetAndNext();
+        }
+      });
+    } else {
+      this.resetAndNext();
+    }
   }
 
   dislike(): void {
-    this.dragX = -500;
+    const currentProfile = this.getCurrentProfile();
+    if(!currentProfile) return;
+
+    // Mostrar animación de NOPE
+    this.dislikeAnimation = true;
     setTimeout(() => {
+      this.dislikeAnimation = false;
+    }, 300);
+
+    // Registrar el SKIP en la base de datos
+    const token = this.userAPIService.decodeToken();
+    const originUserId = token?.user_id;
+    const targetUserId = currentProfile.id;
+
+    if(originUserId){
+      this.userAPIService.registerSwipe(originUserId, targetUserId, false).subscribe({
+        next: (response) => {
+          console.log('kip registrado');
+          this.resetAndNext();
+        },
+        error: (err) => {
+          console.error('Error al registrar skip:', err);
+          this.resetAndNext();
+        }
+      });
+    } else {
+      this.resetAndNext();
+    }
+  }
+
+  //Metodo para resetear y pasar al siguiente perfil
+  private resetAndNext(): void{
+    this.dragX = 0;
+    this.nextProfile();
+  }
+
+  //Metodo para pasar al siguiente perfil
+  nextProfile(): void {
+    if(this.currentIndex < this.profiles.length -1){
       this.currentIndex++;
-      this.dragX = 0;
-    }, 350);
+    }else{
+      //No hay mas perfiles
+      console.log('No hay mas perfiles para mostrar')
+    }
+  }
+
+  //Mostrar notificación de match
+  showMatchNotification(profile: Profile): void{
+    // Usar setTimeout para evitar conflictos con la animacion
+    setTimeout(() => {
+      alert(`Hiciste match con ${profile.name}`);
+    }, 100);
   }
 
   reloadProfiles(): void {

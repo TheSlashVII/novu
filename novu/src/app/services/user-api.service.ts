@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http"
+
 @Injectable({
   providedIn: 'root'
 })
@@ -85,5 +86,33 @@ export class UserAPIService {
 
     isLoggedIn(): boolean {
         return !!this.getToken();
+    }
+
+    /**
+        * Registrar un swipe (like/skip) en la base de datos
+        * @param originUserId - ID del usuario que hace el swipe
+        * @param targetUserId - ID del usuario que recibe el swipe
+        * @param matched - true si es LIKE, false si es SKIP/NOPE
+    */
+
+    registerSwipe(originUserId: number, targetUserId: number, matched: boolean){
+        const ROUTE = `${this.baseServerURL}/swipes/register/`;
+        const data = {
+            origin_user_id: originUserId,
+            target_user_id: targetUserId,
+            matched: matched
+        };
+        return this.http.post(ROUTE, data);
+    }
+
+    /**
+        * Verificar si dos usuarios ya han hecho match
+        * @param userId - ID del usuario actual
+        * @param targetUserId - ID del otro usuario
+    */
+
+    checkMatch(userId: number, targetUserId: number){
+        const ROUTE = `http://localhost:${this.PORT}/matches/check/`;
+        return this.http.get(`${ROUTE}?user1=${userId}&user2=${targetUserId}`);
     }
 }
