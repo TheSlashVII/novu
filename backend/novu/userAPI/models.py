@@ -56,7 +56,7 @@ class User(models.Model):
     # preferences fields
     school_name=models.CharField(max_length=150, default='')
     gender=models.CharField(max_length=10, default='') # on django '' is equal to NULL
-    biography=models.CharField(max_length=150, default='')
+    # biography=models.CharField(max_length=150, default='')
     height=models.CharField(max_length=5,default='')
     date_of_birth=models.DateField()
     min_age=models.IntegerField(default=0)
