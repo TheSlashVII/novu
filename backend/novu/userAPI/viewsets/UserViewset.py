@@ -56,7 +56,7 @@ class UserViewset(viewsets.ViewSet):
         
 
     # to get a specific user based on primary key (To be confirmed)
-    @action(methods=["get", "post"], detail=False)
+    @action(methods=["get"], detail=False)
     def retrieveUserById(self, request, id=None):
         try:
             user = get_object_or_404(User, pk=id)

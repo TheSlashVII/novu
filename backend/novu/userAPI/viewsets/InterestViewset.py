@@ -1,9 +1,11 @@
 from django.shortcuts import get_object_or_404
 from ..serializers import InterestSerializer
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
 from django.http import JsonResponse
 from ..models import Interest
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.decorators import action
 
 
 class InterestViewset(viewsets.ModelViewSet):
@@ -11,6 +13,17 @@ class InterestViewset(viewsets.ModelViewSet):
     serializer_class = InterestSerializer
     lookup_field = "user_id"
     lookup_url_kwarg = "pk"
+    authentication_classes = [JWTAuthentication]
+    
+    
+    def get_permissions(self):    
+        if self.action in ['createFromUser', 'list', 'retrieveByEmail', "createFromAdmin"]:   # public routes | create Admin is Public for now 
+            permission_classes = [permissions.AllowAny]
+        elif self.action in ["retrieveStudyById", "saveStudy"]:  # Routes that require authentication
+            permission_classes = [permissions.IsAuthenticated]
+        else:                                    # PUT, PATCH, DELETE
+            permission_classes = [permissions.IsAuthenticated]
+        return [permission() for permission in permission_classes]
 
     #GET /api/interests/?user_id=1
     def list(self, request):
@@ -25,6 +38,7 @@ class InterestViewset(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     #POST /api/interests
+    @action(methods=["post"], detail=False)
     def saveInterest(self, request):
         user_id = request.data.get('user_id')
         interest_names = request.data.get('interests', [])

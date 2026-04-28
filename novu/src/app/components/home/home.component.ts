@@ -32,10 +32,14 @@ export class HomeComponent {
     isLoggedIn: boolean;
   constructor(private userAPI:UserAPIService, private router:Router) {
       this.isLoggedIn = this.userAPI.isLoggedIn();
-      const isTokenExpired = this.userAPI.isTokenExpired(this.userAPI.getToken()!) ? this.userAPI.isTokenExpired(this.userAPI.getToken()!) : true;
+      const isTokenExpired = this.userAPI.isTokenExpired(this.userAPI.getToken()!) != null ? this.userAPI.isTokenExpired(this.userAPI.getToken()!) : true;
       if (!this.isLoggedIn || isTokenExpired){
+          if (localStorage.getItem('token') != null) {
+              localStorage.removeItem('access_token');
+          }
           this.router.navigateByUrl('');
-          localStorage.removeItem('access_token');
+
+
       }
     afterNextRender(() => {
       this.http.get<Profile[]>('http://localhost:8000/api/users/list/').subscribe({

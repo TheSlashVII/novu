@@ -62,7 +62,7 @@ export class LoginComponent {
               // console.log(token)
               let route:string = token.is_new == true ? "/studies" : "/home";
                 this.isRestricted = token.is_restricted;
-              console.log(this.isRestricted);
+              // console.log(this.isRestricted);
               if(!this.isRestricted){
                   this.isRestricted = false;
                   this.router.navigateByUrl(route)
