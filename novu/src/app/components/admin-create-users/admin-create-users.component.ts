@@ -79,7 +79,9 @@ export class AdminCreateUsersComponent {
         }
         this.userAPIService.adminCreateUser(formData).subscribe((res) => console.log(res))
     }
-
+    toAdminPanel(){
+        this.router.navigateByUrl('/admin');
+    }
     /**
      * Function used to close out sessions
      */

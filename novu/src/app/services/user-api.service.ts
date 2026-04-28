@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from "@angular/common/http"
+import { HttpClient, HttpHeaders } from "@angular/common/http"
 import { Observable, tap } from 'rxjs';
 
 @Injectable({
@@ -11,39 +11,60 @@ export class UserAPIService {
 
   constructor(private http:HttpClient) { }
 
-  createRegisterRequest(data:any){
-    //headers = headers.append('enctype', 'multipart/form-data');
-    const ROUTE:string = `${this.baseServerURL}/create/request`;
+    private authHeaders(): { headers: HttpHeaders } {
+        return {
+            headers: new HttpHeaders({ "Authorization": "Bearer " + this.getToken() })
+        };
+    }
+
+
+  login(data:any){
+    const ROUTE:string = `${this.baseServerURL}/login/`;
     return this.http.post(ROUTE, data)
   }
-  deleteRegisterRequest(id:number){
-      const ROUTE:string = `${this.baseServerURL}/delete/request/${id}/`;
-      return this.http.delete(ROUTE)
-  }
-  login(data:any): Observable<any> {
-    const ROUTE:string = `${this.baseServerURL}/login/`;
-    return this.http.post(ROUTE, data).pipe(
-        tap((response: any) => {
-            if (response.access) {
-                this.saveToken(response.access);
-                //Guardar el user_id si viene en la respuesta
-                if (response.user_id) {
-                    localStorage.setItem('user_id', response.user_id.toString());
-                } else {
-                    const decoded = this.decodeToken();
-                    if (decoded && decoded.user_id) {
-                        localStorage.setItem('user_id', decoded.user_id.toString());
-                    }
-                }
-            }
-        })
-    );
-  }
+// register request functions
+
+    /**
+     * Function used to create a register request
+     * @param data
+     */
+    createRegisterRequest(data:any){
+        //headers = headers.append('enctype', 'multipart/form-data');
+        const ROUTE:string = `${this.baseServerURL}/create/request`;
+        return this.http.post(ROUTE, data)
+    }
+
+    /**
+     * function used to delete a register request
+     * @param id
+     */
+    deleteRegisterRequest(id:number){
+        const ROUTE:string = `${this.baseServerURL}/delete/request/${id}/`;
+        return this.http.delete(ROUTE, this.authHeaders())
+    }
+    /**
+     * Function used to list register requests
+     */
+  listRegisterRequests(){
+        const ROUTE:string = `${this.baseServerURL}/list/request/`;
+        console.log(localStorage.getItem("access_token"));
+        // console.log(this.isTokenExpired(localStorage.getItem("access_token")!));
+        return this.http.get(ROUTE, this.authHeaders())
+    }
   getRegisterRequestCount(){
       const ROUTE:string = `${this.baseServerURL}/count/request/`;
-      return this.http.get(ROUTE)
+      return this.http.get(ROUTE, this.authHeaders())
 
   }
+    /**
+     * Function used to get the details of a register request
+     * @param id
+     */
+    retrieveRegisterRequestDetails(id:any){
+        const ROUTE:string = `${this.baseServerURL}/detail/request/${id}`;
+        return this.http.get(ROUTE, this.authHeaders())
+    }
+// user management functions
 
     /**
      * Function to create users
@@ -57,30 +78,51 @@ export class UserAPIService {
       const ROUTE:string = `${this.baseServerURL}/create/`;
       return this.http.post(ROUTE, {name:name, surnames:surnames, email:email, password:password, date_of_birth:date_of_birth})
   }
+
+    /**
+     * Admin user creation
+     * @param data
+     */
   adminCreateUser(data:any){
       const ROUTE:string = `${this.baseServerURL}/admin/create/`;
       return this.http.post(ROUTE, data)
   }
 
-  getUserById(id:number | string){
-      const ROUTE:string = `${this.baseServerURL}/retrieve/${id}/`;
-      return this.http.get(ROUTE)
-  }
-  /*
-  * function used to list register requests
-   */
-  listRegisterRequests(){
-      const ROUTE:string = `${this.baseServerURL}/list/request`;
-      return this.http.get(ROUTE)
-  }
     /**
-     * Function used to get the details of a register request
+     * Function used to modify the restricted status of the user
+     * @param data
+     */
+  adminModifyRestrictedStatus(data:any){
+    const ROUTE:string = `${this.baseServerURL}/admin/user/modify/access/`;
+    return this.http.put(ROUTE, data, this.authHeaders())
+  }
+
+    /**
+     * Function used to get a user by its id
      * @param id
      */
-  retrieveRegisterRequestDetails(id:any){
-    const ROUTE:string = `${this.baseServerURL}/detail/request/${id}`;
-    return this.http.get(ROUTE)
+  getUserById(id:number | string){
+      const ROUTE:string = `${this.baseServerURL}/retrieve/${id}/`;
+      return this.http.get(ROUTE, this.authHeaders())
   }
+
+    /**
+     * Function used to search users
+     */
+  getUserByName(name:any){
+      const ROUTE:string = `${this.baseServerURL}/admin/user/search/`;
+      return this.http.post(ROUTE, {name:name} , this.authHeaders());
+  }
+
+
+    /**
+     * Function used to list all users available in the database
+     */
+  listAllUsers(){
+      const ROUTE:string = `${this.baseServerURL}/list/`;
+      return this.http.get(ROUTE)
+  }
+
   // JWT
     saveToken(token: string) {
         localStorage.setItem('access_token', token);
@@ -122,5 +164,9 @@ export class UserAPIService {
 
     isLoggedIn(): boolean {
         return !!this.getToken();
+    }
+    isTokenExpired(token: string): boolean {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.exp < Date.now() / 1000;
     }
 }

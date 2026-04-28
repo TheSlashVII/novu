@@ -1,0 +1,15 @@
+<main>
+    <div (click)="redirectHome()" class="inline-flex justify-between items-center mt-5 ml-5 cursor-pointer">
+        <img src="assets/Images/Novu_Logo.png" alt="Novu Logo" class="w-[5rem]">
+        <p class="font-[Poppins] font-black text-xl">novu</p>
+    </div>
+    <div class="flex justify-center items-center h-[30rem]">
+        <div class="p-5 mx-10 sm:mx-20 lg:mx-10">
+            <h1 class="font-[Poppins] font-black text-lg md:text-2xl">Se ha denegado la petición de registro</h1>
+            <div class="flex justify-center gap-3 mt-5">
+                <button (click)="redirectToRegisterRequestList()" class="hover:cursor-pointer hover:text-white px-5 py-2 bg-blue-500 rounded-2xl">Back to register requests</button>
+                <button (click)="redirectToAdminPanel()" class="hover:cursor-pointer hover:text-white px-5 py-2 bg-blue-500 rounded-2xl">Back to Admin Panel</button>
+            </div>
+        </div>
+    </div>
+</main>

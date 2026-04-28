@@ -72,9 +72,14 @@
               @if(formLogin.get('password')?.errors?.['minlength']){
                 <span class="text-red-500 text-xs block mt-1 ml-3">Mínimo 6 caracteres</span>
               }
+                @if (this.error != null) {
+                    <span class="text-red-500 text-xs block mt-1 ml-3">{{this.error}}</span>
+                }
             }
           </div>
-
+            @if (this.isRestricted) {
+                <span class="text-red-500 text-xs block mt-1 ml-3">This account is restricted. </span>
+            }
           <!-- Submit button -->
           <div class="pt-2">
             <button type="submit" [disabled]="!isFormReady || loading"

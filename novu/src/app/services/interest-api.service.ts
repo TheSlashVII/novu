@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -11,7 +11,14 @@ export class InterestApiService {
 
     baseServerURL:string = `http://localhost:${this.PORT}/api/users`;
     constructor(private http: HttpClient) {}
-
+    getToken(): string | null {
+        return localStorage.getItem('access_token');
+    }
+    private authHeaders(): { headers: HttpHeaders } {
+        return {
+            headers: new HttpHeaders({ "Authorization": "Bearer " + this.getToken() })
+        };
+    }
     //Gets all the interests availables
     getInterests(): Observable<{ id: number; name: string }[]> {
         return this.http.get<{ id: number; name: string }[]>(`${this.baseServerURL}/interests/`);
@@ -22,6 +29,6 @@ export class InterestApiService {
         return this.http.post(`${this.baseServerURL}/interests/save/`, {
             user_id: userId,
             interests: interestIds
-        });
+        }, this.authHeaders());
     }
 }

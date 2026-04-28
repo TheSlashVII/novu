@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import {Router} from '@angular/router';
 import {UserAPIService} from '../../services/user-api.service';
-// import {HttpResponse} from '@angular/common/module.d-CnjH8Dlt';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -15,11 +15,13 @@ export class LoginComponent {
   showPassword = false;
   loading = false;
   isLoggedIn:boolean;
+  isRestricted:boolean = false;
+  error: string | null = null;
     constructor(private router: Router, private userAPI:UserAPIService) {
         this.isLoggedIn = this.userAPI.isLoggedIn();
-        if (this.userAPI.isLoggedIn()) {
-            // this.router.navigateByUrl('interests');
 
+        if (this.userAPI.isLoggedIn()) {
+            this.router.navigateByUrl('home');
         }
     }
   formLogin = new FormGroup({
@@ -52,16 +54,33 @@ export class LoginComponent {
       console.log(this.formLogin.value);
     }, 2000);
      */
+      this.error = null;
 
       this.userAPI.login(this.formLogin.value).subscribe( res => {
-          // let response = new HttpResponse()
-          console.log(res)
           const token:any = res
-          this.userAPI.saveToken(token.access) // save the token inside the browser
           this.loading = false;
+          if(token.access !=null){
+              this.userAPI.saveToken(token.access) // save the token inside the browser
+              // console.log(token)
+              let route:string = token.is_new == true ? "/studies" : "/home";
+                this.isRestricted = token.is_restricted;
+              // console.log(this.isRestricted);
+              if(!this.isRestricted){
+                  this.isRestricted = false;
+                  this.router.navigateByUrl(route)
+              } else {
+                  // console.log(`this account is restricted. Status: ${this.isRestricted}`);
+                  localStorage.removeItem("access_token")
+              }
+
+          }
+          else {
+              this.error = "No account was found"
+          }
+
         }
       );
-    this.router.navigateByUrl("/studies")
+
   }
 
 }

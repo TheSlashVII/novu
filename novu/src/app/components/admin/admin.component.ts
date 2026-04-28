@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import {Router, RouterOutlet} from "@angular/router";
 import {UserAPIService} from '../../services/user-api.service';
-import {LoginComponent} from '../login/login.component';
 
 @Component({
   selector: 'app-admin',
@@ -13,19 +12,29 @@ import {LoginComponent} from '../login/login.component';
     standalone: true
 })
 export class AdminComponent {
-    /*
-    // this allows for only authenticated users with admin privilege  to enter this
+
+    // this allows for only authenticated users with admin privilege to enter the admin panel its child sites
     isLoggedIn: boolean;
     isAdmin: boolean = false;
     constructor(private userAPI:UserAPIService, private router: Router) {
         this.isLoggedIn = this.userAPI.isLoggedIn();
         if (this.isLoggedIn) {
             const token = this.decodeToken()
-            this.isAdmin = this.getAdminStatus(Number(token.user_id))
-        }
-        if (!this.isAdmin) {
+            const isTokenExpired = this.isTokenExpired(this.userAPI.getToken()!); // will check if the token is expired
+            console.log(isTokenExpired)
+
+            this.getAdminStatus(Number(token.user_id))
+            console.log(this.isAdmin)
+            // will deny access if you are not an authorized admin
+            if (isTokenExpired) {
+                this.router.navigateByUrl('/unauthorized');
+
+            }
+        } else{
             this.router.navigateByUrl('/unauthorized');
+            localStorage.removeItem('access_token');
         }
+
     }
 
     decodeToken(): any {
@@ -35,18 +44,18 @@ export class AdminComponent {
         return JSON.parse(atob(token.split('.')[1]));
     }
     getAdminStatus(id:number){
-        let status:boolean = false; // admin status
         this.userAPI.getUserById(id).subscribe((res:any) => {
-            let token = this.decodeToken();
-            console.log(res);
-            if (res.admin){
-                status = true;
-            } else {
-                status = false;
+            this.isAdmin = res.admin;
+            if (!this.isAdmin) {
+                this.router.navigateByUrl('/unauthorized');
             }
         })
-        return status;
+
+    }
+    isTokenExpired(token: string): boolean {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.exp < Date.now() / 1000;
     }
 
-     */
+
 }

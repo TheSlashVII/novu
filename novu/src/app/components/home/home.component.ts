@@ -1,6 +1,7 @@
-import { Component, inject, afterNextRender } from '@angular/core';
+import {Component, inject, afterNextRender, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import {UserAPIService} from '../../services/user-api.service';
 
 interface Profile {
   id: number;
@@ -18,7 +19,6 @@ interface Profile {
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
-  private router = inject(Router);
   private http = inject(HttpClient);
 
   profiles: Profile[] = [];
@@ -29,8 +29,18 @@ export class HomeComponent {
   isDragging: boolean = false;
   dragX: number = 0;
   dragStartX: number = 0;
+    isLoggedIn: boolean;
+  constructor(private userAPI:UserAPIService, private router:Router) {
+      this.isLoggedIn = this.userAPI.isLoggedIn();
+      const isTokenExpired = this.userAPI.isTokenExpired(this.userAPI.getToken()!) != null ? this.userAPI.isTokenExpired(this.userAPI.getToken()!) : true;
+      if (!this.isLoggedIn || isTokenExpired){
+          if (localStorage.getItem('token') != null) {
+              localStorage.removeItem('access_token');
+          }
+          this.router.navigateByUrl('');
 
-  constructor() {
+
+      }
     afterNextRender(() => {
       this.http.get<Profile[]>('http://localhost:8000/api/users/list/').subscribe({
         next: (data) => {
@@ -136,4 +146,6 @@ export class HomeComponent {
   goToProfile(): void { this.router.navigate(['/profile']); }
   goToDiscover(): void { this.router.navigate(['/discover']); }
   goToSearch(): void { this.router.navigate(['/search']); }
+
+
 }
