@@ -39,7 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'userAPI',
-    'corsheaders'
+    'corsheaders',
+    'channels',
+    'chat',
 ]
 
 MIDDLEWARE = [
@@ -92,6 +94,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'novu.wsgi.application'
+ASGI_APPLICATION = 'novu.asgi.application'
+
 
 
 # Database
@@ -150,3 +154,13 @@ STATICFILES_DIRS = [
     BASE_DIR / "photos",
     "/var/www/photos/",
 ]
+
+# Channels
+ASGI_APPLICATION = 'novu.asgi.application'
+
+# Usar capa en memoria para desarrollo
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}

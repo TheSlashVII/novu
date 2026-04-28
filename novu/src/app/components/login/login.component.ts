@@ -44,6 +44,8 @@ export class LoginComponent {
       return;
     }
     this.loading = true;
+
+  
     /*
     setTimeout(() => {
       this.loading = false;

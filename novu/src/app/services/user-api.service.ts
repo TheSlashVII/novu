@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http"
+import { HttpClient } from "@angular/common/http"
+import { Observable, tap } from 'rxjs';
+
 @Injectable({
   providedIn: 'root'
 })
 export class UserAPIService {
-  PORT: number = 8000 // django's port
+  private PORT: number = 8000 // django's port
+  private baseServerURL:string = `http://localhost:${this.PORT}/api/users`;
 
-  baseServerURL:string = `http://localhost:${this.PORT}/api/users`;
   constructor(private http:HttpClient) { }
 
   createRegisterRequest(data:any){
@@ -18,9 +20,24 @@ export class UserAPIService {
       const ROUTE:string = `${this.baseServerURL}/delete/request/${id}/`;
       return this.http.delete(ROUTE)
   }
-  login(data:any){
+  login(data:any): Observable<any> {
     const ROUTE:string = `${this.baseServerURL}/login/`;
-    return this.http.post(ROUTE, data)
+    return this.http.post(ROUTE, data).pipe(
+        tap((response: any) => {
+            if (response.access) {
+                this.saveToken(response.access);
+                //Guardar el user_id si viene en la respuesta
+                if (response.user_id) {
+                    localStorage.setItem('user_id', response.user_id.toString());
+                } else {
+                    const decoded = this.decodeToken();
+                    if (decoded && decoded.user_id) {
+                        localStorage.setItem('user_id', decoded.user_id.toString());
+                    }
+                }
+            }
+        })
+    );
   }
   getRegisterRequestCount(){
       const ROUTE:string = `${this.baseServerURL}/count/request/`;
@@ -73,14 +90,34 @@ export class UserAPIService {
         return localStorage.getItem('access_token');
     }
 
+    getUserId(): number | null {
+        const userId = localStorage.getItem('user_id');
+        if(userId) {
+            return parseInt(userId);
+        }
+        const decoded = this.decodeToken();
+        if(decoded && decoded.user_id) {
+            const id = parseInt(decoded.user_id);
+            localStorage.setItem('user_id', id.toString());
+            return id;
+        }
+        return null;
+    }
+
     logoutJWT() {
         localStorage.removeItem('access_token');
+        localStorage.removeItem('user_id');
     }
     decodeToken(): any {
         const token = this.getToken();
         if (!token) return null;
+        try {
+            return JSON.parse(atob(token.split('.')[1]));
+        } catch (e) {
+            console.error('Error decodificando toekn:', e);
+            return null;
+        }
         // JWT payload is the middle part, Base64 decoded
-        return JSON.parse(atob(token.split('.')[1]));
     }
 
     isLoggedIn(): boolean {

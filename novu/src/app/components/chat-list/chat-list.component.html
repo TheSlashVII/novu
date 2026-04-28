@@ -1,0 +1,32 @@
+<div class="chat-list">
+  <div class="chat-header">
+    <h1>Chats</h1>
+    <button class="new-chat-btn">✏️</button>
+  </div>
+
+  <div class="chat-items">
+    @for (chat of chats; track chat.id) {
+      <div class="chat-item" (click)="openChat(chat.id)">
+        <div class="avatar">
+          <img [src]="chat.avatar" [alt]="chat.name">
+          @if (chat.online) {
+            <span class="online-indicator"></span>
+          }
+        </div>
+        
+        <div class="chat-details">
+          <div class="top-row">
+            <span class="name">{{ chat.name }}</span>
+            <span class="time">{{ chat.lastMessageTime }}</span>
+          </div>
+          <div class="bottom-row">
+            <span class="last-message">{{ chat.lastMessage }}</span>
+            @if (chat.unreadCount > 0) {
+              <span class="unread-count">{{ chat.unreadCount }}</span>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

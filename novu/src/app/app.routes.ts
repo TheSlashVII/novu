@@ -18,6 +18,8 @@ import {AdminPostAcceptRequest} from './components/admin-post-accept-request/adm
 import {NotFoundComponent} from './components/not-found/not-found.component';
 import {UnauthorizedComponent} from './components/unauthorized/unauthorized';
 import {AdminCreateUsersComponent} from './components/admin-create-users/admin-create-users.component';
+import { ChatListComponent } from './components/chat-list/chat-list.component';
+import { ChatDetailComponent } from './components/chat-detail/chat-detail.component';
 
 
 export const routes: Routes = [
@@ -46,6 +48,21 @@ export const routes: Routes = [
         component: InterestsComponent
     },
     {
+        path: 'home',
+        component: HomeComponent
+    },{
+        path:'unauthorized',
+        component: UnauthorizedComponent
+    },
+    {
+        path: 'chats', component: ChatListComponent
+    },
+    {
+        path: 'chat/:id', component: ChatDetailComponent
+    },
+
+    //Route admin
+    {
     path: 'admin',
         component: AdminComponent,
         title: "Admin Panel",
@@ -64,15 +81,10 @@ export const routes: Routes = [
         ]
     },
     {
-        path: 'home',
-        component: HomeComponent
-    },{
-        path:'unauthorized',
-        component: UnauthorizedComponent
-    },{
+        path: '', component: WelcomeComponent
+    },
+    {
     path: '**',
         component: NotFoundComponent
-    }
-
-
+    },
 ];
