@@ -29,6 +29,7 @@ list_users = UserController.as_view({"get": "list"})
 test_api = UserController.as_view({"post" : "test"})
 admin_search_user = UserController.as_view({"post" : "retrieveByName"}) # functionality to search users by name
 admin_modify_access = UserController.as_view({"put" : "modifyUserAccess"})
+change_user_is_new = UserController.as_view({"put" : "updateIsNewStatus"}) # function to update the is_new status
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
     path("create/", create_user), # creates a user 
@@ -50,4 +51,5 @@ urlpatterns = [
     path("studies/save/", save_study), #Save or update user's study
     path("studies/retrieve/<int:pk>/", retrieve_study), #Retrieve study by user_id
     path("studies/update/", update_study), #Update user's study
+    path("update/status/<int:id>", change_user_is_new) # update is new status
 ]

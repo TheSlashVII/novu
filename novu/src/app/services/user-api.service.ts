@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http"
-import {Observable} from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
@@ -121,6 +120,10 @@ export class UserAPIService {
       const ROUTE:string = `${this.baseServerURL}/list/`;
       return this.http.get(ROUTE)
   }
+  updateIsUserNewStatus(id:number){
+    const ROUTE:string = `${this.baseServerURL}/update/status/${id}`;
+    return this.http.put(ROUTE,{is_new:0} ,this.authHeaders())
+  }
 
   // JWT
     saveToken(token: string) {
@@ -137,8 +140,7 @@ export class UserAPIService {
     decodeToken(): any {
         const token = this.getToken();
         if (!token) return null;
-        // JWT payload is the middle part, Base64 decoded
-        return JSON.parse(atob(token.split('.')[1]));
+        return JSON.parse(atob(token.split('.')[1])); // atob decodes base64 content
     }
 
     isLoggedIn(): boolean {
