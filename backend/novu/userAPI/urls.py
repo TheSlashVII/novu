@@ -1,6 +1,6 @@
 # from django.contrib import admin
 from django.urls import path, include
-from .viewsets import UserViewset, RegisterRequestViewset, InterestViewset, StudiesViewset, SwipeViewset, MatchViewset
+from .viewsets import UserViewset, RegisterRequestViewset, InterestViewset, StudiesViewset, SwipeViewset, MatchViewset, UserCardViewset, CardTabViewset
 # the UserViewset is duplicated because the first one is the file name
 # and the second one is tha actual class
 # controller Lists
@@ -10,6 +10,9 @@ InterestController = InterestViewset.InterestViewset
 StudiesController = StudiesViewset.StudyViewset
 SwipeController = SwipeViewset.SwipeViewset
 MatchController = MatchViewset.MatchViewset
+UserCardController = UserCardViewset.UserCardViewset
+CardTabController = CardTabViewset.CardTabViewset
+
 
 login=UserController.as_view({"post" : "retrieveByEmail"})
 create_user=UserController.as_view({"post" : "create"})
@@ -32,6 +35,15 @@ register_swipe = SwipeController.as_view({'post': 'register_swipe'})
 check_match = SwipeController.as_view({'get': 'check_match'})
 get_user_swipes = SwipeController.as_view({'get': 'get_user_swipes'})
 get_user_matches = MatchController.as_view({'get': 'get_user_matches'})
+list_user_card = UserCardController.as_view({"get": "list"})
+create_user_card = UserCardController.as_view({"post": "createUserCard"})
+retrieve_user_card = UserCardController.as_view({"get": "retrieve"})
+list_card_tabs = CardTabController.as_view({"get": "list"})
+create_card_tab = CardTabController.as_view({"post": "createCardTab"})
+retrieve_card_tab = CardTabController.as_view({"get": "retrieve"})
+update_card_tab = CardTabController.as_view({"put": "update"})
+patch_card_tab = CardTabController.as_view({"patch": "partial_update"})
+delete_card_tab = CardTabController.as_view({"delete": "destroy"})
 
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
@@ -55,4 +67,13 @@ urlpatterns = [
     path("swipes/check-match/", check_match),
     path("swipes/user/<int:user_id>/", get_user_swipes),
     path("matches/user/<int:user_id>/", get_user_matches),
+    path("cards/", list_user_card),
+    path("cards/create/", create_user_card),
+    path("cards/retrieve/<int:pk>/", retrieve_user_card),
+    path("tabs/", list_card_tabs),
+    path("tabs/create/", create_card_tab),
+    path("tabs/retrieve/<int:pk>/", retrieve_card_tab),
+    path("tabs/update/<int:pk>/", update_card_tab),
+    path("tabs/patch/<int:pk>/", patch_card_tab),
+    path("tabs/delete/<int:pk>/", delete_card_tab),
 ]
