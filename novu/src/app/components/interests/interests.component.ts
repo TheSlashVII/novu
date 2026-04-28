@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { InterestApiService } from '../../services/interest-api.service';
+import {UserAPIService} from '../../services/user-api.service';
 
 @Component({
   selector: 'app-interests',
@@ -10,9 +11,9 @@ import { InterestApiService } from '../../services/interest-api.service';
   styleUrl: './interests.component.css'
 })
 export class InterestsComponent {
-  private router = inject(Router);
-  private interestApi = inject(InterestApiService);
 
+  constructor(private userAPI:UserAPIService,private interestApi:InterestApiService, private router:Router) {
+  }
   interests: { id: number; label: string; selected: boolean }[] = [
     { id: 1, label: 'Ingenieria', selected: false },
     { id: 2, label: 'Tecnologia', selected: false },
@@ -39,11 +40,12 @@ export class InterestsComponent {
       .filter(i => i.selected)
       .map(i => i.label);
 
-    const userId = 1; 
+      const token = this.userAPI.decodeToken();
+    const userId = Number(token.user_id)
 
     this.interestApi.saveUserInterests(userId, selectedIds).subscribe({
       next: () => {
-      
+        this.userAPI.updateIsUserNewStatus(userId).subscribe(res=>console.log(res))
         this.router.navigate(['/home']);
       },
       error: (err) => {
