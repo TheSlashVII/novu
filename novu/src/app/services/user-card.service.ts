@@ -36,4 +36,11 @@ export class UserCardService {
   getUserCardById(userId: number): Observable<UserCard>{
     return this.http.get<UserCard>(`${this.baseServerURL}/cards/retrieve/${userId}/`);
   }
+
+  //GET /api/users/cards/with-tabs/?user_id=1
+  getCardWithTabs(userId: number): Observable<UserCard>{
+    return this.http.get<UserCard>(`${this.baseServerURL}/cards/with-tabs/`, {
+      params: {user_id: userId}
+    })
+  }
 }

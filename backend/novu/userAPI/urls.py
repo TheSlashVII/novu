@@ -38,12 +38,12 @@ get_user_matches = MatchController.as_view({'get': 'get_user_matches'})
 list_user_card = UserCardController.as_view({"get": "list"})
 create_user_card = UserCardController.as_view({"post": "createUserCard"})
 retrieve_user_card = UserCardController.as_view({"get": "retrieve"})
-list_card_tabs = CardTabController.as_view({"get": "list"})
-create_card_tab = CardTabController.as_view({"post": "createCardTab"})
-retrieve_card_tab = CardTabController.as_view({"get": "retrieve"})
-update_card_tab = CardTabController.as_view({"put": "update"})
-patch_card_tab = CardTabController.as_view({"patch": "partial_update"})
-delete_card_tab = CardTabController.as_view({"delete": "destroy"})
+list_card_tabs      = CardTabController.as_view({"get": "list"})
+create_card_tab     = CardTabController.as_view({"post": "createCardTab"})
+retrieve_card_tab   = CardTabController.as_view({"get": "retrieve"})
+update_card_tab     = CardTabController.as_view({"put": "update"})
+patch_card_tab      = CardTabController.as_view({"patch": "partial_update"})
+delete_card_tab     = CardTabController.as_view({"delete": "destroy"})
 
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
@@ -73,7 +73,7 @@ urlpatterns = [
     path("tabs/", list_card_tabs),
     path("tabs/create/", create_card_tab),
     path("tabs/retrieve/<int:pk>/", retrieve_card_tab),
-    path("tabs/update/<int:pk>/", update_card_tab),
-    path("tabs/patch/<int:pk>/", patch_card_tab),
-    path("tabs/delete/<int:pk>/", delete_card_tab),
+    path("tabs/update/<int:pk>/<int:id_section>/", update_card_tab),
+    path("tabs/patch/<int:pk>/<int:id_section>/", patch_card_tab),
+    path("tabs/delete/<int:pk>/<int:id_section>/", delete_card_tab),
 ]

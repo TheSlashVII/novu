@@ -108,12 +108,14 @@ export class AdminRegisterRequestDetailComponent {
                 this.userCard.createUserCard(res.id).subscribe((res) => {
                     console.log(res);
                     let tab: CardTab = {
-                        id: userId,
-                        card: res.user,
+                        id_section: userId,
+                        id_card: res.user,
                         body: 'This is the default card tab. Edit it to add more information about you!',
                         header: 'Default Card Tab',
+                        sub_header: 'A ',
                         tab_biography:
                             'This is the default biography. Edit it to add more information about you!',
+                        background_photo: 'A '
                     };
                     this.cardTab.createCardTab(userId, tab).subscribe((res) => {
                         console.log(res);

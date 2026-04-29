@@ -11,6 +11,18 @@ interface Profile {
   image: string;
 }
 
+interface CardTab {
+  id: number;
+  card: number;
+  header: string;
+  sub_header: string;
+  body: string;
+  tab_biography: string;
+  background_photo: string;
+}
+
+
+
 @Component({
   selector: 'app-home',
   standalone: true,

@@ -54,4 +54,42 @@ class UserCardViewset(viewsets.ModelViewSet):
             serializer = UserCardSerializer(user_card)
             return JsonResponse(serializer.data, safe=False)
 
+        # GET /api/users/cards/with-tabs/?user_id=1
+        def getCardWithTabs(self, request):
+            user_id = request.query_params.get('user_id')
+
+            if not user_id:
+                return Response(
+                    {'error':'Falta el user_id'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            if not User.objects.filter(id=user_id).exists():
+                return Response(
+                    {'error':f'No existe ningun usuario con id {user_id}'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+
+            user_card = UserCard.objects.prefetch_related('cardtab_set').get(user_id=user_id)
+
+            data = {
+                'user': user_card.user_id,
+                'amount_tabs': user_card.amount_tabs,
+                'tabs': [
+                    {
+                        'id_section': tab.id_section,
+                        'id_card': tab.id_card_id,
+                        'header': tab.header,
+                        'sub_header': tab.sub_header,
+                        'body': tab.body,
+                        'tab_biography': tab.tab_biography,
+                        'background_photo': tab.background_photo,
+                    }
+                    for tab in user_card.cardtab_set.all()
+                ]
+            }
+
+            return Response(data, status=status.HTTP_200_OK)
+
            
