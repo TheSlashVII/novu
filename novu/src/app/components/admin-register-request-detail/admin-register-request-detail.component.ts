@@ -112,7 +112,7 @@ export class AdminRegisterRequestDetailComponent {
                         id_card: res.user,
                         body: 'This is the default card tab. Edit it to add more information about you!',
                         header: 'Default Card Tab',
-                        sub_header: 'A ',
+                        sub_header: 'A ', 
                         tab_biography:
                             'This is the default biography. Edit it to add more information about you!',
                         background_photo: 'A '
@@ -144,3 +144,4 @@ export class AdminRegisterRequestDetailComponent {
         this.router.navigateByUrl('/admin/request');
     }
 }
+
