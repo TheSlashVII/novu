@@ -76,17 +76,19 @@ class UserViewset(viewsets.ViewSet):
             email = loginSerializer.validated_data["email"] 
             password = loginSerializer.validated_data["password"]
             try:
-                user = get_object_or_404(User, email=email) # user search
-            except Http404:
+                user = User.objects.get(email=email) # user search
+            except User.DoesNotExist:
                 # catch the error in case of the user not being found
                 return JsonResponse({"error": "No user with the same credentials was found"}, status=status.HTTP_404_NOT_FOUND)
             # compare the passwords inserted into the database and the ones queried by the user
             if check_password(password=password, encoded=user.password):
                 refresh = RefreshToken.for_user(user) # generate tokens for the user
                 # serialize the user
-                
-                isUserRestricted = not user.restricted
-                isUserNew = not user.is_new
+                print(f"USER PK: {user.pk}")
+                print(f"USER ID: {user.id}")
+                print(f"USER EMAIL: {user.email}")
+                isUserRestricted = user.restricted
+                isUserNew = user.is_new
                 # send the tokens to the user
                 return JsonResponse({
                     "access": str(refresh.access_token), # JWT Access token
@@ -156,6 +158,27 @@ class UserViewset(viewsets.ViewSet):
             user = get_object_or_404(User, pk=id)
         except Http404:
             return JsonResponse({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+    @action(detail=False, methods=["put"])
+    def updateIsNewStatus(self, request, id=None):
+        # expected parameters: {is_new:boolean} (integer 0 or 1) 
+        try:
+            user = get_object_or_404(User, pk=id)
+        except Http404:
+            return JsonResponse({"error" : "User not found"})
+        except:
+            return JsonResponse({"error":"Something went wrong"})
+        newStatus = request.data.get("is_new")
+        if(int(newStatus) == 1):
+            user.is_new = True
+        else:
+            user.is_new = False
+        
+        try:
+            user.save()
+        except:
+            return JsonResponse({"error" : "something went wrong"})
+        return JsonResponse({"message":"Updated status"}, status=status.HTTP_200_OK)
         
 
 

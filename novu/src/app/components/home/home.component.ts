@@ -32,6 +32,9 @@ export class HomeComponent {
     isLoggedIn: boolean;
   constructor(private userAPI:UserAPIService, private router:Router) {
       this.isLoggedIn = this.userAPI.isLoggedIn();
+        if(this.userAPI.getToken() == null){
+            this.router.navigateByUrl('');
+        }
       const isTokenExpired = this.userAPI.isTokenExpired(this.userAPI.getToken()!) != null ? this.userAPI.isTokenExpired(this.userAPI.getToken()!) : true;
       if (!this.isLoggedIn || isTokenExpired){
           if (localStorage.getItem('token') != null) {

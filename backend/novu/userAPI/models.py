@@ -8,6 +8,7 @@ from . import userManagers
 
 class User(AbstractBaseUser):
     # basic fields
+    id = models.AutoField(primary_key=True)
     name=models.CharField(max_length=200)
     surnames=models.CharField(max_length=200)
     email=models.CharField(max_length=200, unique=True)
@@ -38,7 +39,7 @@ class User(AbstractBaseUser):
     profile_pic.null = True
     max_distance_km.null = True
     REQUIRED_FIELDS = []
-    USERNAME_FIELD = 'email' 
+    USERNAME_FIELD = 'email' # field used to distinguish between users
     objects = userManagers.UserManager() # used to manage the user sess
 
 

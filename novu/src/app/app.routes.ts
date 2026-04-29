@@ -91,6 +91,10 @@ export const routes: Routes = [
             {
                 path:'restrict_user/detail/:id',
                 component: AdminRestrictUserDetailComponent,
+            },{
+                path:'delete_user',
+                component: AdminRestrictUserDetailComponent,
+                title:'Novu Admin - Delete User',
             }
         ]
     },
