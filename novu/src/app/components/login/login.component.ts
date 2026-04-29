@@ -65,13 +65,14 @@ export class LoginComponent {
               let route:string = token.is_new == true ? "/studies" : "/home";
                 this.isRestricted = token.is_restricted;
               // console.log(this.isRestricted);
-              if(!this.isRestricted){
-                  this.isRestricted = false;
-                  this.router.navigateByUrl(route)
-              } else {
-                  // console.log(`this account is restricted. Status: ${this.isRestricted}`);
-                  localStorage.removeItem("access_token")
-              }
+              // if(!this.isRestricted){
+              //     this.isRestricted = false;
+              //     this.router.navigateByUrl(route)
+              // } else {
+              //     // console.log(`this account is restricted. Status: ${this.isRestricted}`);
+              //     localStorage.removeItem("access_token")
+              // }
+              this.router.navigateByUrl(route)
 
           }
           else {
