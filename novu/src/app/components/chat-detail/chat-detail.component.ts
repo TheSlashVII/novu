@@ -111,13 +111,6 @@ export class ChatDetailComponent {
 
   sendMessage(): void {
     if (this.newMessage.trim() && this.isConnected()) {
-      const tempMessage: ChatMessage = {
-        message: this.newMessage,
-        sender_id: this.currentUserId,
-        sender_name: 'Yo',
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-      this.messages.update(msgs => [...msgs, tempMessage]);
       this.chatService.sendMessage(this.newMessage);
       this.newMessage = '';
       this.shouldScroll = true;

@@ -84,9 +84,6 @@ class UserViewset(viewsets.ViewSet):
             if check_password(password=password, encoded=user.password):
                 refresh = RefreshToken.for_user(user) # generate tokens for the user
                 # serialize the user
-                print(f"USER PK: {user.pk}")
-                print(f"USER ID: {user.id}")
-                print(f"USER EMAIL: {user.email}")
                 isUserRestricted = user.restricted
                 isUserNew = user.is_new
                 # send the tokens to the user

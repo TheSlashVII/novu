@@ -69,7 +69,7 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id', # id field from jwt
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # increase this
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=240),  # increase this
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'AUTH_HEADER_TYPES': ('Bearer',), 
 }

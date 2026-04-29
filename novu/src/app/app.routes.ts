@@ -28,12 +28,12 @@ import { ChatDetailComponent } from './components/chat-detail/chat-detail.compon
 
 
 export const routes: Routes = [
+    {   path: '',
+        component: WelcomeComponent
+    },
     {
         path: 'register',
         component: RegisterComponent
-    },
-    {   path: '',
-        component: WelcomeComponent
     },
     {
         path: 'login',

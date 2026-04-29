@@ -8,13 +8,9 @@
         <div class="user-name">{{ userName() }}</div>
         <div class="user-status">
           @if (isConnected()) {
-            @if (isOnline()) {
-              <span class="online">● En línea</span>
-            } @else {
-              <span class="offline">○ Desconectado</span>
-            }
+              <span class="online">● En línea</span> 
           } @else {
-            <span class="connecting">Conectando...</span>
+            <span class="connecting">○ Conectando...</span>
           }
         </div>
       </div>

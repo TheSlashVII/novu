@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { Subject } from 'rxjs';
+import { Subject, BehaviorSubject } from 'rxjs';
 import { UserAPIService } from './user-api.service';
 
 export interface ChatMessage {
@@ -19,25 +19,24 @@ export class ChatService {
   private socket$!: WebSocketSubject<any>;
   
   public messages$ = new Subject<ChatMessage>();
-  public connectionStatus$ = new Subject<boolean>();
+  public connectionStatus$ = new BehaviorSubject<boolean>(false); // ← BehaviorSubject
 
   connect(userId: number, otherUserId: number): void {
     const token = this.userAPI.getToken();
     
     if (!token) {
-      console.error('❌ No hay token de autenticación. Debes hacer login primero.');
+      console.error('❌ No hay token de autenticación.');
       this.connectionStatus$.next(false);
       return;
     }
     
     const wsUrl = `ws://localhost:8000/ws/chat/${userId}/${otherUserId}/?token=${token}`;
-    console.log('🔌 Conectando a WebSocket con token:', token.substring(0, 30) + '...');
     
     this.socket$ = webSocket({
       url: wsUrl,
       openObserver: {
         next: () => {
-          console.log('✅ WebSocket conectado exitosamente');
+          console.log('✅ WebSocket conectado');
           this.connectionStatus$.next(true);
         }
       },
@@ -66,19 +65,13 @@ export class ChatService {
       console.error('❌ No hay conexión WebSocket activa');
       return;
     }
-    
-    if (!message.trim()) {
-      return;
-    }
-    
+    if (!message.trim()) return;
     this.socket$.next({ message: message });
-    console.log('📤 Mensaje enviado:', message);
   }
 
   disconnect(): void {
     if (this.socket$) {
       this.socket$.complete();
-      console.log('🔌 WebSocket cerrado manualmente');
     }
   }
 }
