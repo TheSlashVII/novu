@@ -23,7 +23,7 @@
             </div>
             <!--List-->
 
-            <div class="flex flex-col gap-2">
+            <div class="overflow-y-auto h-100 flex flex-col gap-2">
                 @if(requests.length > 0){
                     @for (requests of requests; track requests.id_request) {
                         <div class="flex flex-row  bg-white py-3 px-5 sm:px-10 rounded-2xl">
@@ -43,7 +43,7 @@
 
             </div>
             <div class="flex justify-end">
-                <button (click)="goToAdminPanel()" class="hover:cursor-pointer max-w-[15rem] px-3 py-2 text-white rounded-4xl bg-[#ff6b6b]">Back to Admin Page</button>
+                <button (click)="goToAdminPanel()" class="hover:cursor-pointer max-w-[20rem] px-10 py-2 rounded-4xl bg-white font-[Poppins] font-bold">Back to Admin Page</button>
             </div>
 
         </div>

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import {Router} from '@angular/router';
 import {UserAPIService} from '../../services/user-api.service';
-import {HttpErrorResponse} from '@angular/common/http';
+import {Observable, Observer} from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -54,31 +54,33 @@ export class LoginComponent {
      */
       this.error = null;
 
-      this.userAPI.login(this.formLogin.value).subscribe( res => {
-          const token:any = res
-          this.loading = false;
-          if(token.access !=null){
-              this.userAPI.saveToken(token.access) // save the token inside the browser
-              // console.log(token)
-              let route:string = token.is_new == true ? "/studies" : "/home";
-                this.isRestricted = token.is_restricted;
-              // console.log(this.isRestricted);
-              if(!this.isRestricted){
-                  this.isRestricted = false;
-                  this.router.navigateByUrl(route)
+      this.userAPI.login(this.formLogin.value).subscribe({
+          next: res => {
+              const token: any = res
+              this.loading = false;
+              if (token.access != null) {
+                  this.userAPI.saveToken(token.access) // save the token inside the browser
+                  // console.log(token)
+                  let route: string = token.is_new == true ? "/studies" : "/home";
+                  this.isRestricted = token.is_restricted;
+                  // console.log(this.isRestricted);
+                  if (!this.isRestricted) {
+                      this.isRestricted = false;
+                      this.router.navigateByUrl(route)
+                  } else {
+                      // console.log(`this account is restricted. Status: ${this.isRestricted}`);
+                      localStorage.removeItem("access_token")
+                  }
+
               } else {
-                  // console.log(`this account is restricted. Status: ${this.isRestricted}`);
-                  localStorage.removeItem("access_token")
+                  this.loading = false;
+                  this.error = "Error while creating token";
               }
-
+          }, error: err => {
+              this.loading = false;
+              this.error = err;
           }
-          else {
-              this.error = "No account was found"
-          }
-
-        }
-      );
-
+      });
   }
 
 }

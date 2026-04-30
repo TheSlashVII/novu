@@ -99,8 +99,7 @@
       <!-- Grid 2x2 + 1 centrada -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         @for (feature of features; track feature.title) {
-          <div class="flex items-start gap-4 rounded-2xl border border-gray-100 p-6
-                      hover:shadow-md transition-all duration-300">
+          <div class="flex items-start gap-4 rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-all duration-300">
             <div class="shrink-0 w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center">
               @if (feature.icon === 'check') {
                 <svg class="w-5 h-5 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -141,9 +140,9 @@
           </div>
           <div>
             <h3 class="font-poppins font-bold text-sm text-gray-900 mb-1">
-              {{ features[4].title }}
+              {{ filterFeature.title }}
             </h3>
-            <p class="text-sm text-gray-400 leading-relaxed">{{ features[4].description }}</p>
+            <p class="text-sm text-gray-400 leading-relaxed">{{ filterFeature.description }}</p>
           </div>
         </div>
       </div>

@@ -64,12 +64,13 @@ export class WelcomeComponent {
       title: 'Chat integrado',
       description: 'Cuando hay match, podéis hablar directamente desde la app. Sencillo y sin fricciones.',
     },
-    {
+
+  ];
+  filterFeature:Feature = {
       icon: 'filter',
       title: 'Filtra por instituto, estudios o intereses',
       description: 'Encuentra estudiantes de tu misma universidad o de otras ciudades. Novu adapta los perfiles a tu contexto.',
-    },
-  ];
+  }
 
   goToLogin(): void {
     this.router.navigate(['/login']);
