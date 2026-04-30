@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http"
+import {Observable} from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
@@ -85,6 +86,10 @@ export class UserAPIService {
       const ROUTE:string = `${this.baseServerURL}/admin/create/`;
       return this.http.post(ROUTE, data)
   }
+  adminDeleteUser(id:number){
+      const ROUTE:string = `${this.baseServerURL}/admin/delete/${id}`;
+      return this.http.delete(ROUTE, this.authHeaders())
+  }
 
     /**
      * Function used to modify the restricted status of the user
@@ -93,6 +98,11 @@ export class UserAPIService {
   adminModifyRestrictedStatus(data:any){
     const ROUTE:string = `${this.baseServerURL}/admin/user/modify/access/`;
     return this.http.put(ROUTE, data, this.authHeaders())
+  }
+
+  adminGetActiveUserCount():Observable<{count:number}>{
+      const ROUTE:string = `${this.baseServerURL}/admin/count/`;
+      return this.http.get<{count:number}>(ROUTE, this.authHeaders());
   }
 
     /**

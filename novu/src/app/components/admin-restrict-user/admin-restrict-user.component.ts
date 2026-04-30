@@ -80,5 +80,8 @@ export class AdminRestrictUserComponent {
         this.userAPI.logoutJWT();
         this.router.navigateByUrl("");
     }
+    goToPanel(){
+        this.router.navigateByUrl('/admin');
+    }
 
 }

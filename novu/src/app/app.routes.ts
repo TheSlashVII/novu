@@ -23,15 +23,16 @@ import {AdminRestrictUserComponent} from './components/admin-restrict-user/admin
 import {
     AdminRestrictUserDetailComponent
 } from './components/admin-restrict-user-detail/admin-restrict-user-detail.component';
+import {AdminDeleteUserComponent} from './components/admin-delete-user/admin-delete-user.component';
 
 
 export const routes: Routes = [
+    {   path: '',
+        component: WelcomeComponent
+    },
     {
         path: 'register',
         component: RegisterComponent
-    },
-    {   path: '',
-        component: WelcomeComponent
     },
     {
         path: 'login',
@@ -76,7 +77,7 @@ export const routes: Routes = [
                 component: AdminRestrictUserDetailComponent,
             },{
                 path:'delete_user',
-                component: AdminRestrictUserDetailComponent,
+                component: AdminDeleteUserComponent,
                 title:'Novu Admin - Delete User',
             }
         ]

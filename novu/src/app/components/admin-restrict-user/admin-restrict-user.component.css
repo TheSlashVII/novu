@@ -1,0 +1,4 @@
+.user-container{
+    scrollbar-color: #4b5563 #1f2937;
+}
+.user-container::-webkit-scrollbar { display: none; }

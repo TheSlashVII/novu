@@ -16,12 +16,13 @@ export class AdminPanelComponent {
     * Amount of Pending register requests
     * */
     registerRequestsCount:number = 0;
-
+    activeUserCount:number = 0;
     constructor(private userAPI:UserAPIService, private router:Router) {
         this.userAPI.getRegisterRequestCount().subscribe(res => {
             console.log(res);
             this.setRegisterRequestCount(res)
         })
+        this.getActiveUserCount()
     }
 
     goToRegisterRequestList(){this.router.navigateByUrl("/admin/request")}
@@ -40,7 +41,15 @@ export class AdminPanelComponent {
     }
     goToRestrictUsers(){
         //this.router.navigateByUrl("/admin/restrict_users");
-        this.router.navigateByUrl("/restrict_user");
+        this.router.navigateByUrl("/admin/restrict_user");
+    }
+    goToDeleteUsers(){
+        this.router.navigateByUrl("/admin/delete_user");
+    }
+    getActiveUserCount(){
+        this.userAPI.adminGetActiveUserCount().subscribe(res => {
+            this.activeUserCount = res.count;
+        })
     }
 
 

@@ -1,15 +1,16 @@
 
 from django.shortcuts import get_object_or_404
-from ..serializers import UserSerializer, LoginSerializer, UserSearchSerializer
+from ..serializers import UserSerializer, LoginSerializer, UserSearchSerializer, UserProfileSerializer
 from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.http import JsonResponse, Http404
-from ..models import User
+from ..models import User, UserCard
 from django.contrib.auth.hashers import check_password, make_password
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from django.db.models import F
 # this is the equivalent to a controller
 """
 Documentation for viewsets: https://www.django-rest-framework.org/api-guide/viewsets/#example
@@ -18,16 +19,16 @@ Documentation for viewsets: https://www.django-rest-framework.org/api-guide/view
 class UserViewset(viewsets.ViewSet):
     # methods of a viewset
     # to list every model
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [JWTAuthentication] # type of authentication
     def list(self, request):
         queryset = User.objects.all()
         serializer = UserSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def get_permissions(self):
-        if self.action in ['createFromUser', 'list', 'retrieveByEmail', "createFromAdmin"]:   # public routes | create Admin is Public for now 
+        if self.action in ['createFromUser', 'list', 'retrieveByEmail', "createFromAdmin", "getMostLikedProfiles"]:   # public routes | create Admin is Public for now 
             permission_classes = [permissions.AllowAny]
-        elif self.action in ['retrieve', "retrieveUserById", 'test', "retrieveByName", "partial_update", "modifyUserAccess"]:  # Routes that require authentication
+        elif self.action in ['retrieve', "retrieveUserById", 'test', "retrieveByName", "partial_update", "modifyUserAccess", "destroy", "activeUsersCount"]:  # Routes that require authentication
             permission_classes = [permissions.IsAuthenticated]
         else:                                    # PUT, PATCH, DELETE
             permission_classes = [permissions.IsAuthenticated]
@@ -127,16 +128,7 @@ class UserViewset(viewsets.ViewSet):
             return JsonResponse({"message": "User was updated successfuly"})   # list function transforms data into a list. (Inserts the data inside an array)
         else:
             return JsonResponse({"error" : "Bad Request","message" : serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-        
-    @action(methods=["post"], detail=False)
-    def test(self, request):
-        return JsonResponse({"Authenticated" : True})
-    
-    @action(methods=["get"], detail=False)
-    def test2(self,request):
-        return JsonResponse({"Auth2":True})
-
-        
+            
     # to update a specific model 
     def update(self, request, pk=None):
         user = get_object_or_404(User, pk=pk)
@@ -149,12 +141,14 @@ class UserViewset(viewsets.ViewSet):
     def partial_update(self, request, pk=None):
         pass
 
+    """
     # update user
     def updateUser(self, request, id=None):
         try:
             user = get_object_or_404(User, pk=id)
         except Http404:
             return JsonResponse({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+    """        
         
     @action(detail=False, methods=["put"])
     def updateIsNewStatus(self, request, id=None):
@@ -177,8 +171,19 @@ class UserViewset(viewsets.ViewSet):
             return JsonResponse({"error" : "something went wrong"})
         return JsonResponse({"message":"Updated status"}, status=status.HTTP_200_OK)
         
-
-
+    @action(detail=False, methods=["get"])
+    def activeUsersCount(self,request):
+        userCount = User.objects.all().count() # returns the amount of users available at the database currently
+        return JsonResponse({"count" : userCount})
+    
+    #function to get the most liked profiles
+    @action(detail=False, methods=["get"])
+    def getMostLikedProfiles(self, request):
+        #userList = User.objects.all().order_by(F("likes").desc()) # F allows us to select specific columns and run special functions on them like using desc to return the objects in descending order
+        # serializer = UserSerializer(userList, many=True)
+        users = User.objects.select_related('usercard').prefetch_related(
+        'usercard__cardtab_set').order_by(F('likes').desc())
+        return JsonResponse({"join_test" : list(UserProfileSerializer(users, many=True).data)}, safe=False)
 
     # to eliminate a user
     def destroy(self, request, id=None):

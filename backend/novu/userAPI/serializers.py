@@ -91,8 +91,20 @@ class LoginSerializer(serializers.Serializer):
 class UserSearchSerializer(serializers.Serializer):
     name=serializers.CharField()
 
+# serializer to show user cards easier when fetching for them
+class UserProfileSerializer(serializers.ModelSerializer):
+    amount_tabs = serializers.IntegerField(source='usercard.amount_tabs')
+    tabs = CardTabSerializer(source='usercard.cardtab_set', many=True)
 
-
+    class Meta:
+        model = User
+        # these are the fields for the SQL join query
+        fields = [
+            'id', 'name', 'surnames', 'email',
+            'gender', 'biography', 'height', 'date_of_birth',
+            'profile_pic', 'likes', 'school_name',
+            'amount_tabs', 'tabs',   
+        ]
 
 
 
