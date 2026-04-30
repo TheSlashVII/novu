@@ -17,9 +17,9 @@ export class UserAPIService {
     }
 
 
-  login(data:any){
+  login(data:any):Observable<{access:string, refresh:string, is_new:boolean, is_restricted:boolean, error:string}>  {
     const ROUTE:string = `${this.baseServerURL}/login/`;
-    return this.http.post(ROUTE, data)
+    return this.http.post<{access:string, refresh:string, is_new:boolean, is_restricted:boolean, error:string}> (ROUTE, data)
   }
 // register request functions
 

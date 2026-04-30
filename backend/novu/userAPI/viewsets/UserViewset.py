@@ -80,7 +80,7 @@ class UserViewset(viewsets.ViewSet):
                 user = User.objects.get(email=email) # user search
             except User.DoesNotExist:
                 # catch the error in case of the user not being found
-                return JsonResponse({"error": "No user with the same credentials was found"}, status=status.HTTP_404_NOT_FOUND)
+                return JsonResponse({"error": "No se encontró un usuario con las mismas credenciales"}, status=status.HTTP_401_UNAUTHORIZED)
             # compare the passwords inserted into the database and the ones queried by the user
             if check_password(password=password, encoded=user.password):
                 refresh = RefreshToken.for_user(user) # generate tokens for the user
@@ -94,7 +94,7 @@ class UserViewset(viewsets.ViewSet):
                     "is_new" : isUserNew, # send the boolean value of is new to skip the login process
                     "is_restricted" : isUserRestricted # sends a boolean of the status of the user if he is restricted to access the app
                 }, status=status.HTTP_200_OK)
-            return JsonResponse({"error": "No user with the same credentials was found"}, status=status.HTTP_401_UNAUTHORIZED)
+            return JsonResponse({"error": "No se encontró un usuario con las mismas credenciales"}, status=status.HTTP_401_UNAUTHORIZED)
         return JsonResponse({"error": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
     
     # function used to search the name of the user

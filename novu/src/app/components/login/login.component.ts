@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import {Router} from '@angular/router';
 import {UserAPIService} from '../../services/user-api.service';
-import {Observable, Observer} from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -78,7 +77,8 @@ export class LoginComponent {
               }
           }, error: err => {
               this.loading = false;
-              this.error = err;
+              this.error = err.error.error;
+              console.log(err)
           }
       });
   }
