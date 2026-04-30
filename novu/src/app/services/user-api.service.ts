@@ -137,6 +137,9 @@ export class UserAPIService {
 
   // JWT
     saveToken(token: string) {
+      if(this.getToken() != null ){
+          this.logoutJWT()
+      }
         localStorage.setItem('access_token', token);
     }
 

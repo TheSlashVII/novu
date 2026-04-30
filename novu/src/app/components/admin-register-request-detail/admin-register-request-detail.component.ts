@@ -76,7 +76,8 @@ export class AdminRegisterRequestDetailComponent {
         return path;
     }
     checkStudentIdImage(){
-        window.open(this.getStudentSelfieImage(), "_blank");
+        const path = this.getStudentSelfieImage()
+        window.open(path, "_blank");
     }
     checkStudentIdSelfieImage(){
         window.open(this.registerRequest.photo_id_selfie, "_blank");

@@ -6,7 +6,8 @@ from django.http import JsonResponse, Http404
 from ..models import Request
 from rest_framework.decorators import action
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
+import os
+from pathlib import Path
 # Register request controller
 class RequestViewset(viewsets.ModelViewSet):
     queryset = Request.objects.all()
@@ -81,21 +82,17 @@ class RequestViewset(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    # to delete a specific request
-    def destroy(self,request,id=None):
-        try:
-            register_request = get_object_or_404(Request, pk=id)
-        except Http404:
-            return JsonResponse({"Error": "Error while processing the endpoint"}, status=status.HTTP_400_BAD_REQUEST)
-        register_request.delete()
-        return JsonResponse(
-            {"message": f"Request {id} deleted successfully."},
-            status = status.HTTP_204_NO_CONTENT
-        )
+
     @action(methods=["delete"], detail=False)
     def deleteRequest(self,request,id=None):
+        BASE_DIR = Path(__file__).resolve().parent.parent.parent  # points to novu root dir
         try:
             register_request = get_object_or_404(Request, pk=id)
+            # delete the files used in the register request
+            selfie = str(BASE_DIR / str(register_request.photo_id_selfie))
+            idCard = str(BASE_DIR / str(register_request.photo_student_id))
+            os.remove(selfie)
+            os.remove(idCard)
         except Http404:
             return JsonResponse({"Error": "Error while processing the endpoint"}, status=status.HTTP_400_BAD_REQUEST)
         register_request.delete()

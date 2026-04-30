@@ -26,9 +26,9 @@ class UserViewset(viewsets.ViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def get_permissions(self):
-        if self.action in ['createFromUser', 'list', 'retrieveByEmail', "createFromAdmin", "getMostLikedProfiles"]:   # public routes | create Admin is Public for now 
+        if self.action in ['createFromUser', 'list', 'retrieveByEmail', "createFromAdmin"]:   # public routes | create Admin is Public for now 
             permission_classes = [permissions.AllowAny]
-        elif self.action in ['retrieve', "retrieveUserById", 'test', "retrieveByName", "partial_update", "modifyUserAccess", "destroy", "activeUsersCount"]:  # Routes that require authentication
+        elif self.action in ['retrieve', "retrieveUserById", 'test', "retrieveByName", "partial_update", "modifyUserAccess", "destroy", "activeUsersCount", "getMostLikedProfiles"]:  # Routes that require authentication
             permission_classes = [permissions.IsAuthenticated]
         else:                                    # PUT, PATCH, DELETE
             permission_classes = [permissions.IsAuthenticated]
@@ -191,10 +191,9 @@ class UserViewset(viewsets.ViewSet):
             user = get_object_or_404(User, pk=id)
         except Http404:
             return JsonResponse({"error": "User Not found"}, status=status.HTTP_400_BAD_REQUEST)
+        except OSError: # treat error in case it tries to delete a file that does not exist
+            return JsonResponse({"message" : "User deleted", "warning" : "attempted to delete a non-existing file"}, status=status.HTTP_204_NO_CONTENT)
         user.delete()
-        return Response(
-            {"message": "User deleted"},
-            status=status.HTTP_204_NO_CONTENT
-        )
+        return Response({"message": "User deleted"}, status=status.HTTP_204_NO_CONTENT)
 
     
