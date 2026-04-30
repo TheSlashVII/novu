@@ -29,6 +29,7 @@ list_users = UserController.as_view({"get": "list"})
 test_api = UserController.as_view({"post" : "test"})
 admin_search_user = UserController.as_view({"post" : "retrieveByName"}) # functionality to search users by name
 admin_modify_access = UserController.as_view({"put" : "modifyUserAccess"})
+change_user_is_new = UserController.as_view({"put" : "updateIsNewStatus"}) # function to update the is_new status
 change_user_is_new = UserController.as_view({"put" : "updateIsNewStatus"}) # function to update the user's is_new status
 admin_delete_user = UserController.as_view({"delete": "destroy"})
 admin_count_active_users = UserController.as_view({"get" : "activeUsersCount"})
@@ -53,6 +54,7 @@ urlpatterns = [
     path("studies/save/", save_study), #Save or update user's study
     path("studies/retrieve/<int:pk>/", retrieve_study), #Retrieve study by user_id
     path("studies/update/", update_study), #Update user's study
+    path("update/status/<int:id>", change_user_is_new), # update is new status
     path("update/status/<int:id>", change_user_is_new), # update is new status
     path("admin/delete/<int:id>", admin_delete_user), # deletes users
     path("admin/count/", admin_count_active_users), # counts users in the database

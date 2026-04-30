@@ -79,6 +79,8 @@ class UserViewset(viewsets.ViewSet):
             try:
                 user = User.objects.get(email=email) # user search
             except User.DoesNotExist:
+                user = User.objects.get(email=email) # user search
+            except User.DoesNotExist:
                 # catch the error in case of the user not being found
                 return JsonResponse({"error": "No se encontró un usuario con las mismas credenciales"}, status=status.HTTP_401_UNAUTHORIZED)
             # compare the passwords inserted into the database and the ones queried by the user
