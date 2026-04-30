@@ -1,26 +1,28 @@
 import { Component } from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {UserAPIService} from '../../services/user-api.service';
-
+import { ActivatedRoute, Router } from '@angular/router';
+import { UserAPIService } from '../../services/user-api.service';
+import { UserCardService } from '../../services/user-card.service';
+import { CardTabService } from '../../services/card-tab.service';
+import { CardTab } from '../../services/card-tab.service';
 export interface registerRequestInterface {
-    id_request:number,
-    name:string,
-    surnames:string,
-    email:string,
-    password:string,
-    date_of_birth:string,
-    photo_student_id:string,
-    photo_id_selfie:string,
-    id_student:string | null,
-    status:string,
-    submitted_at:string,
+    id_request: number;
+    name: string;
+    surnames: string;
+    email: string;
+    password: string;
+    date_of_birth: string;
+    photo_student_id: string;
+    photo_id_selfie: string;
+    id_student: string | null;
+    status: string;
+    submitted_at: string;
 }
 
 @Component({
-  selector: 'app-admin-register-request-detail',
-  imports: [],
-  templateUrl: './admin-register-request-detail.component.html',
-  styleUrl: './admin-register-request-detail.component.css'
+    selector: 'app-admin-register-request-detail',
+    imports: [],
+    templateUrl: './admin-register-request-detail.component.html',
+    styleUrl: './admin-register-request-detail.component.css',
 })
 /*
 * {
@@ -38,30 +40,35 @@ export interface registerRequestInterface {
 }
 * */
 export class AdminRegisterRequestDetailComponent {
-    email:string="user@example.com";
-    registerRequest:registerRequestInterface;
-    constructor(private router: Router, activatedRoute: ActivatedRoute, private userAPI:UserAPIService) {
+    email: string = 'user@example.com';
+    registerRequest: registerRequestInterface;
+    constructor(
+        private router: Router,
+        activatedRoute: ActivatedRoute,
+        private userAPI: UserAPIService,
+        private userCard: UserCardService,
+        private cardTab: CardTabService
+    ) {
         // to get the id inserted by the route on the get request
-        this.registerRequest = this.requestInitializer()
+        this.registerRequest = this.requestInitializer();
 
-        activatedRoute.paramMap.subscribe(param => {
-            const id = param.get("id");
-            userAPI.retrieveRegisterRequestDetails(id).subscribe(res => {
-                this.setRegisterRequest(res)
-            })
-        })
-
+        activatedRoute.paramMap.subscribe((param) => {
+            const id = param.get('id');
+            userAPI.retrieveRegisterRequestDetails(id).subscribe((res) => {
+                this.setRegisterRequest(res);
+            });
+        });
     }
-    setRegisterRequest(registerRequest:any){
+    setRegisterRequest(registerRequest: any) {
         this.registerRequest = registerRequest;
-        console.log(this.registerRequest)
+        console.log(this.registerRequest);
     }
     /*
-    * This function is to manage in the case where the OCR can't read the student ID
-    * */
-    getStudentId(){
-        if(this.registerRequest.id_student == null){
-            return "unavailable";
+     * This function is to manage in the case where the OCR can't read the student ID
+     * */
+    getStudentId() {
+        if (this.registerRequest.id_student == null) {
+            return 'unavailable';
         }
         return this.registerRequest.id_student;
     }
@@ -79,49 +86,70 @@ export class AdminRegisterRequestDetailComponent {
         const path = this.getStudentSelfieImage()
         window.open(path, "_blank");
     }
-    checkStudentIdSelfieImage(){
-        window.open(this.registerRequest.photo_id_selfie, "_blank");
+    checkStudentIdSelfieImage() {
+        window.open(this.registerRequest.photo_id_selfie, '_blank');
     }
     deleteRequest(id:number){
         this.userAPI.deleteRegisterRequest(id).subscribe()
         this.goToDeniedRequest()
     }
 
-    createUser(){
+    createUser() {
         let data = {
-            name:this.registerRequest.name,
-            surnames:this.registerRequest.surnames,
-            email:this.registerRequest.email,
-            password:this.registerRequest.password,
-            date_of_birth:this.registerRequest.date_of_birth
-        }
-        this.userAPI.createUser(data.name, data.surnames, data.email, data.password, data.date_of_birth).subscribe({
-            next: ()=>{
-                this.goToAcceptedRequest()
-            },
-            error: ()=>{
-                console.log("error creating user");
-            }
-        })
-
+            name: this.registerRequest.name,
+            surnames: this.registerRequest.surnames,
+            email: this.registerRequest.email,
+            password: this.registerRequest.password,
+            date_of_birth: this.registerRequest.date_of_birth,
+        };
+        this.userAPI
+            .createUser(
+                data.name,
+                data.surnames,
+                data.email,
+                data.password,
+                data.date_of_birth
+            )
+            .subscribe((res: any) => {
+                console.log(res);
+                let userId = res.id;
+                this.deleteRequest(this.registerRequest.id_request);
+                this.userCard.createUserCard(res.id).subscribe((res) => {
+                    console.log(res);
+                    let tab: CardTab = {
+                        id_section: userId,
+                        id_card: res.user,
+                        body: 'This is the default card tab. Edit it to add more information about you!',
+                        header: 'Default Card Tab',
+                        sub_header: 'A ',
+                        tab_biography:
+                            'This is the default biography. Edit it to add more information about you!',
+                        background_photo: 'A '
+                    };
+                    this.cardTab.createCardTab(userId, tab).subscribe((res) => {
+                        console.log(res);
+                        this.router.navigateByUrl('/admin/request');
+                    });
+                });
+            });
     }
 
-    requestInitializer(){
+    requestInitializer() {
         return {
-            id_request:-1,
-            name:"",
-            surnames:"",
-            email:"",
-            password:"",
-            date_of_birth:"",
-            photo_student_id:"",
-            photo_id_selfie:"",
-            id_student:null,
-            status:"",
-            submitted_at:"",
-        }
+            id_request: -1,
+            name: '',
+            surnames: '',
+            email: '',
+            password: '',
+            date_of_birth: '',
+            photo_student_id: '',
+            photo_id_selfie: '',
+            id_student: null,
+            status: '',
+            submitted_at: '',
+        };
     }
-    goToRequestList(){
+    goToRequestList() {
         this.router.navigateByUrl('/admin/request');
     }
     goToAcceptedRequest(){
@@ -130,7 +158,5 @@ export class AdminRegisterRequestDetailComponent {
     goToDeniedRequest(){
         this.router.navigateByUrl('/admin/post_deny');
     }
-
-
 
 }

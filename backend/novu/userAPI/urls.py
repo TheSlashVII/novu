@@ -1,6 +1,6 @@
 # from django.contrib import admin
 from django.urls import path, include
-from .viewsets import UserViewset, RegisterRequestViewset, InterestViewset, StudiesViewset
+from .viewsets import UserViewset, RegisterRequestViewset, InterestViewset, StudiesViewset, SwipeViewset, MatchViewset, UserCardViewset, CardTabViewset
 # the UserViewset is duplicated because the first one is the file name
 # and the second one is tha actual class
 # controller Lists
@@ -8,6 +8,11 @@ UserController=UserViewset.UserViewset
 RegisterRequestController=RegisterRequestViewset.RequestViewset
 InterestController = InterestViewset.InterestViewset
 StudiesController = StudiesViewset.StudyViewset
+SwipeController = SwipeViewset.SwipeViewset
+MatchController = MatchViewset.MatchViewset
+UserCardController = UserCardViewset.UserCardViewset
+CardTabController = CardTabViewset.CardTabViewset
+
 
 login=UserController.as_view({"post" : "retrieveByEmail"})
 create_user=UserController.as_view({"post" : "createFromUser"})
@@ -34,6 +39,20 @@ change_user_is_new = UserController.as_view({"put" : "updateIsNewStatus"}) # fun
 admin_delete_user = UserController.as_view({"delete": "destroy"})
 admin_count_active_users = UserController.as_view({"get" : "activeUsersCount"})
 count_most_liked_users = UserController.as_view({"get" : "getMostLikedProfiles"})
+register_swipe = SwipeController.as_view({'post': 'register_swipe'})
+check_match = SwipeController.as_view({'get': 'check_match'})
+get_user_swipes = SwipeController.as_view({'get': 'get_user_swipes'})
+get_user_matches = MatchController.as_view({'get': 'get_user_matches'})
+list_user_card = UserCardController.as_view({"get": "list"})
+create_user_card = UserCardController.as_view({"post": "createUserCard"})
+retrieve_user_card = UserCardController.as_view({"get": "retrieve"})
+list_card_tabs = CardTabController.as_view({"get": "list"})
+create_card_tab = CardTabController.as_view({"post": "createCardTab"})
+retrieve_card_tab = CardTabController.as_view({"get": "retrieve"})
+update_card_tab = CardTabController.as_view({"put": "update"})
+patch_card_tab = CardTabController.as_view({"patch": "partial_update"})
+delete_card_tab = CardTabController.as_view({"delete": "destroy"})
+
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
     path("create/", create_user), # creates a user 
@@ -58,6 +77,18 @@ urlpatterns = [
     path("update/status/<int:id>", change_user_is_new), # update is new status
     path("admin/delete/<int:id>", admin_delete_user), # deletes users
     path("admin/count/", admin_count_active_users), # counts users in the database
-    path("count/most_liked", count_most_liked_users)
-
+    path("count/most_liked", count_most_liked_users),
+    path("swipes/register/", register_swipe),
+    path("swipes/check-match/", check_match),
+    path("swipes/user/<int:user_id>/", get_user_swipes),
+    path("matches/user/<int:user_id>/", get_user_matches),
+    path("cards/", list_user_card),
+    path("cards/create/", create_user_card),
+    path("cards/retrieve/<int:pk>/", retrieve_user_card),
+    path("tabs/", list_card_tabs),
+    path("tabs/create/", create_card_tab),
+    path("tabs/retrieve/<int:pk>/", retrieve_card_tab),
+    path("tabs/update/<int:pk>/<int:id_section>/", update_card_tab),
+    path("tabs/patch/<int:pk>/<int:id_section>/", patch_card_tab),
+    path("tabs/delete/<int:pk>/<int:id_section>/", delete_card_tab),
 ]

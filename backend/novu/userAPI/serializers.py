@@ -11,15 +11,18 @@ class UserSerializer(serializers.ModelSerializer):
         model=User
         fields='__all__'
 
-class UserCardSerializer(serializers.ModelSerializer):
-    class Meta:
-        model=UserCard
-        fields='__all__'
 
 class CardTabSerializer(serializers.ModelSerializer):
     class Meta:
         model=CardTab
         fields='__all__'
+
+
+class UserCardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=UserCard
+        fields='__all__'
+
 
 class StudySerializer(serializers.ModelSerializer):
     class Meta:

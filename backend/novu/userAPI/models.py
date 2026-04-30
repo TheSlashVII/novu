@@ -54,6 +54,7 @@ class User(AbstractBaseUser):
 """
 class User(models.Model):
     # basic fields
+    id=models.BigAutoField(primary_key=True)
     name=models.CharField(max_length=200)
     surnames=models.CharField(max_length=200)
     email=models.CharField(max_length=200, unique=True)
@@ -61,7 +62,7 @@ class User(models.Model):
     # preferences fields
     school_name=models.CharField(max_length=150, default='')
     gender=models.CharField(max_length=10, default='') # on django '' is equal to NULL
-    biography=models.CharField(max_length=150, default='')
+    # biography=models.CharField(max_length=150, default='')
     height=models.CharField(max_length=5,default='')
     date_of_birth=models.DateField()
     min_age=models.IntegerField(default=0)
@@ -99,13 +100,14 @@ class UserCard(models.Model):
 # card_tab table
 # it represents each tab for an user card
 class CardTab(models.Model):
-    card=models.ForeignKey(UserCard, on_delete=models.CASCADE)
+    id_section=models.IntegerField(null=False, default=1) # this is to identify the section number of the tab, for example 1, 2, 3, etc. It is not the primary key because it can be repeated for different users
+    id_card=models.ForeignKey(UserCard, on_delete=models.CASCADE, db_column="id_card" , null=False, default=1) # db_column is for changing the name of the column at the database.
     body=models.CharField(max_length=200)
     header=models.CharField(max_length=50)
     sub_header=models.CharField(max_length=50)
     tab_biography=models.CharField(max_length=100)
     background_photo=models.TextField()
-
+    pk=models.CompositePrimaryKey("id_section", "id_card") # Fix to define multiple columns as primary keys
     class Meta:
         db_table='Card_tab'
 
