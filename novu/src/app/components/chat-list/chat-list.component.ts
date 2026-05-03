@@ -1,6 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { afterNextRender, Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { UserAPIService } from '../../services/user-api.service';
 
 interface ChatPreview {
   id: number;
@@ -9,7 +11,6 @@ interface ChatPreview {
   lastMessageTime: string;
   avatar: string;
   unreadCount: number;
-  online: boolean;
 }
 
 @Component({
@@ -22,48 +23,42 @@ interface ChatPreview {
 
 export class ChatListComponent {
   private router = inject(Router);
+  private http= inject(HttpClient);
+  private userAPI = inject(UserAPIService);
 
-  chats: ChatPreview[] = [
-    {
-      id: 1,
-      name: 'Jamie',
-      lastMessage: '3 New messages...',
-      lastMessageTime: '',
-      avatar: 'https://randomuser.me/api/portraits/women/1.jpg',
-      unreadCount: 3,
-      online: true
-    },
-    {
-      id: 2,
-      name: 'Vicky',
-      lastMessage: 'Sent 40 minutes ago',
-      lastMessageTime: '40 min',
-      avatar: 'https://randomuser.me/api/portraits/women/2.jpg',
-      unreadCount: 0,
-      online: false
-    },
-    {
-      id: 3,
-      name: 'Carlos',
-      lastMessage: '¿Nos vemos mañana?',
-      lastMessageTime: '2h',
-      avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
-      unreadCount: 1,
-      online: true
-    },
-    {
-      id: 4,
-      name: 'Ana',
-      lastMessage: 'Gracias por todo!',
-      lastMessageTime: '5h',
-      avatar: 'https://randomuser.me/api/portraits/women/3.jpg',
-      unreadCount: 0,
-      online: false
+  chats: ChatPreview[] = [];
+  loading: boolean = true;
+  error: string = '';
+
+  constructor() {
+  afterNextRender(() => {
+    const userId = this.userAPI.getUserId();
+    console.log('userId:', userId);
+    
+    if (!userId) {
+      this.router.navigate(['/login']);
+      return;
     }
-  ];
+
+    console.log('Llamando a:', `http://localhost:8000/api/chat/conversations/${userId}/`);
+
+    this.http.get<ChatPreview[]>(`http://localhost:8000/api/chat/conversations/${userId}/`)
+      .subscribe({
+        next: (data) => {
+          console.log('Datos recibidos:', data);
+          this.chats = data;
+          this.loading = false;
+        },
+        error: (err) => {
+          console.error('Error:', err);
+          this.error = 'No se pudieron cargar las conversaciones.';
+          this.loading = false;
+        }
+      });
+  });
+}
 
   openChat(userId: number): void {
     this.router.navigate(['/chat', userId]);
   }
-  
 }

@@ -107,11 +107,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def save_message(self, sender_id, recipient_id, content):
         try:
+            print(f"🔍 Buscando match entre {sender_id} y {recipient_id}")
             # Búsqueda corregida
             match = Match.objects.filter(
                 (models.Q(user1_id=sender_id) & models.Q(user2_id=recipient_id)) | 
                 (models.Q(user1_id=recipient_id) & models.Q(user2_id=sender_id))
             ).first()
+
+            print(f"🔍 Match encontrado: {match}")
             
             if not match:
                 print(f"❌ No se encontró un Match para {sender_id} y {recipient_id}")
@@ -127,4 +130,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return message
         except Exception as e:
             print(f"❌ Error guardando mensaje: {e}")
+            import traceback
+            traceback.print_exc()
             return None
