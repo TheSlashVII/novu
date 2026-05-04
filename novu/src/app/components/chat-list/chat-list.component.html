@@ -6,46 +6,44 @@
 
   <div class="chat-items">
 
-    @if (loading) {
-      <div class="flex flex-col items-center gap-4 py-10">
-        <div class="w-10 h-10 rounded-full border-4 border-violet-200
-                    border-t-violet-600 animate-spin"></div>
-        <p class="text-gray-400 text-sm">Cargando conversaciones...</p>
+    @if (loading()) {
+  <div class="flex flex-col items-center gap-4 py-10">
+    <div class="w-10 h-10 rounded-full border-4 border-violet-200
+                border-t-violet-600 animate-spin"></div>
+    <p class="text-gray-400 text-sm">Cargando conversaciones...</p>
+  </div>
+
+} @else if (error()) {
+  <div class="text-center py-10">
+    <p class="text-rose-500 text-sm">{{ error() }}</p>
+  </div>
+
+} @else if (chats().length === 0) {
+  <div class="text-center py-10">
+    <p class="text-gray-400 text-sm">No tienes conversaciones todavía</p>
+  </div>
+
+} @else {
+  @for (chat of chats(); track chat.id) {
+    <div class="chat-item" (click)="openChat(chat.id)">
+      <div class="avatar">
+        <img [src]="chat.avatar || 'https://ui-avatars.com/api/?name=' + chat.name + '&background=7c3aed&color=fff'"
+             [alt]="chat.name">
       </div>
-
-    } @else if (error) {
-      <div class="text-center py-10">
-        <p class="text-rose-500 text-sm">{{ error }}</p>
-      </div>
-
-    } @else if (chats.length === 0) {
-      <div class="text-center py-10">
-        <p class="text-gray-400 text-sm">No tienes conversaciones todavía</p>
-      </div>
-
-    } @else {
-      @for (chat of chats; track chat.id) {
-        <div class="chat-item" (click)="openChat(chat.id)">
-          <div class="avatar">
-            <img [src]="chat.avatar || 'https://ui-avatars.com/api/?name=' + chat.name + '&background=7c3aed&color=fff'"
-                 [alt]="chat.name">
-          </div>
-
-          <div class="chat-details">
-            <div class="top-row">
-              <span class="name">{{ chat.name }}</span>
-              <span class="time">{{ chat.lastMessageTime }}</span>
-            </div>
-            <div class="bottom-row">
-              <span class="last-message">{{ chat.lastMessage }}</span>
-              @if (chat.unreadCount > 0) {
-                <span class="unread-count">{{ chat.unreadCount }}</span>
-              }
-            </div>
-          </div>
+      <div class="chat-details">
+        <div class="top-row">
+          <span class="name">{{ chat.name }}</span>
+          <span class="time">{{ chat.lastMessageTime }}</span>
         </div>
-      }
-    }
-
+        <div class="bottom-row">
+          <span class="last-message">{{ chat.lastMessage }}</span>
+          @if (chat.unreadCount > 0) {
+            <span class="unread-count">{{ chat.unreadCount }}</span>
+          }
+        </div>
+      </div>
+    </div>
+  }
+}
   </div>
 </div>

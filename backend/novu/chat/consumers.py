@@ -65,6 +65,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if not message:
             return
         
+        print(f"👤 Usuario autenticado ID: {self.user.id}")
+        print(f"👤 user1_id: {self.user1_id}, user2_id: {self.user2_id}")
+        
         # Determinar el destinatario
         recipient_id = self.user2_id if self.user.id == self.user1_id else self.user1_id
         

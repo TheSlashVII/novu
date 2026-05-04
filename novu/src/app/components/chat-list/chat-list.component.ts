@@ -1,4 +1,4 @@
-import { afterNextRender, Component, inject, OnInit } from '@angular/core';
+import { Component, inject, afterNextRender, signal} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -26,14 +26,14 @@ export class ChatListComponent {
   private http= inject(HttpClient);
   private userAPI = inject(UserAPIService);
 
-  chats: ChatPreview[] = [];
-  loading: boolean = true;
-  error: string = '';
+  chats = signal<ChatPreview[]>([]);
+  loading = signal<boolean>(true);
+  error = signal<string>('');
 
   constructor() {
-  afterNextRender(() => {
-    const userId = this.userAPI.getUserId();
-    console.log('userId:', userId);
+    afterNextRender(() => {
+      const userId = this.userAPI.getUserId();
+      console.log('userId:', userId);
     
     if (!userId) {
       this.router.navigate(['/login']);
@@ -46,13 +46,13 @@ export class ChatListComponent {
       .subscribe({
         next: (data) => {
           console.log('Datos recibidos:', data);
-          this.chats = data;
-          this.loading = false;
+          this.chats.set(data);
+          this.loading.set(false);
         },
         error: (err) => {
           console.error('Error:', err);
-          this.error = 'No se pudieron cargar las conversaciones.';
-          this.loading = false;
+          this.error.set('No se pudieron cargar las conversaciones.');
+          this.loading.set(false);
         }
       });
   });

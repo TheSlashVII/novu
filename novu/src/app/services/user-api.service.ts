@@ -157,14 +157,30 @@ export class UserAPIService {
     decodeToken(): any {
         const token = this.getToken();
         if (!token) return null;
-        return JSON.parse(atob(token.split('.')[1])); // atob decodes base64 content
+        try {
+            const base64 = token.split('.')[1]
+                .replace(/-/g, '+')
+                .replace(/_/g, '/');
+            return JSON.parse(atob(base64));
+        } catch (e) {
+            console.error('Error codificando token:', e);
+            return null;
+        }
     }
 
     isLoggedIn(): boolean {
         return !!this.getToken();
     }
+    
     isTokenExpired(token: string): boolean {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.exp < Date.now() / 1000;
+        try {
+            const base64 = token.split('.')[1]
+                .replace(/-/g, '+')
+                .replace(/_/g, '/');        
+            const payload = JSON.parse(atob(base64));
+            return payload.exp < Date.now() / 1000;
+            } catch (e) {
+                return true;
+            }
     }
 }
