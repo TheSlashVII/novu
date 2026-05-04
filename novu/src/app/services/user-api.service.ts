@@ -150,6 +150,16 @@ export class UserAPIService {
         const ROUTE:string = `${this.baseServerURL}/age/update/${id}`;
         return this.http.patch(ROUTE,{age:age} ,this.authHeaders())
     }
+
+    /**
+     * Function used to update a user's gender
+     * @param id
+     * @param gender
+     */
+    updateUserGender(id:number, gender:string){
+        const ROUTE:string = `${this.baseServerURL}/gender/update/${id}`;
+        return this.http.patch(ROUTE, {gender:gender} ,this.authHeaders())
+    }
     // JWT
     saveToken(token: string) {
       if(this.getToken() != null ){
