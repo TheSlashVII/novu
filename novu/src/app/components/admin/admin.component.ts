@@ -25,7 +25,7 @@ export class AdminComponent {
 
             this.getAdminStatus(Number(token.user_id))
             console.log(this.isAdmin)
-            // will deny access if you are not an authorized admin
+            // will deny access if you are not an authorized admin 
             if (isTokenExpired) {
                 this.router.navigateByUrl('/unauthorized');
 

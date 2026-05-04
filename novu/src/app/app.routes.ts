@@ -25,10 +25,14 @@ import {
 } from './components/admin-restrict-user-detail/admin-restrict-user-detail.component';
 import {AdminDeleteUserComponent} from './components/admin-delete-user/admin-delete-user.component';
 import {CardCreationComponent} from './components/card-creation/card-creation.component';
+import { ChatListComponent } from './components/chat-list/chat-list.component';
+import { ChatDetailComponent } from './components/chat-detail/chat-detail.component';
+
 
 export const routes: Routes = [
     {   path: '',
-        component: WelcomeComponent
+        component: WelcomeComponent,
+        title: "Novu - Home"
     },
     {
         path: 'register',
@@ -51,6 +55,21 @@ export const routes: Routes = [
         path: 'interests',
         component: InterestsComponent
     },
+    {
+        path: 'home',
+        component: HomeComponent
+    },{
+        path:'unauthorized',
+        component: UnauthorizedComponent
+    },
+    {
+        path: 'chats', component: ChatListComponent
+    },
+    {
+        path: 'chat/:id', component: ChatDetailComponent
+    },
+
+    //Route admin
     {
     path: 'admin',
         component: AdminComponent,
@@ -81,21 +100,15 @@ export const routes: Routes = [
                 title:'Novu Admin - Delete User',
             }
         ]
-    },
-    {
-        path: 'home',
-        component: HomeComponent,
-        title: "Novu - Home",
     },{
         path: 'card_creation',
         component: CardCreationComponent,
     },{
         path:'unauthorized',
         component: UnauthorizedComponent
-    },{
+    },
+    {
     path: '**',
         component: NotFoundComponent
-    }
-
-
+    },
 ];

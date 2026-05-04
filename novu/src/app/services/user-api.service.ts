@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http"
-import {Observable} from 'rxjs';
+import { HttpClient, HttpHeaders } from "@angular/common/http"
+import { Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserAPIService {
-  PORT: number = 8000 // django's port
+  private PORT: number = 8000 // django's port
+  private baseServerURL:string = `http://localhost:${this.PORT}/api/users`;
 
-  baseServerURL:string = `http://localhost:${this.PORT}/api/users`;
   constructor(private http:HttpClient) { }
 
     private authHeaders(): { headers: HttpHeaders } {
@@ -148,21 +148,52 @@ export class UserAPIService {
         return localStorage.getItem('access_token');
     }
 
+    getUserId(): number | null {
+        const userId = localStorage.getItem('user_id');
+        if(userId) {
+            return parseInt(userId);
+        }
+        const decoded = this.decodeToken();
+        if(decoded && decoded.user_id) {
+            const id = parseInt(decoded.user_id);
+            localStorage.setItem('user_id', id.toString());
+            return id;
+        }
+        return null;
+    }
+
     logoutJWT() {
         localStorage.removeItem('access_token');
+        localStorage.removeItem('user_id');
     }
     decodeToken(): any {
         const token = this.getToken();
         if (!token) return null;
-        return JSON.parse(atob(token.split('.')[1])); // atob decodes base64 content
+        try {
+            const base64 = token.split('.')[1]
+                .replace(/-/g, '+')
+                .replace(/_/g, '/');
+            return JSON.parse(atob(base64));
+        } catch (e) {
+            console.error('Error codificando token:', e);
+            return null;
+        }
     }
 
     isLoggedIn(): boolean {
         return !!this.getToken();
     }
+    
     isTokenExpired(token: string): boolean {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.exp < Date.now() / 1000;
+        try {
+            const base64 = token.split('.')[1]
+                .replace(/-/g, '+')
+                .replace(/_/g, '/');        
+            const payload = JSON.parse(atob(base64));
+            return payload.exp < Date.now() / 1000;
+            } catch (e) {
+                return true;
+            }
     }
 
     /**

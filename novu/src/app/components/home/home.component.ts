@@ -238,7 +238,7 @@ export class HomeComponent {
     });
   }
 
-  goToChat(): void { this.router.navigate(['/chat']); }
+  goToChat(): void { this.router.navigate(['/chats']); }
   goToProfile(): void { this.router.navigate(['/profile']); }
   goToDiscover(): void { this.router.navigate(['/discover']); }
   goToSearch(): void { this.router.navigate(['/search']); }
