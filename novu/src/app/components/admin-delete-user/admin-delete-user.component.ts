@@ -16,12 +16,12 @@ export class AdminDeleteUserComponent {
     searchBar = new FormGroup({
         name: new FormControl(''),
     })
-    pageCount:number = 0;
+
     constructor(private userAPI:UserAPIService, private router: Router) {
         this.userAPI.listAllUsers().subscribe((res:any) => {
             this.results = res;
         })
-        this.pageCount = this.getPageNumber()
+
     }
 
     logout(){
@@ -48,18 +48,15 @@ export class AdminDeleteUserComponent {
         this.userAPI.adminDeleteUser(id).subscribe({
             next: (res)=> {
                 console.log(res)
-                this.router.navigateByUrl("/admin/delete_user")
+                this.userAPI.listAllUsers().subscribe((res:any) => {
+                    this.results = res;
+                })
+                //this.router.navigateByUrl("/admin/delete_user")
             },
             error: err => {
                 console.log(err)
             }
         })
-    }
-    getPageNumber(){
-        if(this.results.length > 0){
-            return this.results.length / 7;
-        }
-        return 0;
     }
     goToPanel(){
         this.router.navigateByUrl('/admin');

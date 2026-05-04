@@ -64,7 +64,7 @@ class CardTabViewset(viewsets.ModelViewSet):
         data['id_card'] = user_card.user_id
         # to store background photo inside the backend
         photoInfo = {"user_id": data['id_card'], "url": data['background_photo'], "visible":True}
-        imageSerializer = PhotoSerializer(photoInfo)
+        imageSerializer = PhotoSerializer(data=photoInfo)
         if imageSerializer.is_valid():
             imageSerializer.save()
             

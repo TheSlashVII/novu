@@ -89,9 +89,23 @@ export class AdminRegisterRequestDetailComponent {
     checkStudentIdSelfieImage() {
         window.open(this.registerRequest.photo_id_selfie, '_blank');
     }
-    deleteRequest(id:number){
-        this.userAPI.deleteRegisterRequest(id).subscribe()
-        this.goToDeniedRequest()
+
+    /**
+     * Deletes a register request after denial or approval
+     * @param id user id
+     * @param redirect should the function redirect to the postDenial page
+     */
+    deleteRequest(id:number, redirect:boolean = false){
+        this.userAPI.deleteRegisterRequest(id).subscribe({
+            next: ()=>{
+                if(redirect){
+                    this.goToDeniedRequest()
+                }
+            }, error: err => {
+                console.log(err);
+            }
+        })
+
     }
 
     createUser() {
@@ -161,6 +175,7 @@ export class AdminRegisterRequestDetailComponent {
         this.router.navigateByUrl('/admin/post_accept');
     }
     goToDeniedRequest(){
+
         this.router.navigateByUrl('/admin/post_deny');
     }
 
