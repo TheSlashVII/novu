@@ -1,9 +1,9 @@
 from django.shortcuts import get_object_or_404
-from ..serializers import CardTabSerializer
+from ..serializers import CardTabSerializer, PhotoSerializer
 from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
 from django.http import JsonResponse
-from ..models import CardTab, UserCard, User
+from ..models import CardTab, UserCard, User, Photo
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.decorators import action
 class CardTabViewset(viewsets.ModelViewSet):
@@ -12,9 +12,9 @@ class CardTabViewset(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication] # type of authentication
     
     def get_permissions(self):
-        if self.action in ["createCardTab",]:   # public routes | create Admin is Public for now 
+        if self.action in ["createCardTab","partial_update"]:   # public routes | create Admin is Public for now 
             permission_classes = [permissions.AllowAny]
-        elif self.action in ["retrieve" , "update", "destroy", "partial_update"]:  # Routes that require authentication
+        elif self.action in ["retrieve" , "update", "destroy"]:  # Routes that require authentication
             permission_classes = [permissions.IsAuthenticated]
         else:                                    # PUT, PATCH, DELETE
             permission_classes = [permissions.IsAuthenticated]
@@ -61,8 +61,14 @@ class CardTabViewset(viewsets.ModelViewSet):
 
         data = request.data.copy()
         data['id_section'] = current_tab_id
-        data['card'] = user_card.user_id
-
+        data['id_card'] = user_card.user_id
+        # to store background photo inside the backend
+        photoInfo = {"user_id": data['id_card'], "url": data['background_photo'], "visible":True}
+        imageSerializer = PhotoSerializer(photoInfo)
+        if imageSerializer.is_valid():
+            imageSerializer.save()
+            
+        
         serializer = CardTabSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
@@ -94,7 +100,19 @@ class CardTabViewset(viewsets.ModelViewSet):
 
     # PATCH /api/tabs/<pk>/
     def partial_update(self, request, pk=None, id_section=None):
-        tab = get_object_or_404(CardTab, id_card__user_id=pk, id_section=id_section)
+        try:
+            tab = get_object_or_404(CardTab, id_card__user_id=pk, id_section=id_section)
+        except:
+            return JsonResponse({"user not found"}, status=status.HTTP_404_NOT_FOUND)
+        # to save the foto
+        reqData = request.data.copy()
+        photoInfo = {"user_id": pk, "url": reqData['background_photo'], "visible":True}
+        imageSerializer = PhotoSerializer(data=photoInfo)
+        
+        if imageSerializer.is_valid():
+            imageSerializer.save()
+        newPhoto = str(Photo.objects.filter(user_id=pk).last().url)
+        request.data["background_photo"] = newPhoto
         serializer = CardTabSerializer(tab, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()

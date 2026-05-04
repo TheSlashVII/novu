@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {CardTab} from '../../services/card-tab.service';
 
 @Component({
   selector: 'app-card-creation',
@@ -11,7 +12,7 @@ import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
   styleUrl: './card-creation.component.css'
 })
 export class CardCreationComponent {
-
+    choosePhoto:string = "Elige una foto para subir";
     cardTitle: string = 'Tu titulo irá aquí';
     cardSubtitle: string = 'Tu subtitulo irá aquí';
     cardBiography: string = 'Tu biografía irá aquí';
@@ -24,6 +25,7 @@ export class CardCreationComponent {
         photo:         new FormControl<File | null>(null),
     });
 
+
     get cardTitleValue()     { return this.form.get('cardTitle')!; }
     get cardSubtitleValue()  { return this.form.get('cardSubtitle')!; }
     get cardAgeValue()       { return this.form.get('cardAge')!; }
@@ -34,11 +36,13 @@ export class CardCreationComponent {
     onPhotoChange(event: Event) {
         const file = (event.target as HTMLInputElement).files?.[0] ?? null;
         this.form.patchValue({ photo: file });
+        this.choosePhoto = "Una foto de fondo ha sido elegida"
     }
 
     onSubmit() {
         if (this.form.invalid) return;
         console.log(this.form.value);
+
     }
 
     updateValue($event:any, fieldName:string):void{

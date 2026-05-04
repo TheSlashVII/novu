@@ -17,6 +17,7 @@ class User(AbstractBaseUser):
     school_name=models.CharField(max_length=150, default='')
     gender=models.CharField(max_length=10, default='') # on django '' is equal to NULL
     height=models.CharField(max_length=5,default='')
+    age=models.IntegerField(null=True)
     date_of_birth=models.DateField()
     min_age=models.IntegerField(default=0)
     max_age=models.IntegerField()

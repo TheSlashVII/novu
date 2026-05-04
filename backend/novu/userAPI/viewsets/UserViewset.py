@@ -141,6 +141,14 @@ class UserViewset(viewsets.ViewSet):
     # to update partially a new model
     def partial_update(self, request, pk=None):
         pass
+    def updateUserAge(self, request, pk=None):
+        try:
+            user = get_object_or_404(User, pk=pk)
+        except Http404:
+            JsonResponse({"user not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        
+        pass
 
     """
     # update user
