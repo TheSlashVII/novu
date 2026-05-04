@@ -55,7 +55,7 @@ class UserCardViewset(viewsets.ModelViewSet):
             )
 
         user_card = UserCard.objects.create(user_id=user_id)
-        serializer = UserCardSerializer(user_card)
+        serializer = UserCardSerializer(data=user_card)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         # GET /api/cards/<pk>/

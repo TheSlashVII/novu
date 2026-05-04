@@ -4,12 +4,12 @@ from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.http import JsonResponse, Http404
-from ..models import User, UserCard, Block
+from ..models import User, UserCard, Block, Swipe
 from django.contrib.auth.hashers import check_password, make_password
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from django.db.models import F # used to select fields and to execute additional functionality on the columns
+from django.db.models import F, Q # used to select fields and to execute additional functionality on the columns
 # this is the equivalent to a controller
 """
 Documentation for viewsets: https://www.django-rest-framework.org/api-guide/viewsets/#example
@@ -299,5 +299,5 @@ class UserViewset(viewsets.ViewSet):
             },
             "profiles": list(serializer.data)
         },
-        safe=False,
-    )
+            safe=False,
+        )

@@ -121,14 +121,19 @@ export class AdminRegisterRequestDetailComponent {
                         id_card: res.user,
                         body: 'This is the default card tab. Edit it to add more information about you!',
                         header: 'Default Card Tab',
-                        sub_header: 'A ', 
+                        sub_header: 'A ',
                         tab_biography:
                             'This is the default biography. Edit it to add more information about you!',
                         background_photo: 'A '
                     };
-                    this.cardTab.createCardTab(userId, tab).subscribe((res) => {
-                        console.log(res);
-                        this.goToAcceptedRequest()
+                    this.cardTab.createCardTab(userId, tab).subscribe( {
+                        next: value => {
+                            console.log(value);
+                            this.goToAcceptedRequest()
+                        }, error:value => {
+                            console.log(value);
+                        }
+
                     });
                 });
             });

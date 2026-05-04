@@ -45,20 +45,28 @@ export class CardCreationComponent {
     onSubmit() {
         if (this.form.invalid) return;
         console.log(this.form.value);
+        const token = this.userAPI.decodeToken()
         const tab:CardTab ={
 
-            background_photo: '',
+            background_photo: this.form.value.photo?.name!,
             body: '',
-            header: '',
-            id_card: 0,
-            id_section: 0,
-            sub_header: '',
-            tab_biography: ''
-
+            header: this.form.value.cardTitle!,
+            id_card: Number(token.user_id),
+            id_section: 1, // will always point the first card tab made
+            sub_header: this.form.value.cardSubtitle!,
+            tab_biography: this.form.value.cardBiography!
         }
         console.log(this.form.value.photo?.name);
 
-        // this.cardAPI.patchCardTab()
+        this.cardAPI.patchCardTab(Number(token.user_id), 1, tab).subscribe({
+            next: value =>{
+                this.router.navigateByUrl("/home")
+            },
+            error: err => {
+                console.log(err);
+            }
+
+        })
 
     }
 
