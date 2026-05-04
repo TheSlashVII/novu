@@ -19,6 +19,7 @@ export class CardCreationComponent {
     cardSubtitle: string = 'Tu subtitulo irá aquí';
     cardBiography: string = 'Tu biografía irá aquí';
     cardAge: string | number = '';
+    name: string = '';
     form = new FormGroup({
         cardTitle:     new FormControl('', [Validators.required, Validators.maxLength(50)]),
         cardSubtitle:  new FormControl('', [Validators.required, Validators.maxLength(50)]),
@@ -28,6 +29,13 @@ export class CardCreationComponent {
     });
 
     constructor(private userAPI:UserAPIService, private router: Router, private cardAPI:CardTabService) {
+        const token = userAPI.decodeToken();
+
+        this.userAPI.getUserById(token.user_id).subscribe({
+            next: (res:any) => {
+                this.name = res.name;
+            }
+        })
     }
     get cardTitleValue()     { return this.form.get('cardTitle')!; }
     get cardSubtitleValue()  { return this.form.get('cardSubtitle')!; }
@@ -42,14 +50,25 @@ export class CardCreationComponent {
         this.choosePhoto = "Una foto de fondo ha sido elegida"
     }
 
+    updateUserAge(){
+        const token = this.userAPI.decodeToken();
+        this.userAPI.updateUserAge(token.user_id, this.form.value.cardAge!).subscribe({
+            next: (res:any) => {
+                console.log(res)
+            }, error: (err:any) => {
+                console.log(err)
+            }
+        })
+
+    }
     onSubmit() {
         if (this.form.invalid) return;
-        console.log(this.form.value);
-        const token = this.userAPI.decodeToken()
-        const tab:CardTab ={
 
-            background_photo: this.form.value.photo?.name!,
-            body: '',
+        const token = this.userAPI.decodeToken()
+        this.updateUserAge();
+        // update cardTab #1
+        const tab:CardTab ={
+            background_photo: this.form.value.photo?.name! || ' ',
             header: this.form.value.cardTitle!,
             id_card: Number(token.user_id),
             id_section: 1, // will always point the first card tab made
@@ -60,13 +79,17 @@ export class CardCreationComponent {
 
         this.cardAPI.patchCardTab(Number(token.user_id), 1, tab).subscribe({
             next: value =>{
-                this.router.navigateByUrl("/home")
+                // this.router.navigateByUrl("/home")
+                console.log(this.form.value);
+                console.log(value);
             },
             error: err => {
                 console.log(err);
             }
 
         })
+
+
 
     }
 
