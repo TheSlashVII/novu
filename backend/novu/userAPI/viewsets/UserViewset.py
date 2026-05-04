@@ -150,7 +150,17 @@ class UserViewset(viewsets.ViewSet):
         user.age = int(request.data.get("age"))
         user.save()
         return JsonResponse({"message" : "age updated"},status=status.HTTP_200_OK, safe=False)
-
+    
+    @action(methods=["patch"], detail=False)
+    def updateUserGender(self, request, pk=None):
+        try:
+            user = get_object_or_404(User, pk=pk)
+        except Http404:
+            JsonResponse({"user not found"}, status=status.HTTP_404_NOT_FOUND)
+        user.gender = str(request.data.get("gender"))
+        user.save()
+        return JsonResponse({"message" : "Gender updated"},status=status.HTTP_200_OK, safe=False)
+    
     """
     # update user
     def updateUser(self, request, id=None):

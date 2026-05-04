@@ -46,7 +46,7 @@ export class InterestsComponent {
     this.interestApi.saveUserInterests(userId, selectedIds).subscribe({
       next: () => {
         this.userAPI.updateIsUserNewStatus(userId).subscribe(res=>console.log(res))
-        this.router.navigate(['/home']);
+        this.router.navigate(['/gender']);
       },
       error: (err) => {
         console.error('Error guardando intereses:', err);

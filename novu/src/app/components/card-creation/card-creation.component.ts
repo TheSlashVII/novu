@@ -79,9 +79,7 @@ export class CardCreationComponent {
 
         this.cardAPI.patchCardTab(Number(token.user_id), 1, tab).subscribe({
             next: value =>{
-                // this.router.navigateByUrl("/home")
-                console.log(this.form.value);
-                console.log(value);
+                this.router.navigateByUrl("/home")
             },
             error: err => {
                 console.log(err);
