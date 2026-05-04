@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {CardTab} from '../../services/card-tab.service';
+import {CardTab, CardTabService} from '../../services/card-tab.service';
+import {UserAPIService} from '../../services/user-api.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-card-creation',
@@ -25,7 +27,8 @@ export class CardCreationComponent {
         photo:         new FormControl<File | null>(null),
     });
 
-
+    constructor(private userAPI:UserAPIService, private router: Router, private cardAPI:CardTabService) {
+    }
     get cardTitleValue()     { return this.form.get('cardTitle')!; }
     get cardSubtitleValue()  { return this.form.get('cardSubtitle')!; }
     get cardAgeValue()       { return this.form.get('cardAge')!; }
@@ -42,6 +45,20 @@ export class CardCreationComponent {
     onSubmit() {
         if (this.form.invalid) return;
         console.log(this.form.value);
+        const tab:CardTab ={
+
+            background_photo: '',
+            body: '',
+            header: '',
+            id_card: 0,
+            id_section: 0,
+            sub_header: '',
+            tab_biography: ''
+
+        }
+        console.log(this.form.value.photo?.name);
+
+        // this.cardAPI.patchCardTab()
 
     }
 
