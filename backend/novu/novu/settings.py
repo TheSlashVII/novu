@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -50,11 +51,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware'
 ]
 # JWT Authentication
-"""
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -66,14 +66,19 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     'USER_ID_FIELD': 'id',
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # increase this
+    'USER_ID_CLAIM': 'user_id', # id field from jwt
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=240),  # increase this
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'AUTH_HEADER_TYPES': ('Bearer',), 
 }
-"""
+AUTH_USER_MODEL = 'userAPI.User' 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:4200',
 ]
-
+CORS_ALLOW_HEADERS = [
+    "authorization",
+    "content-type",
+]
 ROOT_URLCONF = 'novu.urls'
 
 TEMPLATES = [

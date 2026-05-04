@@ -1,12 +1,14 @@
 from django.db import models
 from . import utilities
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser
+from . import userManagers
 # Create your models here.
 # this file is used to create the models for the database
 # by default the id field is created so no need to declare it 
-"""
+
 class User(AbstractBaseUser):
     # basic fields
+    id = models.AutoField(primary_key=True)
     name=models.CharField(max_length=200)
     surnames=models.CharField(max_length=200)
     email=models.CharField(max_length=200, unique=True)
@@ -14,14 +16,12 @@ class User(AbstractBaseUser):
     # preferences fields
     school_name=models.CharField(max_length=150, default='')
     gender=models.CharField(max_length=10, default='') # on django '' is equal to NULL
-    biography=models.CharField(max_length=150, default='')
     height=models.CharField(max_length=5,default='')
     date_of_birth=models.DateField()
     min_age=models.IntegerField(default=0)
     max_age=models.IntegerField()
     profile_pic=models.TextField()
     max_distance_km=models.IntegerField()
-    show_me=models.BooleanField(default=True)
     likes=models.IntegerField(default=0)
     # check to see if the user is new or not
     is_new=models.BooleanField(default=True)
@@ -30,13 +30,15 @@ class User(AbstractBaseUser):
     restricted_reason=models.CharField(max_length=100, default='')
     restricted_at=models.DateField(null=True)
     admin=models.BooleanField(default=0)
-    is_active = models.BooleanField(default=True) 
+    is_active = models.BooleanField(default=True, db_default=True) # must be true for the sessions to work 
+    last_login = models.DateTimeField(blank=True, null=True)
     # Constraints and other conditions
     max_age.null = True
     profile_pic.null = True
     max_distance_km.null = True
     REQUIRED_FIELDS = []
-    USERNAME_FIELD = 'email' 
+    USERNAME_FIELD = 'email' # field used to distinguish between users
+    objects = userManagers.UserManager() # used to manage the user sess
 
 
     # VERY IMPORTANT! This subclass is used to rename the table. 
@@ -46,40 +48,6 @@ class User(AbstractBaseUser):
     
     def __str__(self):
         return self.email
-""" 
-class User(models.Model):
-    # basic fields
-    id=models.BigAutoField(primary_key=True)
-    name=models.CharField(max_length=200)
-    surnames=models.CharField(max_length=200)
-    email=models.CharField(max_length=200, unique=True)
-    password=models.CharField(max_length=500)
-    # preferences fields
-    school_name=models.CharField(max_length=150, default='')
-    gender=models.CharField(max_length=10, default='') # on django '' is equal to NULL
-    # biography=models.CharField(max_length=150, default='')
-    height=models.CharField(max_length=5,default='')
-    date_of_birth=models.DateField()
-    min_age=models.IntegerField(default=0)
-    max_age=models.IntegerField()
-    profile_pic=models.TextField()
-    max_distance_km=models.IntegerField()
-    show_me=models.BooleanField(default=True)
-    likes=models.IntegerField(default=0)
-    # check to see if the user is new or not
-    is_new=models.BooleanField(default=True)
-    # acces management fields
-    restricted=models.BooleanField(default=False)
-    restricted_reason=models.CharField(max_length=100, default='')
-    restricted_at=models.DateField(null=True)
-    admin=models.BooleanField(default=0)
-    # Constraints and other conditions
-    max_age.null = True
-    profile_pic.null = True
-    max_distance_km.null = True
-    
-    class Meta:
-        db_table='User'
 
 # user_card table
 # this is to represent the user presentation card
@@ -173,7 +141,7 @@ class Swipe(models.Model):
 class Interest(models.Model):
     user_id=models.ForeignKey(User, db_column="user_id", on_delete=models.CASCADE)
     name=models.CharField(max_length=50)
-    pk=models.CompositePrimaryKey("user_id", "name")
+    pk=models.CompositePrimaryKey("user_id", "name") # to make primary keys with multiple fields
     class Meta:
         db_table="Interest"
 
@@ -217,19 +185,6 @@ class Request(models.Model):
     photo_id_selfie=models.ImageField(upload_to=utilities.fileRenameRegister, max_length=200) # the url to the photo with the student holding his id 
     id_student=models.BigIntegerField()
     id_student.null = True
-    
-    
-    # set status states
-    # this is for setting a list of available choices when writing to this column. Only these options are valid
-    PENDING = 'Pending'
-    ACCEPTED = 'Accepted'
-    DENIED = 'Denied'
-    status_choices = {
-        ACCEPTED: 'Accepted',
-        DENIED: 'Denied',
-        PENDING: 'Pending'
-    }
-    status=models.CharField(max_length=15, choices=status_choices, default=PENDING)
     submitted_at=models.DateTimeField(auto_now_add=True)
     class Meta:
         db_table='Request'

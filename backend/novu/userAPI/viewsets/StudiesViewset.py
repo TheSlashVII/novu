@@ -1,16 +1,30 @@
 from django.shortcuts import get_object_or_404
 from ..serializers import StudySerializer
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, permissions
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.http import JsonResponse
 from ..models import Study
 from ..models import User
-
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework_simplejwt.authentication import JWTAuthentication
 class StudyViewset(viewsets.ModelViewSet):
     queryset = Study.objects.all()
     serializer_class = StudySerializer
     lookup_field = "user_id"
     lookup_url_kwarg = "pk"
+    authentication_classes = [JWTAuthentication]
+    
+    
+    def get_permissions(self):
+        
+        if self.action in ['createFromUser', 'list', 'retrieveByEmail', "createFromAdmin"]:   # public routes | create Admin is Public for now 
+            permission_classes = [permissions.AllowAny]
+        elif self.action in ["retrieveStudyById", "saveStudy"]:  # Routes that require authentication
+            permission_classes = [permissions.IsAuthenticated]
+        else:                                    # PUT, PATCH, DELETE
+            permission_classes = [permissions.IsAuthenticated]
+        return [permission() for permission in permission_classes]
 
     #GET /api/studies/?user_id=1
     def list(self, request):
@@ -25,7 +39,8 @@ class StudyViewset(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     #POST /api/studies/save/
-    def create(self, request):
+    @action(methods=["post"], detail=False)
+    def saveStudy(self, request):
         user_id = request.data.get('user_id')
         study_name = request.data.get('study_name')
 
@@ -55,7 +70,8 @@ class StudyViewset(viewsets.ModelViewSet):
         )
 
     # GET /api/studies/retrieve/<user_id>/
-    def retrieve(self, request, pk=None):
+    @action(methods=["get"], detail=False)
+    def retrieveStudyById(self, request, pk=None):
         studies = Study.objects.filter(user_id=pk)
         serializer = StudySerializer(studies, many=True)
         return JsonResponse(serializer.data, safe=False)

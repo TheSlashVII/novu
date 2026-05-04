@@ -18,15 +18,21 @@ import {AdminPostAcceptRequest} from './components/admin-post-accept-request/adm
 import {NotFoundComponent} from './components/not-found/not-found.component';
 import {UnauthorizedComponent} from './components/unauthorized/unauthorized';
 import {AdminCreateUsersComponent} from './components/admin-create-users/admin-create-users.component';
-
+import {AdminPostDenyRequestComponent} from './components/admin-post-deny-request/admin-post-deny-request.component';
+import {AdminRestrictUserComponent} from './components/admin-restrict-user/admin-restrict-user.component';
+import {
+    AdminRestrictUserDetailComponent
+} from './components/admin-restrict-user-detail/admin-restrict-user-detail.component';
+import {AdminDeleteUserComponent} from './components/admin-delete-user/admin-delete-user.component';
+import {CardCreationComponent} from './components/card-creation/card-creation.component';
 
 export const routes: Routes = [
+    {   path: '',
+        component: WelcomeComponent
+    },
     {
         path: 'register',
         component: RegisterComponent
-    },
-    {   path: '',
-        component: WelcomeComponent
     },
     {
         path: 'login',
@@ -57,15 +63,32 @@ export const routes: Routes = [
                 component: AdminRegisterRequestDetailComponent,
                 title: "Admin - Register Request",
             },{
-                path:"post/accept", component: AdminPostAcceptRequest,
+                path:"post_accept", component: AdminPostAcceptRequest,
             }, {
                 path:"create_user", component: AdminCreateUsersComponent
+            }, {
+                path:"post_deny", component: AdminPostDenyRequestComponent
+            },{
+                path:'restrict_user',
+                component: AdminRestrictUserComponent
+            },
+            {
+                path:'restrict_user/detail/:id',
+                component: AdminRestrictUserDetailComponent,
+            },{
+                path:'delete_user',
+                component: AdminDeleteUserComponent,
+                title:'Novu Admin - Delete User',
             }
         ]
     },
     {
         path: 'home',
-        component: HomeComponent
+        component: HomeComponent,
+        title: "Novu - Home",
+    },{
+        path: 'card_creation',
+        component: CardCreationComponent,
     },{
         path:'unauthorized',
         component: UnauthorizedComponent

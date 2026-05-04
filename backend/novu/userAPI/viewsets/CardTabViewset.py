@@ -1,13 +1,24 @@
 from django.shortcuts import get_object_or_404
 from ..serializers import CardTabSerializer
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
 from django.http import JsonResponse
 from ..models import CardTab, UserCard, User
-
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.decorators import action
 class CardTabViewset(viewsets.ModelViewSet):
     queryset = CardTab.objects.all()
     serializer_class = CardTabSerializer
+    authentication_classes = [JWTAuthentication] # type of authentication
+    
+    def get_permissions(self):
+        if self.action in ["createCardTab",]:   # public routes | create Admin is Public for now 
+            permission_classes = [permissions.AllowAny]
+        elif self.action in ["retrieve" , "update", "destroy", "partial_update"]:  # Routes that require authentication
+            permission_classes = [permissions.IsAuthenticated]
+        else:                                    # PUT, PATCH, DELETE
+            permission_classes = [permissions.IsAuthenticated]
+        return [permission() for permission in permission_classes]
 
     #GET /api/tabs/?user_id=1
     def list(self, request):
@@ -18,10 +29,11 @@ class CardTabViewset(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         tabs = CardTab.objects.filter(card__user_id=user_id)
-        serializer = CardTabSerialzier(tabs, many=True)
+        serializer = CardTabSerializer(tabs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     #POST /api/tabs/create/
+    @action(detail=False, methods=["post"])
     def createCardTab(self, request):
         user_id = request.data.get('user_id')
 
@@ -73,7 +85,7 @@ class CardTabViewset(viewsets.ModelViewSet):
 
     # PUT /api/tabs/<pk>/
     def update(self, request, pk=None):
-        tab = get_object_or_404(CardTab, id_card__user_id=pk, id_section=id_section)
+        tab = get_object_or_404(CardTab, id_card__user_id=pk, id_section=request.data.get("id_section"))
         serializer = CardTabSerializer(tab, data=request.data)
         if serializer.is_valid():
             serializer.save()

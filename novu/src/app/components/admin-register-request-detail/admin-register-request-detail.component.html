@@ -3,7 +3,7 @@
     <div class="flex flex-col justify-start xl:mx-60 mx-10 bg-[#87A0FF] p-10 rounded-2xl gap-5">
         <div class="flex flex-col sm:flex-row justify-start w-full gap-10 items-center">
             @if (registerRequest.photo_id_selfie.length > 1) {
-                <img (click)="checkStudentIdSelfieImage()" src="{{registerRequest.photo_id_selfie}}" alt="photo selfie" class="w-[10rem] h-[10rem]">
+                <img (click)="checkStudentIdSelfieImage()" src="{{getStudentIdImage()}}" alt="photo selfie" class="w-[10rem] h-[10rem]">
             } @else {
                 <div class="bg-white flex items-center w-[10rem] h-[10rem]">Image <br>Unavailable</div>
             }

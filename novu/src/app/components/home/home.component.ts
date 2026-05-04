@@ -1,4 +1,4 @@
-import { Component, inject, afterNextRender } from '@angular/core';
+import {Component, inject, afterNextRender, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { UserAPIService } from '../../services/user-api.service';
@@ -31,7 +31,6 @@ interface CardTab {
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
-  private router = inject(Router);
   private http = inject(HttpClient);
 
   profiles: Profile[] = [];
@@ -42,12 +41,25 @@ export class HomeComponent {
   isDragging: boolean = false;
   dragX: number = 0;
   dragStartX: number = 0;
-
+    isLoggedIn: boolean;
   private likeAnimation: boolean = false;
   private dislikeAnimation: boolean = false;
 
 
-  constructor(private userAPIService: UserAPIService) {
+  constructor(private userAPIService: UserAPIService, private userAPI:UserAPIService, private router:Router) {
+      this.isLoggedIn = this.userAPI.isLoggedIn();
+        if(this.userAPI.getToken() == null){
+            this.router.navigateByUrl('');
+        }
+      const isTokenExpired = this.userAPI.isTokenExpired(this.userAPI.getToken()!) != null ? this.userAPI.isTokenExpired(this.userAPI.getToken()!) : true;
+      if (!this.isLoggedIn || isTokenExpired){
+          if (localStorage.getItem('token') != null) {
+              localStorage.removeItem('access_token');
+          }
+          this.router.navigateByUrl('');
+
+
+      }
     afterNextRender(() => {
       this.http.get<Profile[]>('http://localhost:8000/api/users/list/').subscribe({
         next: (data) => {
@@ -142,7 +154,7 @@ export class HomeComponent {
           if(response.match_created){
             this.showMatchNotification(currentProfile);
           }
-          
+
           // Resetear dragX y pasar al siguiente perfil
           this.resetAndNext();
         },
@@ -230,4 +242,6 @@ export class HomeComponent {
   goToProfile(): void { this.router.navigate(['/profile']); }
   goToDiscover(): void { this.router.navigate(['/discover']); }
   goToSearch(): void { this.router.navigate(['/search']); }
+
+
 }

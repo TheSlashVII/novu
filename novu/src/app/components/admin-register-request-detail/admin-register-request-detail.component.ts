@@ -72,17 +72,26 @@ export class AdminRegisterRequestDetailComponent {
         }
         return this.registerRequest.id_student;
     }
-
-    checkStudentIdImage() {
-        window.open(this.registerRequest.photo_student_id, '_blank');
+    getStudentIdImage(){
+        const server = "http://localhost:8000/";
+        const path = `${server}${this.registerRequest.photo_student_id}`;
+        return path;
+    }
+    getStudentSelfieImage(){
+        const server = "http://localhost:8000/";
+        const path = `${server}${this.registerRequest.photo_id_selfie}`;
+        return path;
+    }
+    checkStudentIdImage(){
+        const path = this.getStudentSelfieImage()
+        window.open(path, "_blank");
     }
     checkStudentIdSelfieImage() {
         window.open(this.registerRequest.photo_id_selfie, '_blank');
     }
-    deleteRequest(id: number) {
-        return this.userAPI
-            .deleteRegisterRequest(id)
-            .subscribe((res) => console.log(res));
+    deleteRequest(id:number){
+        this.userAPI.deleteRegisterRequest(id).subscribe()
+        this.goToDeniedRequest()
     }
 
     createUser() {
@@ -108,7 +117,7 @@ export class AdminRegisterRequestDetailComponent {
                 this.userCard.createUserCard(res.id).subscribe((res) => {
                     console.log(res);
                     let tab: CardTab = {
-                        id_section: userId,
+                        id_section: 1,
                         id_card: res.user,
                         body: 'This is the default card tab. Edit it to add more information about you!',
                         header: 'Default Card Tab',
@@ -119,7 +128,7 @@ export class AdminRegisterRequestDetailComponent {
                     };
                     this.cardTab.createCardTab(userId, tab).subscribe((res) => {
                         console.log(res);
-                        this.router.navigateByUrl('/admin/request');
+                        this.goToAcceptedRequest()
                     });
                 });
             });
@@ -143,5 +152,12 @@ export class AdminRegisterRequestDetailComponent {
     goToRequestList() {
         this.router.navigateByUrl('/admin/request');
     }
+    goToAcceptedRequest(){
+        this.router.navigateByUrl('/admin/post_accept');
+    }
+    goToDeniedRequest(){
+        this.router.navigateByUrl('/admin/post_deny');
+    }
+
 }
 
