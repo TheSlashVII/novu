@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
 import { CardTab } from './card-tab.service';
@@ -15,14 +15,21 @@ export class UserCardService {
   PORT: number = 8000 // django's port
 
   baseServerURL:string = `http://localhost:${this.PORT}/api/users`;
-  
+    private authHeaders(): { headers: HttpHeaders } {
+        return {
+            headers: new HttpHeaders({ "Authorization": "Bearer " + this.getToken() })
+        };
+    }
+    getToken(): string | null {
+        return localStorage.getItem('access_token');
+    }
   constructor(private http: HttpClient) { }
 
   //GET /api/users/cards/?user_id=1
   getUserCard(userId: number): Observable<UserCard> {
     return this.http.get<UserCard>(`${this.baseServerURL}/cards/`, {
-      params: {user_id: userId}
-    });
+      params: {user_id: userId}, headers: { "Authorization": "Bearer " + this.getToken() }
+    },);
   }
 
   //POST /api/users/cards/create/

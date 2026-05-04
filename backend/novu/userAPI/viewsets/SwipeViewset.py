@@ -1,5 +1,5 @@
 # swipe_viewsets.py
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.contrib.auth.models import User
@@ -7,13 +7,22 @@ from ..models import Swipe, Match
 from ..serializers import SwipeSerializer, MatchSerializer
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse, Http404
-
+from rest_framework_simplejwt.authentication import JWTAuthentication
 class SwipeViewset(viewsets.ModelViewSet):
     queryset = Swipe.objects.all()
     serializer_class = SwipeSerializer
     lookup_field = "origin_user_id"
     lookup_url_kwarg = "pk"
 
+    authentication_classes = [JWTAuthentication] # type of authentication
+    def get_permissions(self):
+        if self.action in []:   # public routes | create Admin is Public for now 
+            permission_classes = [permissions.AllowAny]
+        elif self.action in ["register_swipe", "check_match"]:  # Routes that require authentication
+            permission_classes = [permissions.IsAuthenticated]
+        else:                                    # PUT, PATCH, DELETE
+            permission_classes = [permissions.IsAuthenticated]
+        return [permission() for permission in permission_classes]
     # POST /api/swipes/register/
     @action(detail=False, methods=['post'])
     def register_swipe(self, request):
@@ -100,6 +109,7 @@ class SwipeViewset(viewsets.ModelViewSet):
         return Response(response_data, status=status.HTTP_201_CREATED)
 
     # GET /api/swipes/check-match/?user1=1&user2=2
+    @action(detail=False, methods=["get"])
     def check_match(self, request):
         """
         Verificar si dos usuarios tienen match mutuo

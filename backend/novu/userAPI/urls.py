@@ -77,18 +77,18 @@ urlpatterns = [
     path("update/status/<int:id>", change_user_is_new), # update is new status
     path("admin/delete/<int:id>", admin_delete_user), # deletes users
     path("admin/count/", admin_count_active_users), # counts users in the database
-    path("count/most_liked", count_most_liked_users),
-    path("swipes/register/", register_swipe),
-    path("swipes/check-match/", check_match),
-    path("swipes/user/<int:user_id>/", get_user_swipes),
-    path("matches/user/<int:user_id>/", get_user_matches),
-    path("cards/", list_user_card),
-    path("cards/create/", create_user_card),
-    path("cards/retrieve/<int:pk>/", retrieve_user_card),
-    path("tabs/", list_card_tabs),
-    path("tabs/create/", create_card_tab),
-    path("tabs/retrieve/<int:pk>/", retrieve_card_tab),
-    path("tabs/update/<int:pk>/<int:id_section>/", update_card_tab),
-    path("tabs/patch/<int:pk>/<int:id_section>/", patch_card_tab),
-    path("tabs/delete/<int:pk>/<int:id_section>/", delete_card_tab),
+    path("count/most_liked", count_most_liked_users), 
+    path("swipes/register/", register_swipe), #used to register the swipe result
+    path("swipes/check-match/", check_match), # used to check the match status
+    path("swipes/user/<int:user_id>/", get_user_swipes), # used to get the user swipes
+    path("matches/user/<int:user_id>/", get_user_matches), # lists the matched users
+    path("cards/", list_user_card), #used to list cards
+    path("cards/create/", create_user_card), # used to create usercards
+    path("cards/retrieve/<int:pk>/", retrieve_user_card), # used to get the usercards
+    path("tabs/", list_card_tabs), # used to list card tabs
+    path("tabs/create/", create_card_tab), # used to create card tabs
+    path("tabs/retrieve/<int:pk>/", retrieve_card_tab), # used to get card tabs
+    path("tabs/update/<int:pk>/<int:id_section>/", update_card_tab), # used to update card tabs
+    path("tabs/patch/<int:pk>/<int:id_section>/", patch_card_tab), # used to update cardtabs partially
+    path("tabs/delete/<int:pk>/<int:id_section>/", delete_card_tab), # used to delete card tabs
 ]

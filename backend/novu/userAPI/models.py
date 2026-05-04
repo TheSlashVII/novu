@@ -141,7 +141,7 @@ class Swipe(models.Model):
 class Interest(models.Model):
     user_id=models.ForeignKey(User, db_column="user_id", on_delete=models.CASCADE)
     name=models.CharField(max_length=50)
-    pk=models.CompositePrimaryKey("user_id", "name")
+    pk=models.CompositePrimaryKey("user_id", "name") # to make primary keys with multiple fields
     class Meta:
         db_table="Interest"
 

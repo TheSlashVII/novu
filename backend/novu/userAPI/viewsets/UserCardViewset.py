@@ -1,14 +1,24 @@
 from django.shortcuts import get_object_or_404
 from ..serializers import UserCardSerializer
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
 from django.http import JsonResponse
 from ..models import UserCard, User
-
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.decorators import action
 class UserCardViewset(viewsets.ModelViewSet):
     queryset = UserCard.objects.all()
     serializer_class = UserCardSerializer
+    authentication_classes = [JWTAuthentication] # type of authentication
 
+    def get_permissions(self):
+        if self.action in ["getCardWithTabs", "createUserCard"]:   # public routes 
+            permission_classes = [permissions.AllowAny]
+        elif self.action in []:  # Routes that require authentication
+            permission_classes = [permissions.IsAuthenticated]
+        else: # PUT, PATCH, DELETE
+            permission_classes = [permissions.IsAuthenticated]
+        return [permission() for permission in permission_classes]
     #GET /api/cards/?user_id=1
     def list(self, request):
         user_id = request.query_params.get('user_id')
@@ -49,13 +59,15 @@ class UserCardViewset(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         # GET /api/cards/<pk>/
-        def retrieve(self, request, pk=None):
+    def retrieve(self, request, pk=None):
             user_card = get_object_or_404(UserCard, pk=pk)
             serializer = UserCardSerializer(user_card)
             return JsonResponse(serializer.data, safe=False)
 
         # GET /api/users/cards/with-tabs/?user_id=1
-        def getCardWithTabs(self, request):
+    
+    @action(detail=False, methods=["get"])
+    def getCardWithTabs(self, request):
             user_id = request.query_params.get('user_id')
 
             if not user_id:

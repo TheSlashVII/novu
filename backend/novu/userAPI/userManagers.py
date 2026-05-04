@@ -1,4 +1,5 @@
 from django.contrib.auth.models import BaseUserManager
+# this class is used to manage the users inside the app. It allows django to know who is who
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:

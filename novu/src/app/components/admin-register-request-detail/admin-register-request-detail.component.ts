@@ -117,7 +117,7 @@ export class AdminRegisterRequestDetailComponent {
                 this.userCard.createUserCard(res.id).subscribe((res) => {
                     console.log(res);
                     let tab: CardTab = {
-                        id_section: userId,
+                        id_section: 1,
                         id_card: res.user,
                         body: 'This is the default card tab. Edit it to add more information about you!',
                         header: 'Default Card Tab',
@@ -128,7 +128,7 @@ export class AdminRegisterRequestDetailComponent {
                     };
                     this.cardTab.createCardTab(userId, tab).subscribe((res) => {
                         console.log(res);
-                        this.router.navigateByUrl('/admin/request');
+                        this.goToAcceptedRequest()
                     });
                 });
             });

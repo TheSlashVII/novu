@@ -24,7 +24,7 @@ import {
     AdminRestrictUserDetailComponent
 } from './components/admin-restrict-user-detail/admin-restrict-user-detail.component';
 import {AdminDeleteUserComponent} from './components/admin-delete-user/admin-delete-user.component';
-
+import {CardCreationComponent} from './components/card-creation/card-creation.component';
 
 export const routes: Routes = [
     {   path: '',
@@ -86,6 +86,9 @@ export const routes: Routes = [
         path: 'home',
         component: HomeComponent,
         title: "Novu - Home",
+    },{
+        path: 'card_creation',
+        component: CardCreationComponent,
     },{
         path:'unauthorized',
         component: UnauthorizedComponent

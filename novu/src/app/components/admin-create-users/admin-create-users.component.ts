@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {UserAPIService} from '../../services/user-api.service';
 import {Router} from '@angular/router';
+import {UserCardService} from '../../services/user-card.service';
+import {CardTab, CardTabService} from '../../services/card-tab.service';
 @Component({
   selector: 'app-admin-create-users',
     imports: [
@@ -32,7 +34,7 @@ export class AdminCreateUsersComponent {
         restricted_at: new FormControl(null),
         admin: new FormControl(false),
     })
-    constructor(private userAPIService: UserAPIService, private router:Router) {
+    constructor(private userAPIService: UserAPIService, private router:Router, private userCardService:UserCardService, private cardTabService:CardTabService) {
 
     }
 
@@ -77,7 +79,31 @@ export class AdminCreateUsersComponent {
                 new Date(f.restricted_at).toISOString().split('T')[0]
             );
         }
-        this.userAPIService.adminCreateUser(formData).subscribe((res) => console.log(res))
+        this.userAPIService.adminCreateUser(formData).subscribe({
+            next: (res) => {
+                const newUser:any = res
+                this.userCardService.createUserCard(newUser.id).subscribe((userCard) => {
+                    console.log(res)
+                    let tab: CardTab = {
+                        id_section: 1,
+                        id_card: userCard.user,
+                        body: 'This is the default card tab. Edit it to add more information about you!',
+                        header: 'Default Card Tab',
+                        sub_header: 'A ',
+                        tab_biography:
+                            'This is the default biography. Edit it to add more information about you!',
+                        background_photo: 'A '
+                    };
+                    this.cardTabService.createCardTab(newUser.id, tab).subscribe(res => {console.log(res)})
+
+                })
+
+            },
+            error: err => {
+                console.log(err.error.message);
+            }
+        })
+
     }
     toAdminPanel(){
         this.router.navigateByUrl('/admin');

@@ -94,7 +94,13 @@ class RequestViewset(viewsets.ModelViewSet):
             os.remove(selfie)
             os.remove(idCard)
         except Http404:
-            return JsonResponse({"Error": "Error while processing the endpoint"}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({"Error": "Error while processing the endpoint"}, status=status.HTTP_404_NOT_FOUND)
+        except FileNotFoundError:
+            register_request.delete()
+            return JsonResponse(
+                {"message": f"Request {id} deleted successfully."},
+                status = status.HTTP_204_NO_CONTENT
+            )
         register_request.delete()
         return JsonResponse(
             {"message": f"Request {id} deleted successfully."},

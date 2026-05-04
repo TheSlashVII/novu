@@ -1,4 +1,3 @@
-
 from django.shortcuts import get_object_or_404
 from ..serializers import UserSerializer, LoginSerializer, UserSearchSerializer, UserProfileSerializer
 from rest_framework import viewsets, status, permissions
@@ -10,7 +9,7 @@ from django.contrib.auth.hashers import check_password, make_password
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from django.db.models import F
+from django.db.models import F # used to select fields and to execute additional functionality on the columns
 # this is the equivalent to a controller
 """
 Documentation for viewsets: https://www.django-rest-framework.org/api-guide/viewsets/#example

@@ -46,7 +46,7 @@ export class HomeComponent {
   private dislikeAnimation: boolean = false;
 
 
-  constructor(private userAPIService: UserAPIServiceprivate userAPI:UserAPIService, private router:Router) {
+  constructor(private userAPIService: UserAPIService, private userAPI:UserAPIService, private router:Router) {
       this.isLoggedIn = this.userAPI.isLoggedIn();
         if(this.userAPI.getToken() == null){
             this.router.navigateByUrl('');
@@ -154,7 +154,7 @@ export class HomeComponent {
           if(response.match_created){
             this.showMatchNotification(currentProfile);
           }
-          
+
           // Resetear dragX y pasar al siguiente perfil
           this.resetAndNext();
         },
