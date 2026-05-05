@@ -95,19 +95,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         }))
     
     @database_sync_to_async
-    def authenticate_user(self, token):
-        try:
-            # Decodificar el token JWT
-            access_token = AccessToken(token)
-            user_id = access_token['user_id']
-            user = User.objects.get(id=user_id)
-            print(f"✅ Usuario autenticado: {user.email}")
-            return user
-        except Exception as e:
-            print(f"❌ Error autenticando: {e}")
-            return None
-    
-    @database_sync_to_async
     def save_message(self, sender_id, recipient_id, content):
         try:
             print(f"🔍 Buscando match entre {sender_id} y {recipient_id}")
@@ -136,3 +123,60 @@ class ChatConsumer(AsyncWebsocketConsumer):
             import traceback
             traceback.print_exc()
             return None
+        
+class NotificationConsumer (AsyncWebsocketConsumer):
+    
+    async def connect(self):
+        query_string = self.scope['query_string'].decode()
+        params = parse_qs(query_string)
+        token = params.get('token', [None])[0]
+        
+        if not token:
+            await self.close()
+            return
+        
+        user = await self.authenticate_user(token)
+        if not user:
+            await self.close()
+            return
+        
+        self.user = user
+        self.group_name = f"notifications_{user.id}"
+        
+        await self.channel_layer.group_add(
+            self.group_name,
+            self.channel_name
+        )
+        await self.accept()
+        print(f"🔔 Notificaciones conectadas para: {user.email}")
+        
+    async def disconnect(self, close_code):
+        if hasattr(self, 'group_name'):
+            await self.channel_layer.group_discard(
+                self.group_name,
+                self.channel_name
+            )
+            
+    async def receive(self, text_data):
+        pass
+    
+    async def new_message_notification(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'notification',
+            'sender_id': event['sender_id'],
+            'sender_name': event['sender_name'],
+            'message': event['message'],
+        }))
+        
+        @database_sync_to_async
+        def authenticate_user(self, token):
+            try:
+                # Decodificar el token JWT
+                access_token = AccessToken(token)
+                user_id = access_token['user_id']
+                user = User.objects.get(id=user_id)
+                print(f"✅ Usuario autenticado: {user.email}")
+                return user
+            except Exception as e:
+                print(f"❌ Error autenticando: {e}")
+                return None

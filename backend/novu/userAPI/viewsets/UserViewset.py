@@ -4,12 +4,13 @@ from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.http import JsonResponse, Http404
-from ..models import User, UserCard
+from ..models import User, UserCard, Block, Swipe
 from django.contrib.auth.hashers import check_password, make_password
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from django.db.models import F # used to select fields and to execute additional functionality on the columns
+from django.db.models import F, Q # used to select fields and to execute additional functionality on the columns
+from datetime import date
 # this is the equivalent to a controller
 """
 Documentation for viewsets: https://www.django-rest-framework.org/api-guide/viewsets/#example
@@ -205,8 +206,8 @@ class UserViewset(viewsets.ViewSet):
         user.delete()
         return Response({"message": "User deleted"}, status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=false, methods=["post"])
-    def getFilteredProfiles(self, request)
+    @action(detail=False, methods=["post"])
+    def getFilteredProfiles(self, request):
         """
         Body JSON esperado:
         {
@@ -270,8 +271,8 @@ class UserViewset(viewsets.ViewSet):
         users = users.filter(gender__iexact=gender_param)
 
     # 6. Filtro por intereses
-    if interests_list:
-        users = users.filter(interest__name__in=interests_list).distinct()
+    if interests:
+        users = users.filter(interest__name__in=interests).distinct()
     
     # 7. filtro por objetivos
     if goals_list:
@@ -291,7 +292,7 @@ class UserViewset(viewsets.ViewSet):
         "filters_applied":{
             "min_age": min_age,
             "max_age": max_age,
-            "interests": interests_list or None,
+            "interests": interests or None,
             "goals": goals_list or None,
             "studies": studies_list or None,
             "relation_preference": relation_list or None,

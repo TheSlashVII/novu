@@ -1,8 +1,9 @@
-import { Component, inject, afterNextRender, signal} from '@angular/core';
+import { Component, inject, afterNextRender, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { UserAPIService } from '../../services/user-api.service';
+import { NotificationService } from '../../services/notification.service';
 
 interface ChatPreview {
   id: number;
@@ -20,11 +21,11 @@ interface ChatPreview {
   templateUrl: './chat-list.component.html',
   styleUrl: './chat-list.component.css'
 })
-
 export class ChatListComponent {
   private router = inject(Router);
-  private http= inject(HttpClient);
+  private http = inject(HttpClient);
   private userAPI = inject(UserAPIService);
+  private notificationService = inject(NotificationService);
 
   chats = signal<ChatPreview[]>([]);
   loading = signal<boolean>(true);
@@ -33,32 +34,62 @@ export class ChatListComponent {
   constructor() {
     afterNextRender(() => {
       const userId = this.userAPI.getUserId();
-      console.log('userId:', userId);
-    
-    if (!userId) {
-      this.router.navigate(['/login']);
-      return;
-    }
 
-    console.log('Llamando a:', `http://localhost:8000/api/chat/conversations/${userId}/`);
+      if (!userId) {
+        this.router.navigate(['/login']);
+        return;
+      }
 
-    this.http.get<ChatPreview[]>(`http://localhost:8000/api/chat/conversations/${userId}/`)
-      .subscribe({
-        next: (data) => {
-          console.log('Datos recibidos:', data);
-          this.chats.set(data);
-          this.loading.set(false);
-        },
-        error: (err) => {
-          console.error('Error:', err);
-          this.error.set('No se pudieron cargar las conversaciones.');
-          this.loading.set(false);
-        }
+      this.http.get<ChatPreview[]>(`http://localhost:8000/api/chat/conversations/${userId}/`)
+        .subscribe({
+          next: (data) => {
+            // Añade los contadores de no leídos que ya tenga el servicio
+            const chatsWithUnread = data.map(chat => ({
+              ...chat,
+              unreadCount: this.notificationService.unreadCounts[chat.id] || 0
+            }));
+            this.chats.set(chatsWithUnread);
+            this.loading.set(false);
+          },
+          error: (err) => {
+            console.error('Error:', err);
+            this.error.set('No se pudieron cargar las conversaciones.');
+            this.loading.set(false);
+          }
+        });
+
+      // Escucha notificaciones nuevas en tiempo real
+      this.notificationService.notifications$.subscribe((notification) => {
+        this.chats.update(chats => {
+          const exists = chats.find(c => c.id === notification.sender_id);
+          if (exists) {
+            // Actualiza la conversación existente
+            return chats.map(c =>
+              c.id === notification.sender_id
+                ? { ...c, lastMessage: notification.message, unreadCount: (c.unreadCount || 0) + 1 }
+                : c
+            );
+          } else {
+            // Si no existe la conversación todavía, la añade
+            return [...chats, {
+              id: notification.sender_id,
+              name: notification.sender_name,
+              lastMessage: notification.message,
+              lastMessageTime: '',
+              avatar: '',
+              unreadCount: 1
+            }];
+          }
+        });
       });
-  });
-}
+    });
+  }
 
   openChat(userId: number): void {
+    this.notificationService.clearUnread(userId);
+    this.chats.update(chats =>
+      chats.map(c => c.id === userId ? { ...c, unreadCount: 0 } : c)
+    );
     this.router.navigate(['/chat', userId]);
   }
 }

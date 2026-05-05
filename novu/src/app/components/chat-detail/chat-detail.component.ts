@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ChatService, ChatMessage } from '../../services/chat.service';
 import { HttpClient } from '@angular/common/http';
 import { UserAPIService } from '../../services/user-api.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-chat-detail',
@@ -21,6 +22,7 @@ export class ChatDetailComponent {
   private destroyRef = inject(DestroyRef);
   private http = inject(HttpClient);
   private userAPI = inject(UserAPIService);
+  private notificationService = inject(NotificationService);
 
   messages = signal<ChatMessage[]>([]);
   newMessage = '';
@@ -47,6 +49,9 @@ export class ChatDetailComponent {
     }
     this.currentUserId = userId;
     console.log('✅ Usuario actual ID:', this.currentUserId);
+
+    //Clean notifications when you open the chat
+    this.notificationService.clearUnread(this.otherUserId);
     
     this.loadUserData(this.otherUserId);
     this.loadMessageHistory();
