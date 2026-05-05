@@ -160,6 +160,12 @@ export class UserAPIService {
         const ROUTE:string = `${this.baseServerURL}/gender/update/${id}`;
         return this.http.patch(ROUTE, {gender:gender} ,this.authHeaders())
     }
+
+    getUserProfiles(){
+        const ROUTE:string = `${this.baseServerURL}/profiles/`;
+        // return this.http.get(ROUTE, this.authHeaders())
+        return this.http.get(ROUTE)
+    }
     // JWT
     saveToken(token: string) {
       if(this.getToken() != null ){

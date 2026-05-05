@@ -12,7 +12,7 @@ class CardTabViewset(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication] # type of authentication
     
     def get_permissions(self):
-        if self.action in ["createCardTab","partial_update"]:   # public routes | create Admin is Public for now 
+        if self.action in ["createCardTab","partial_update", "list"]:   # public routes | create Admin is Public for now 
             permission_classes = [permissions.AllowAny]
         elif self.action in ["retrieve" , "update", "destroy"]:  # Routes that require authentication
             permission_classes = [permissions.IsAuthenticated]
@@ -21,14 +21,14 @@ class CardTabViewset(viewsets.ModelViewSet):
         return [permission() for permission in permission_classes]
 
     #GET /api/tabs/?user_id=1
-    def list(self, request):
-        user_id = request.query_params.get('user_id')
+    def list(self, request, pk=None):
+        user_id = pk
         if not user_id:
             return Response(
                 {'error':'Falta el user_id'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        tabs = CardTab.objects.filter(card__user_id=user_id)
+        tabs = CardTab.objects.filter(id_card__user_id=user_id)
         serializer = CardTabSerializer(tabs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
