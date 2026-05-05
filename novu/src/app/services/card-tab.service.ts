@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/internal/Observable';
 export interface CardTab {
     id_section?: number;
     id_card: number;
-    body: string;
+    body?: string; // deprecated field
     header: string;
     sub_header: string;
     tab_biography: string;

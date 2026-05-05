@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {CardTab} from '../../services/card-tab.service';
+import {CardTab, CardTabService} from '../../services/card-tab.service';
+import {UserAPIService} from '../../services/user-api.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-card-creation',
@@ -17,6 +19,7 @@ export class CardCreationComponent {
     cardSubtitle: string = 'Tu subtitulo irá aquí';
     cardBiography: string = 'Tu biografía irá aquí';
     cardAge: string | number = '';
+    name: string = '';
     form = new FormGroup({
         cardTitle:     new FormControl('', [Validators.required, Validators.maxLength(50)]),
         cardSubtitle:  new FormControl('', [Validators.required, Validators.maxLength(50)]),
@@ -25,7 +28,15 @@ export class CardCreationComponent {
         photo:         new FormControl<File | null>(null),
     });
 
+    constructor(private userAPI:UserAPIService, private router: Router, private cardAPI:CardTabService) {
+        const token = userAPI.decodeToken();
 
+        this.userAPI.getUserById(token.user_id).subscribe({
+            next: (res:any) => {
+                this.name = res.name;
+            }
+        })
+    }
     get cardTitleValue()     { return this.form.get('cardTitle')!; }
     get cardSubtitleValue()  { return this.form.get('cardSubtitle')!; }
     get cardAgeValue()       { return this.form.get('cardAge')!; }
@@ -39,9 +50,44 @@ export class CardCreationComponent {
         this.choosePhoto = "Una foto de fondo ha sido elegida"
     }
 
+    updateUserAge(){
+        const token = this.userAPI.decodeToken();
+        this.userAPI.updateUserAge(token.user_id, this.form.value.cardAge!).subscribe({
+            next: (res:any) => {
+                console.log(res)
+            }, error: (err:any) => {
+                console.log(err)
+            }
+        })
+
+    }
     onSubmit() {
         if (this.form.invalid) return;
-        console.log(this.form.value);
+
+        const token = this.userAPI.decodeToken()
+        this.updateUserAge();
+        // update cardTab #1
+        const tab:CardTab ={
+            background_photo: this.form.value.photo?.name! || ' ',
+            header: this.form.value.cardTitle!,
+            id_card: Number(token.user_id),
+            id_section: 1, // will always point the first card tab made
+            sub_header: this.form.value.cardSubtitle!,
+            tab_biography: this.form.value.cardBiography!
+        }
+        console.log(this.form.value.photo?.name);
+
+        this.cardAPI.patchCardTab(Number(token.user_id), 1, tab).subscribe({
+            next: value =>{
+                this.router.navigateByUrl("/home")
+            },
+            error: err => {
+                console.log(err);
+            }
+
+        })
+
+
 
     }
 

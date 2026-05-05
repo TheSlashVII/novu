@@ -28,6 +28,7 @@ import {CardCreationComponent} from './components/card-creation/card-creation.co
 import { ChatListComponent } from './components/chat-list/chat-list.component';
 import { ChatDetailComponent } from './components/chat-detail/chat-detail.component';
 
+import {GenderComponent} from './components/gender/gender.component';
 
 export const routes: Routes = [
     {   path: '',
@@ -54,6 +55,13 @@ export const routes: Routes = [
     {
         path: 'interests',
         component: InterestsComponent
+    },{
+        path:'gender',
+        component: GenderComponent,
+    },{
+        path: 'home',
+        component: HomeComponent,
+        title: "Novu - Home",
     },
     {
         path: 'home',

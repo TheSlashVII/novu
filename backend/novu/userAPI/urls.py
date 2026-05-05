@@ -1,5 +1,5 @@
 # from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
 from .viewsets import UserViewset, RegisterRequestViewset, InterestViewset, StudiesViewset, SwipeViewset, MatchViewset, UserCardViewset, CardTabViewset
 # the UserViewset is duplicated because the first one is the file name
 # and the second one is tha actual class
@@ -52,7 +52,8 @@ retrieve_card_tab = CardTabController.as_view({"get": "retrieve"})
 update_card_tab = CardTabController.as_view({"put": "update"})
 patch_card_tab = CardTabController.as_view({"patch": "partial_update"})
 delete_card_tab = CardTabController.as_view({"delete": "destroy"})
-
+update_user_age = UserController.as_view({"patch" : "updateUserAge"})
+update_user_gender = UserController.as_view({"patch": "updateUserGender"})
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
     path("create/", create_user), # creates a user 
@@ -74,7 +75,6 @@ urlpatterns = [
     path("studies/retrieve/<int:pk>/", retrieve_study), #Retrieve study by user_id
     path("studies/update/", update_study), #Update user's study
     path("update/status/<int:id>", change_user_is_new), # update is new status
-    path("update/status/<int:id>", change_user_is_new), # update is new status
     path("admin/delete/<int:id>", admin_delete_user), # deletes users
     path("admin/count/", admin_count_active_users), # counts users in the database
     path("count/most_liked", count_most_liked_users), 
@@ -91,4 +91,6 @@ urlpatterns = [
     path("tabs/update/<int:pk>/<int:id_section>/", update_card_tab), # used to update card tabs
     path("tabs/patch/<int:pk>/<int:id_section>/", patch_card_tab), # used to update cardtabs partially
     path("tabs/delete/<int:pk>/<int:id_section>/", delete_card_tab), # used to delete card tabs
+    path("age/update/<int:pk>", update_user_age), # updates the user age
+    path("gender/update/<int:pk>", update_user_gender), # updates user gender
 ]

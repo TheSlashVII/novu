@@ -64,7 +64,7 @@ class CardTabViewset(viewsets.ModelViewSet):
         data['id_card'] = user_card.user_id
         # to store background photo inside the backend
         photoInfo = {"user_id": data['id_card'], "url": data['background_photo'], "visible":True}
-        imageSerializer = PhotoSerializer(photoInfo)
+        imageSerializer = PhotoSerializer(data=photoInfo)
         if imageSerializer.is_valid():
             imageSerializer.save()
             
@@ -106,18 +106,20 @@ class CardTabViewset(viewsets.ModelViewSet):
             return JsonResponse({"user not found"}, status=status.HTTP_404_NOT_FOUND)
         # to save the foto
         reqData = request.data.copy()
-        photoInfo = {"user_id": pk, "url": reqData['background_photo'], "visible":True}
-        imageSerializer = PhotoSerializer(data=photoInfo)
-        
-        if imageSerializer.is_valid():
-            imageSerializer.save()
-        newPhoto = str(Photo.objects.filter(user_id=pk).last().url)
-        request.data["background_photo"] = newPhoto
-        serializer = CardTabSerializer(tab, data=request.data, partial=True)
+        # check if the user has uploaded a photo 
+        if not reqData['background_photo'] == '':
+            photoInfo = {"user_id": pk, "url": reqData['background_photo'], "visible":True}
+            imageSerializer = PhotoSerializer(data=photoInfo)
+            
+            if imageSerializer.is_valid():
+                imageSerializer.save()
+            newPhoto = Photo.objects.filter(user_id=pk).last()
+            request.data["background_photo"] = newPhoto
+        serializer = CardTabSerializer(tab, data=request.data, partial=True) # transform the data into json 
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(serializer.data, status=status.HTTP_200_OK)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # DELETE /api/tabs/<pk>/
     def destroy(self, request, pk=None, id_section=None):
