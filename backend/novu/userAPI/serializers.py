@@ -104,7 +104,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         # these are the fields for the SQL join query
         fields = [
             'id', 'name', 'surnames', 'email',
-            'gender', 'height', 'date_of_birth',
+            'gender', 'age','height', 'date_of_birth',
             'profile_pic', 'likes', 'school_name',
             'amount_tabs', 'tabs',   
         ]
