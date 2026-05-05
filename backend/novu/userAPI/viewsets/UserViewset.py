@@ -266,15 +266,15 @@ class UserViewset(viewsets.ViewSet):
             users = users.exclude(id__in=already_swiped)
 
         # 4. Filtro por edad
-        today = date.today()
+
+        if min_age is not None or max_age is not None:
+            users = users.exclude(age__isnull=True)
 
         if min_age is not None:
-            max_dob = date(today.year - int(min_age), today.month, today.day)
-            users = users.filter(date_of_birth__lte=max_dob)
+            users = users.filter(age__gte=int(min_age))
 
         if max_age is not None:
-            min_dob = date(today.year - int(max_age) - 1, today.month, today.day + 1)
-            users = users.filter(date_of_birth__gte=min_dob)
+            users = users.filter(age__lte=int(max_age))
 
         # 5. Filtro por género
         if gender_param:
