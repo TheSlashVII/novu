@@ -2,6 +2,7 @@ import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {Router} from '@angular/router';
+import {UserAPIService} from '../../services/user-api.service';
 
 export type SettingsSection = 'profile' | 'card' | 'preferences';
 
@@ -50,7 +51,7 @@ export interface UserPreferences {
   `],
 })
 export class SettingsComponent {
-    constructor(private router:Router) {
+    constructor(private router:Router, private userAPI:UserAPIService) {
     }
     activeSection = signal<SettingsSection>('profile'); // signals are like the useState() hook in react
 
@@ -111,6 +112,10 @@ export class SettingsComponent {
             icon: `<svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M12 3a9 9 0 1 0 0 18A9 9 0 0 0 12 3z"/><path d="M12 8v4l3 3"/></svg>`,
         },
     ];
+    logout(){
+        this.userAPI.logoutJWT();
+        this.router.navigate(['']);
+    }
     goToHome(){
         this.router.navigateByUrl("/home");
     }

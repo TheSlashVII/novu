@@ -13,7 +13,11 @@
             </div>
             <h1 class="text-base font-medium tracking-tight">Settings</h1>
         </div>
-        <button (click)="this.goToHome()" aria-label="Remove tab" class="text-[#4a4459] text-xl leading-none px-1 cursor-pointer transition-colors duration-150 hover:text-[#e05a6a] bg-transparent border-none">×</button>
+        <div class="flex flex-row gap-3">
+            <button (click)="logout()" class="px-7 py-2.5 rounded-xl  bg-[#FF6B6B]  text-white text-sm font-medium cursor-pointer transition-opacity duration-150 hover:opacity-85 active:scale-95 border-none">Logout</button>
+            <button (click)="this.goToHome()" aria-label="Remove tab" class="text-[#4a4459] text-xl leading-none px-1 cursor-pointer transition-colors duration-150 hover:text-[#e05a6a] bg-transparent border-none">×</button>
+        </div>
+
     </header>
 
     <!--  Main layout  -->
@@ -405,6 +409,7 @@
                     </div>
                 </section>
             }
+
 
         </main>
     </div>
