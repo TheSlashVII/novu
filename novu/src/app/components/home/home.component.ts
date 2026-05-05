@@ -239,7 +239,7 @@ export class HomeComponent {
   }
 
   goToChat(): void { this.router.navigate(['/chat']); }
-  goToProfile(): void { this.router.navigate(['/profile']); }
+  goToProfile(): void { this.router.navigateByUrl('/settings'); }
   goToDiscover(): void { this.router.navigate(['/discover']); }
   goToSearch(): void { this.router.navigate(['/search']); }
 

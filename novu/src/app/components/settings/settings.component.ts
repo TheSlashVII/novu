@@ -1,8 +1,9 @@
 import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import {Router} from '@angular/router';
 
-export type SettingsSection = 'profile' | 'card' | 'photos' | 'preferences';
+export type SettingsSection = 'profile' | 'card' | 'preferences';
 
 /**
  * Used for previewing the user card
@@ -49,6 +50,8 @@ export interface UserPreferences {
   `],
 })
 export class SettingsComponent {
+    constructor(private router:Router) {
+    }
     activeSection = signal<SettingsSection>('profile'); // signals are like the useState() hook in react
 
     profile = signal<UserProfile>({
@@ -95,19 +98,22 @@ export class SettingsComponent {
             id: 'card',
             label: 'Card tabs',
             icon: `<svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18"/></svg>`,
-        },
+        },/*
         {
             id: 'photos',
             label: 'Photos',
             icon: `<svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>`,
         },
+        */
         {
             id: 'preferences',
             label: 'Preferences',
             icon: `<svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M12 3a9 9 0 1 0 0 18A9 9 0 0 0 12 3z"/><path d="M12 8v4l3 3"/></svg>`,
         },
     ];
-
+    goToHome(){
+        this.router.navigateByUrl("/home");
+    }
     setSection(section: SettingsSection): void {
         this.activeSection.set(section);
     }
