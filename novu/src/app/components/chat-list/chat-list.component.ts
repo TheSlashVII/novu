@@ -1,9 +1,10 @@
-import { Component, inject, afterNextRender, signal } from '@angular/core';
+import { Component, inject, afterNextRender, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { UserAPIService } from '../../services/user-api.service';
 import { NotificationService } from '../../services/notification.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 interface ChatPreview {
   id: number;
@@ -26,15 +27,17 @@ export class ChatListComponent {
   private http = inject(HttpClient);
   private userAPI = inject(UserAPIService);
   private notificationService = inject(NotificationService);
+  private destroyRef = inject(DestroyRef);
 
   chats = signal<ChatPreview[]>([]);
   loading = signal<boolean>(true);
   error = signal<string>('');
 
-  constructor() {
+   constructor() {
     afterNextRender(() => {
-      const userId = this.userAPI.getUserId();
+      this.notificationService.connect();
 
+      const userId = this.userAPI.getUserId();
       if (!userId) {
         this.router.navigate(['/login']);
         return;
@@ -43,7 +46,7 @@ export class ChatListComponent {
       this.http.get<ChatPreview[]>(`http://localhost:8000/api/chat/conversations/${userId}/`)
         .subscribe({
           next: (data) => {
-            // Añade los contadores de no leídos que ya tenga el servicio
+            console.log('unreadCounts al cargar:', this.notificationService.unreadCounts);
             const chatsWithUnread = data.map(chat => ({
               ...chat,
               unreadCount: this.notificationService.unreadCounts[chat.id] || 0
@@ -58,30 +61,29 @@ export class ChatListComponent {
           }
         });
 
-      // Escucha notificaciones nuevas en tiempo real
-      this.notificationService.notifications$.subscribe((notification) => {
-        this.chats.update(chats => {
-          const exists = chats.find(c => c.id === notification.sender_id);
-          if (exists) {
-            // Actualiza la conversación existente
-            return chats.map(c =>
-              c.id === notification.sender_id
-                ? { ...c, lastMessage: notification.message, unreadCount: (c.unreadCount || 0) + 1 }
-                : c
-            );
-          } else {
-            // Si no existe la conversación todavía, la añade
-            return [...chats, {
-              id: notification.sender_id,
-              name: notification.sender_name,
-              lastMessage: notification.message,
-              lastMessageTime: '',
-              avatar: '',
-              unreadCount: 1
-            }];
-          }
+      this.notificationService.notifications$
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((notification) => {
+          this.chats.update(chats => {
+            const exists = chats.find(c => c.id === notification.sender_id);
+            if (exists) {
+              return chats.map(c =>
+                c.id === notification.sender_id
+                  ? { ...c, lastMessage: notification.message, unreadCount: (c.unreadCount || 0) + 1 }
+                  : c
+              );
+            } else {
+              return [...chats, {
+                id: notification.sender_id,
+                name: notification.sender_name,
+                lastMessage: notification.message,
+                lastMessageTime: '',
+                avatar: '',
+                unreadCount: 1
+              }];
+            }
+          });
         });
-      });
     });
   }
 
