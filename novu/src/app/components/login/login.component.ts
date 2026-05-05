@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
-import {Router} from '@angular/router';
-import {UserAPIService} from '../../services/user-api.service';
+import { Router } from '@angular/router';
+import { UserAPIService } from '../../services/user-api.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-login',
@@ -13,16 +14,21 @@ import {UserAPIService} from '../../services/user-api.service';
 export class LoginComponent {
   showPassword = false;
   loading = false;
-  isLoggedIn:boolean;
-  isRestricted:boolean = false;
+  isLoggedIn: boolean;
+  isRestricted: boolean = false;
   error: string | null = null;
-    constructor(private router: Router, private userAPI:UserAPIService) {
-        this.isLoggedIn = this.userAPI.isLoggedIn();
 
-        if (this.userAPI.isLoggedIn()) {
-            this.router.navigateByUrl('home');
-        }
+  constructor(
+    private router: Router,
+    private userAPI: UserAPIService,
+    private notificationService: NotificationService
+  ) {
+    this.isLoggedIn = this.userAPI.isLoggedIn();
+    if (this.userAPI.isLoggedIn()) {
+      this.router.navigateByUrl('home');
     }
+  }
+
   formLogin = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')]),
     password: new FormControl('', [Validators.required, Validators.minLength(6)]),
@@ -33,11 +39,11 @@ export class LoginComponent {
   }
 
   togglePassword() {
-    this.showPassword = !this.showPassword; // toggles between true and false. If it's true, it becomes false and viceversa.
+    this.showPassword = !this.showPassword;
   }
 
-  goToWelcome() {this.router.navigateByUrl('')}
-  goToRegister() {this.router.navigateByUrl('/register')}
+  goToWelcome() { this.router.navigateByUrl(''); }
+  goToRegister() { this.router.navigateByUrl('/register'); }
 
   submit(): void {
     if (!this.isFormReady) {
@@ -45,42 +51,21 @@ export class LoginComponent {
       return;
     }
     this.loading = true;
-    /*
-    setTimeout(() => {
+    this.error = null;
+
+    this.userAPI.login(this.formLogin.value).subscribe(res => {
+      const token: any = res;
       this.loading = false;
-      console.log(this.formLogin.value);
-    }, 2000);
-     */
-      this.error = null;
+      if (token.access != null) {
+        this.userAPI.saveToken(token.access);
+        
+        // Conectar notificaciones después del login
+        this.notificationService.connect();
 
-      this.userAPI.login(this.formLogin.value).subscribe({
-          next: res => {
-              const token: any = res
-              this.loading = false;
-              if (token.access != null) {
-                  this.userAPI.saveToken(token.access) // save the token inside the browser
-                  // console.log(token)
-                  let route: string = token.is_new == true ? "/studies" : "/home";
-                  this.isRestricted = token.is_restricted;
-                  // console.log(this.isRestricted);
-                  if (!this.isRestricted) {
-                      this.isRestricted = false;
-                      this.router.navigateByUrl(route)
-                  } else {
-                      // console.log(`this account is restricted. Status: ${this.isRestricted}`);
-                      localStorage.removeItem("access_token")
-                  }
-
-              } else {
-                  this.loading = false;
-                  this.error = "Error while creating token";
-              }
-          }, error: err => {
-              this.loading = false;
-              this.error = err.error.error;
-              console.log(err)
-          }
-      });
+        this.isRestricted = token.is_restricted;
+        let route: string = token.is_new == true ? "/studies" : "/home";
+        this.router.navigateByUrl(route);
+      }
+    });
   }
-
 }

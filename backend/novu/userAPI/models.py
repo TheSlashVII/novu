@@ -112,16 +112,17 @@ class Match(models.Model):
 # this table is for having a record on messages being sent 
 class Message(models.Model):
     # Columns
-    id_message=models.BigAutoField(primary_key=True)
-    match_id=models.ForeignKey(Match, on_delete=models.CASCADE, db_column="match_id")
-    sender_id=models.ForeignKey(User, on_delete=models.CASCADE, db_column="sender_id")
+    id_message = models.BigAutoField(primary_key=True)
+    match_id = models.ForeignKey(Match, on_delete=models.CASCADE, db_column="match_id")
+    sender_id = models.ForeignKey(User, on_delete=models.CASCADE, db_column="sender_id")
+    recipient_id = models.ForeignKey(User, related_name="received_messages", on_delete=models.CASCADE, db_column="recipient_id", null=True, blank=True)
     content=models.TextField()
     # read recipients
     sent_at=models.DateTimeField(auto_now_add=True)
-    read_at=models.DateTimeField()
+    read_at=models.DateTimeField(null=True, blank=True)
     # to reply to messages as Instagram or Whatsapp
-    id_previous_message=models.ForeignKey('self', related_name="+",on_delete=models.CASCADE, db_column="id_previous_message")
-    id_next_message=models.ForeignKey('self', related_name="+",on_delete=models.CASCADE, db_column="id_next_message")
+    id_previous_message = models.ForeignKey('self', related_name="+", on_delete=models.CASCADE, db_column="id_previous_message", null=True, blank=True)
+    id_next_message = models.ForeignKey('self', related_name="+", on_delete=models.CASCADE, db_column="id_next_message", null=True, blank=True)
     # column name
     class Meta:
         db_table="Message"

@@ -1,0 +1,45 @@
+<div class="chat-container">
+  <!-- Header -->
+  <div class="chat-header">
+    <button class="back-btn" (click)="goBack()">←</button>
+    <div class="user-info" (click)="goToProfile()">
+      <img [src]="userAvatar()" class="avatar-small" [alt]="userName()">
+      <div>
+        <div class="user-name">{{ userName() }}</div>
+        <div class="user-status">
+          @if (isConnected()) {
+              <span class="online">● En línea</span> 
+          } @else {
+            <span class="connecting">○ Conectando...</span>
+          }
+        </div>
+      </div>
+    </div>
+    <button class="menu-btn">⋮</button>
+  </div>
+
+  <!-- Messages -->
+  <div class="messages-container" #messagesContainer>
+    @for (message of messages(); track $index) {
+      <div class="message" [class.sent]="message.sender_id === currentUserId">
+        <div class="message-bubble">
+          {{ message.message }}
+        </div>
+        <div class="message-time">{{ message.timestamp }}</div>
+      </div>
+    }
+  </div>
+
+  <!-- Input -->
+  <div class="chat-input">
+    <input 
+      type="text" 
+      [(ngModel)]="newMessage" 
+      (keyup.enter)="sendMessage()"
+      [placeholder]="isConnected() ? 'Escribe un mensaje...' : 'Conectando...'"
+      [disabled]="!isConnected()">
+    <button class="send-btn" (click)="sendMessage()" [disabled]="!isConnected() || !newMessage.trim()">
+      ➤
+    </button>
+  </div>
+</div>
