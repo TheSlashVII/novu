@@ -114,7 +114,12 @@ export class HomeComponent {
   }
     getCurrentBackgroundPicture(tab:number = 0){
       let user = this.getCurrentProfile();
-      return `http://localhost:8000/${user?.tabs[tab].background_photo!}`
+      let bg = user?.tabs[tab].background_photo!;
+      if(bg != null){
+          return `http://localhost:8000/${user?.tabs[tab].background_photo!}`
+      }
+      return "assets/Images/backgroundless_cardtab.svg";
+
 
     }
   getCardRotation(): string {
