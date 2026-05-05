@@ -112,7 +112,11 @@ export class HomeComponent {
   getCurrentProfile(): UserProfile | null {
     return this.userProfiles[this.currentIndex] ?? null;
   }
+    getCurrentBackgroundPicture(tab:number = 0){
+      let user = this.getCurrentProfile();
+      return `http://localhost:8000/${user?.tabs[tab].background_photo!}`
 
+    }
   getCardRotation(): string {
     const deg = this.dragX * 0.08;
     return `translateX(${this.dragX}px) rotate(${deg}deg)`;

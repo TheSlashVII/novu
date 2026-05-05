@@ -70,7 +70,7 @@
              (touchend)="onTouchEnd()">
 
           <!-- Foto -->
-            <img [src]="getCurrentProfile()!.tabs[0].background_photo"
+            <img [src]="getCurrentBackgroundPicture()"
                  [alt]="getCurrentProfile()!.name"
                  class="w-full h-[480px] object-cover pointer-events-none"
                  onerror="this.src='https://ui-avatars.com/api/?name=Perfil&background=7c3aed&color=fff&size=400'"/>
