@@ -106,17 +106,17 @@ class CardTabViewset(viewsets.ModelViewSet):
             return JsonResponse({"user not found"}, status=status.HTTP_404_NOT_FOUND)
         # to save the foto
         reqData = request.data.copy()
-        # check if the user has uploaded a photo 
-        if not reqData['background_photo'] == '':
-            photoInfo = {"user_id": pk, "url": reqData['background_photo'], "visible":True}
-            imageSerializer = PhotoSerializer(data=photoInfo)
-            
-            if imageSerializer.is_valid():
-                imageSerializer.save()
-            newPhoto = Photo.objects.filter(user_id=pk).last()
-            request.data["background_photo"] = newPhoto
         serializer = CardTabSerializer(tab, data=request.data, partial=True) # transform the data into json 
+        # check if the user has uploaded a photo 
+        # if not reqData['background_photo'] == '':
+        #     # photoInfo = {"user_id": pk, "url": reqData['background_photo'], "visible":True}
+        #     # imageSerializer = PhotoSerializer(data=photoInfo)
+            
+        #     # if imageSerializer.is_valid():
+        #     #     imageSerializer.save()
+        #     newPhoto = Photo.objects.filter(user_id=pk).last()
         if serializer.is_valid():
+            # serializer.validated_data["background_photo"] = newPhoto.url
             serializer.save()
             return JsonResponse(serializer.data, status=status.HTTP_200_OK)
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
