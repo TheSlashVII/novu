@@ -26,6 +26,7 @@ import {
 import {AdminDeleteUserComponent} from './components/admin-delete-user/admin-delete-user.component';
 import {CardCreationComponent} from './components/card-creation/card-creation.component';
 import {GenderComponent} from './components/gender/gender.component';
+import {SettingsComponent} from './components/settings/settings.component';
 
 export const routes: Routes = [
     {   path: '',
@@ -58,6 +59,10 @@ export const routes: Routes = [
         path: 'home',
         component: HomeComponent,
         title: "Novu - Home",
+    },{
+        path:'settings',
+        component:SettingsComponent,
+        title:"Novu - Settings",
     },
     {
     path: 'admin',
