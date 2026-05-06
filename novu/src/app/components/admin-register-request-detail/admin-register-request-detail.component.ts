@@ -73,12 +73,14 @@ export class AdminRegisterRequestDetailComponent {
         return this.registerRequest.id_student;
     }
     getStudentIdImage(){
-        const server = "http://localhost:8000/";
+        // const server = "http://localhost:8000/";
+        const server = window.location.origin;
         const path = `${server}${this.registerRequest.photo_student_id}`;
         return path;
     }
     getStudentSelfieImage(){
-        const server = "http://localhost:8000/";
+        // const server = "http://localhost:8000/";
+        const server = window.location.origin;
         const path = `${server}${this.registerRequest.photo_id_selfie}`;
         return path;
     }

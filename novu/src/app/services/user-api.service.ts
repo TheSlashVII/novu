@@ -8,7 +8,8 @@ import { Observable, tap } from 'rxjs';
 export class UserAPIService {
     PORT: number = 8000 // django's port
 
-    baseServerURL:string = `http://localhost:${this.PORT}/api/users`;
+    // baseServerURL:string = `http://localhost:${this.PORT}/api/users`;
+    baseServerURL:string = `/api/users`;
     constructor(private http:HttpClient) { }
 
     /**
@@ -218,12 +219,12 @@ export class UserAPIService {
     isLoggedIn(): boolean {
         return !!this.getToken();
     }
-    
+
     isTokenExpired(token: string): boolean {
         try {
             const base64 = token.split('.')[1]
                 .replace(/-/g, '+')
-                .replace(/_/g, '/');        
+                .replace(/_/g, '/');
             const payload = JSON.parse(atob(base64));
             return payload.exp < Date.now() / 1000;
             } catch (e) {

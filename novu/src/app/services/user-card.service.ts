@@ -14,7 +14,8 @@ export interface UserCard {
 export class UserCardService {
   PORT: number = 8000 // django's port
 
-  baseServerURL:string = `http://localhost:${this.PORT}/api/users`;
+//   baseServerURL:string = `http://localhost:${this.PORT}/api/users`;
+    baseServerURL:string = `/api/users`;
     private authHeaders(): { headers: HttpHeaders } {
         return {
             headers: new HttpHeaders({ "Authorization": "Bearer " + this.getToken() })

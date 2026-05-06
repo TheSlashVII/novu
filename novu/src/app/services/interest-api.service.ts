@@ -9,7 +9,8 @@ import { Observable } from 'rxjs';
 export class InterestApiService {
     PORT: number = 8000 // django's port
 
-    baseServerURL:string = `http://localhost:${this.PORT}/api/users`;
+    // baseServerURL:string = `http://localhost:${this.PORT}/api/users`;
+    baseServerURL:string = `/api/users`;
     constructor(private http: HttpClient) {}
     getToken(): string | null {
         return localStorage.getItem('access_token');
