@@ -8,7 +8,8 @@ import { Observable, tap } from 'rxjs';
 export class UserAPIService {
     PORT: number = 8000 // django's port
 
-    baseServerURL:string = `http://localhost:${this.PORT}/api/users`;
+    // baseServerURL:string = `http://localhost:${this.PORT}/api/users`;
+    baseServerURL:string = `/api/users`;
     constructor(private http:HttpClient) { }
 
     /**
@@ -160,6 +161,17 @@ export class UserAPIService {
         const ROUTE:string = `${this.baseServerURL}/gender/update/${id}`;
         return this.http.patch(ROUTE, {gender:gender} ,this.authHeaders())
     }
+
+    getUserProfiles(){
+        const ROUTE:string = `${this.baseServerURL}/profiles/`;
+        // return this.http.get(ROUTE, this.authHeaders())
+        return this.http.get(ROUTE)
+    }
+    uploadPhoto(id:number, data:any){
+        const ROUTE:string = `${this.baseServerURL}/photos/upload/${id}`;
+    //        return this.http.post(ROUTE, this.authHeaders())
+        return this.http.post(ROUTE, data)
+    }
     // JWT
     saveToken(token: string) {
       if(this.getToken() != null ){
@@ -207,12 +219,12 @@ export class UserAPIService {
     isLoggedIn(): boolean {
         return !!this.getToken();
     }
-    
+
     isTokenExpired(token: string): boolean {
         try {
             const base64 = token.split('.')[1]
                 .replace(/-/g, '+')
-                .replace(/_/g, '/');        
+                .replace(/_/g, '/');
             const payload = JSON.parse(atob(base64));
             return payload.exp < Date.now() / 1000;
             } catch (e) {

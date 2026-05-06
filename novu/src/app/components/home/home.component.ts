@@ -11,6 +11,15 @@ interface Profile {
   image: string;
 }
 
+interface UserProfile {
+    id: number;
+    name: string;
+    age: number;
+    date_of_birth: string;
+    amount_tabs:number;
+    tabs:CardTab[];
+}
+
 interface CardTab {
   id: number;
   card: number;
@@ -32,7 +41,7 @@ interface CardTab {
 })
 export class HomeComponent {
   private http = inject(HttpClient);
-
+    userProfiles: UserProfile[] = [];
   profiles: Profile[] = [];
   currentIndex: number = 0;
   loading: boolean = true;
@@ -46,12 +55,12 @@ export class HomeComponent {
   private dislikeAnimation: boolean = false;
 
 
-  constructor(private userAPIService: UserAPIService, private userAPI:UserAPIService, private router:Router) {
-      this.isLoggedIn = this.userAPI.isLoggedIn();
-        if(this.userAPI.getToken() == null){
+  constructor(private userAPIService: UserAPIService, private router:Router) {
+      this.isLoggedIn = this.userAPIService.isLoggedIn();
+        if(this.userAPIService.getToken() == null){
             this.router.navigateByUrl('');
         }
-      const isTokenExpired = this.userAPI.isTokenExpired(this.userAPI.getToken()!) != null ? this.userAPI.isTokenExpired(this.userAPI.getToken()!) : true;
+      const isTokenExpired = this.userAPIService.isTokenExpired(this.userAPIService.getToken()!) != null ? this.userAPIService.isTokenExpired(this.userAPIService.getToken()!) : true;
       if (!this.isLoggedIn || isTokenExpired){
           if (localStorage.getItem('token') != null) {
               localStorage.removeItem('access_token');
@@ -60,6 +69,9 @@ export class HomeComponent {
 
 
       }
+      this.retrieveUsers()
+
+
     afterNextRender(() => {
       this.http.get<Profile[]>('http://localhost:8000/api/users/list/').subscribe({
         next: (data) => {
@@ -73,11 +85,43 @@ export class HomeComponent {
       });
     });
   }
+    // for you page algorithm
+    retrieveUsers(){
+      const token = this.userAPIService.decodeToken()
+        const userID = token.user_id;
+      this.userAPIService.getUserProfiles().subscribe({
+          next: (data) => {
+              let res:any = data
+              this.userProfiles = res;
+              this.userProfiles = this.userProfiles.filter(user => user.tabs != null && user.id != userID);
+              // console.log(this.userProfiles);
+          }
+      })
+    }
 
-  getCurrentProfile(): Profile | null {
-    return this.profiles[this.currentIndex] ?? null;
+
+
+
+
+
+
+
+
+
+
+  getCurrentProfile(): UserProfile | null {
+    return this.userProfiles[this.currentIndex] ?? null;
   }
+    getCurrentBackgroundPicture(tab:number = 0){
+      let user = this.getCurrentProfile();
+      let bg:string = user?.tabs[tab].background_photo!;
+      if(bg != null){
+          return `http://localhost:8000/${user?.tabs[tab].background_photo!}`
+      }
+      return "assets/Images/backgroundless_cardtab.svg";
 
+
+    }
   getCardRotation(): string {
     const deg = this.dragX * 0.08;
     return `translateX(${this.dragX}px) rotate(${deg}deg)`;
@@ -216,7 +260,7 @@ export class HomeComponent {
   }
 
   //Mostrar notificación de match
-  showMatchNotification(profile: Profile): void{
+  showMatchNotification(profile: UserProfile): void{
     // Usar setTimeout para evitar conflictos con la animacion
     setTimeout(() => {
       alert(`Hiciste match con ${profile.name}`);
@@ -239,7 +283,7 @@ export class HomeComponent {
   }
 
   goToChat(): void { this.router.navigate(['/chats']); }
-  goToProfile(): void { this.router.navigate(['/profile']); }
+  goToProfile(): void { this.router.navigateByUrl('/settings'); }
   goToDiscover(): void { this.router.navigate(['/discover']); }
   goToSearch(): void { this.router.navigate(['/search']); }
 

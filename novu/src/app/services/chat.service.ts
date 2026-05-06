@@ -17,21 +17,24 @@ export interface ChatMessage {
 export class ChatService {
   private userAPI = inject(UserAPIService);
   private socket$!: WebSocketSubject<any>;
-  
+
   public messages$ = new Subject<ChatMessage>();
   public connectionStatus$ = new BehaviorSubject<boolean>(false); // ← BehaviorSubject
 
   connect(userId: number, otherUserId: number): void {
     const token = this.userAPI.getToken();
-    
+
     if (!token) {
       console.error('❌ No hay token de autenticación.');
       this.connectionStatus$.next(false);
       return;
     }
-    
-    const wsUrl = `ws://localhost:8000/ws/chat/${userId}/${otherUserId}/?token=${token}`;
-    
+
+    // const wsUrl = `ws://localhost:8000/ws/chat/${userId}/${otherUserId}/?token=${token}`;
+      const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+      const wsUrl =
+          `${protocol}://${window.location.host}/ws/chat/${userId}/${otherUserId}/?token=${token}`;
+
     this.socket$ = webSocket({
       url: wsUrl,
       openObserver: {

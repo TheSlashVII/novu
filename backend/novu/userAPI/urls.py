@@ -1,6 +1,6 @@
 # from django.contrib import admin
 from django.urls import path
-from .viewsets import UserViewset, RegisterRequestViewset, InterestViewset, StudiesViewset, SwipeViewset, MatchViewset, UserCardViewset, CardTabViewset
+from .viewsets import UserViewset, RegisterRequestViewset, InterestViewset, StudiesViewset, SwipeViewset, MatchViewset, UserCardViewset, CardTabViewset, PhotoViewset
 # the UserViewset is duplicated because the first one is the file name
 # and the second one is tha actual class
 # controller Lists
@@ -12,7 +12,7 @@ SwipeController = SwipeViewset.SwipeViewset
 MatchController = MatchViewset.MatchViewset
 UserCardController = UserCardViewset.UserCardViewset
 CardTabController = CardTabViewset.CardTabViewset
-
+PhotoController = PhotoViewset.PhotoViewset
 
 login=UserController.as_view({"post" : "retrieveByEmail"})
 create_user=UserController.as_view({"post" : "createFromUser"})
@@ -54,6 +54,8 @@ patch_card_tab = CardTabController.as_view({"patch": "partial_update"})
 delete_card_tab = CardTabController.as_view({"delete": "destroy"})
 update_user_age = UserController.as_view({"patch" : "updateUserAge"})
 update_user_gender = UserController.as_view({"patch": "updateUserGender"})
+get_user_profiles = UserController.as_view({"get" : "getUserProfiles"})
+upload_user_photos = PhotoController.as_view({"post" : "uploadPhoto"})
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
     path("create/", create_user), # creates a user 
@@ -85,7 +87,7 @@ urlpatterns = [
     path("cards/", list_user_card), #used to list cards
     path("cards/create/", create_user_card), # used to create usercards
     path("cards/retrieve/<int:pk>/", retrieve_user_card), # used to get the usercards
-    path("tabs/", list_card_tabs), # used to list card tabs
+    path("tabs/<int:pk>", list_card_tabs), # used to list card tabs
     path("tabs/create/", create_card_tab), # used to create card tabs
     path("tabs/retrieve/<int:pk>/", retrieve_card_tab), # used to get card tabs
     path("tabs/update/<int:pk>/<int:id_section>/", update_card_tab), # used to update card tabs
@@ -93,4 +95,6 @@ urlpatterns = [
     path("tabs/delete/<int:pk>/<int:id_section>/", delete_card_tab), # used to delete card tabs
     path("age/update/<int:pk>", update_user_age), # updates the user age
     path("gender/update/<int:pk>", update_user_gender), # updates user gender
+    path("profiles/", get_user_profiles), # to get all the users + their cards
+    path("photos/upload/<int:id>", upload_user_photos),
 ]

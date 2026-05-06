@@ -9,7 +9,7 @@ export interface CardTab {
     header: string;
     sub_header: string;
     tab_biography: string;
-    background_photo: string;
+    background_photo: string | File;
 }
 
 @Injectable({
@@ -18,7 +18,8 @@ export interface CardTab {
 export class CardTabService {
     PORT: number = 8000; // django's port
 
-    baseServerURL: string = `http://localhost:${this.PORT}/api/users`;
+    // baseServerURL: string = `http://localhost:${this.PORT}/api/users`;
+    baseServerURL: string = `/api/users`;
     constructor(private http: HttpClient) {}
 
     //GET /api/users/tabs/?user_id=1
@@ -59,7 +60,7 @@ export class CardTabService {
     patchCardTab(
         userId: number,
         idSection: number,
-        tab: Partial<CardTab>
+        tab:any
     ): Observable<CardTab> {
         return this.http.patch<CardTab>(
             `${this.baseServerURL}/tabs/patch/${userId}/${idSection}/`,

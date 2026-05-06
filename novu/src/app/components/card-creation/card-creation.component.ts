@@ -63,12 +63,12 @@ export class CardCreationComponent {
     }
     onSubmit() {
         if (this.form.invalid) return;
-
+        const formData = new FormData();
         const token = this.userAPI.decodeToken()
         this.updateUserAge();
         // update cardTab #1
         const tab:CardTab ={
-            background_photo: this.form.value.photo?.name! || ' ',
+            background_photo: this.form.value.photo!,
             header: this.form.value.cardTitle!,
             id_card: Number(token.user_id),
             id_section: 1, // will always point the first card tab made
@@ -76,16 +76,37 @@ export class CardCreationComponent {
             tab_biography: this.form.value.cardBiography!
         }
         console.log(this.form.value.photo?.name);
+        const photoToUpload = new FormData();
+        photoToUpload.append("background_photo", this.form.value.photo!)
+        this.userAPI.uploadPhoto(Number(token.user_id), photoToUpload).subscribe(
+            {
+                next: (res:any) => {
+                    formData.append("background_photo",res.photo.url);
+                    formData.append("header", this.form.value.cardTitle!);
+                    formData.append("sub_header",this.form.value.cardSubtitle!);
+                    formData.append("tab_biography", this.form.value.cardBiography!)
+                    formData.append("id_card", String(token.user_id));
+                    formData.append("id_section", "1");
 
-        this.cardAPI.patchCardTab(Number(token.user_id), 1, tab).subscribe({
-            next: value =>{
-                this.router.navigateByUrl("/home")
-            },
-            error: err => {
-                console.log(err);
+                    let dataToSend:Record<string, FormDataEntryValue> = {}
+                    formData.forEach((value, key) => {
+                        dataToSend[key] = value;
+                    })
+                    console.log(formData)
+                    console.log(dataToSend)
+                    this.cardAPI.patchCardTab(Number(token.user_id), 1, dataToSend).subscribe({
+                        next: value =>{
+                            this.router.navigateByUrl("/home")
+                        },
+                        error: err => {
+                            console.log(err);
+                        }
+
+                    })
+                }
             }
+        )
 
-        })
 
 
 

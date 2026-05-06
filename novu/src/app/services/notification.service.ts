@@ -39,14 +39,15 @@ export class NotificationService {
             console.log('Notificaciones ya conectadas.')
             return;
         }
-        
+
         const token = this.userAPI.getToken();
         const userId = this.userAPI.getUserId();
 
         if (!token || !userId) return;
 
-        const wsUrl = `ws://localhost:8000/ws/notifications/${userId}/?token=${token}`;
-
+        // const wsUrl = `ws://localhost:8000/ws/notifications/${userId}/?token=${token}`;
+        const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+        const wsUrl = `${protocol}://${window.location.host}/ws/notifications/${userId}/?token=${token}`;
         this.socket$ = webSocket({
             url: wsUrl,
             openObserver: {

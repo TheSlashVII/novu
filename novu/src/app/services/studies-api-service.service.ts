@@ -9,7 +9,8 @@ export class StudiesApiServiceService {
 
   PORT: number = 8000; // django's port
 
-  baseServerURL: string = `http://localhost:${this.PORT}/api/users`;
+  // baseServerURL: string = `http://localhost:${this.PORT}/api/users`;
+    baseServerURL: string = `/api/users`;
   constructor(private http: HttpClient) {}
     private authHeaders(): { headers: HttpHeaders } {
         return {
