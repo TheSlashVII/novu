@@ -11,7 +11,7 @@ interface Profile {
   image: string;
 }
 
-interface UserProfile {
+export interface UserProfile {
     id: number;
     name: string;
     age: number;
@@ -46,14 +46,13 @@ export class HomeComponent {
   currentIndex: number = 0;
   loading: boolean = true;
   error: string = '';
-
+    hasWentBack:boolean = false;
   isDragging: boolean = false;
   dragX: number = 0;
   dragStartX: number = 0;
     isLoggedIn: boolean;
   private likeAnimation: boolean = false;
   private dislikeAnimation: boolean = false;
-
 
   constructor(private userAPIService: UserAPIService, private router:Router) {
       this.isLoggedIn = this.userAPIService.isLoggedIn();
@@ -73,6 +72,21 @@ export class HomeComponent {
 
 
     afterNextRender(() => {
+        const token = this.userAPIService.decodeToken()
+        const userID = token.user_id;
+        this.userAPIService.getUserProfiles().subscribe({
+            next: (data) => {
+                this.userProfiles = data.filter(user => user.tabs != null && user.id != userID);
+                // this.userProfiles = this.userProfiles.filter(user => user.tabs != null && user.id != userID);
+                // console.log(this.userProfiles);
+                this.loading = false;
+            },
+            error: () => {
+                this.error = 'No se pudieron cargar los perfiles.';
+                this.loading = false;
+            }
+        })
+        /*
       this.http.get<Profile[]>('http://localhost:8000/api/users/list/').subscribe({
         next: (data) => {
           this.profiles = data;
@@ -83,6 +97,8 @@ export class HomeComponent {
           this.loading = false;
         }
       });
+
+         */
     });
   }
     // for you page algorithm
@@ -91,10 +107,14 @@ export class HomeComponent {
         const userID = token.user_id;
       this.userAPIService.getUserProfiles().subscribe({
           next: (data) => {
-              let res:any = data
-              this.userProfiles = res;
-              this.userProfiles = this.userProfiles.filter(user => user.tabs != null && user.id != userID);
+              this.userProfiles = data.filter(user => user.tabs != null && user.id != userID);
+              // this.userProfiles = this.userProfiles.filter(user => user.tabs != null && user.id != userID);
               // console.log(this.userProfiles);
+              this.loading = false;
+          },
+          error: () => {
+              this.error = 'No se pudieron cargar los perfiles.';
+              this.loading = false;
           }
       })
     }
@@ -116,7 +136,7 @@ export class HomeComponent {
       let user = this.getCurrentProfile();
       let bg:string = user?.tabs[tab].background_photo!;
       if(bg != null){
-          return `http://localhost:8000/${user?.tabs[tab].background_photo!}`
+          return `${window.location.origin}/${user?.tabs[tab].background_photo!}`
       }
       return "assets/Images/backgroundless_cardtab.svg";
 
@@ -251,12 +271,25 @@ export class HomeComponent {
 
   //Metodo para pasar al siguiente perfil
   nextProfile(): void {
-    if(this.currentIndex < this.profiles.length -1){
+    if(this.currentIndex < this.userProfiles.length -1){
       this.currentIndex++;
     }else{
       //No hay mas perfiles
       console.log('No hay mas perfiles para mostrar')
     }
+  }
+  preivousProfile(){
+      if(this.hasWentBack){
+          this.hasWentBack = false;
+          return
+      }
+      if (this.currentIndex <= 0 ){
+          this.hasWentBack = true;
+          this.currentIndex = 0;
+          return;
+      }
+      this.hasWentBack = true;
+      this.currentIndex--;
   }
 
   //Mostrar notificación de match
@@ -284,7 +317,7 @@ export class HomeComponent {
 
   goToChat(): void { this.router.navigate(['/chats']); }
   goToProfile(): void { this.router.navigateByUrl('/settings'); }
-  goToDiscover(): void { this.router.navigate(['/discover']); }
+  // goToDiscover(): void { this.router.navigate(['/discover']); }
   goToSearch(): void { this.router.navigate(['/search']); }
 
 

@@ -42,7 +42,7 @@ export class ChatListComponent {
         this.router.navigate(['/login']);
         return;
       }
-
+/*
       this.http.get<ChatPreview[]>(`http://localhost:8000/api/chat/conversations/${userId}/`)
         .subscribe({
           next: (data) => {
@@ -60,8 +60,27 @@ export class ChatListComponent {
             this.loading.set(false);
           }
         });
+ */
 
-      this.notificationService.notifications$
+        this.http.get<ChatPreview[]>(`${window.location.origin}/api/chat/conversations/${userId}/`)
+            .subscribe({
+                next: (data) => {
+                    console.log('unreadCounts al cargar:', this.notificationService.unreadCounts);
+                    const chatsWithUnread = data.map(chat => ({
+                        ...chat,
+                        unreadCount: this.notificationService.unreadCounts[chat.id] || 0
+                    }));
+                    this.chats.set(chatsWithUnread);
+                    this.loading.set(false);
+                },
+                error: (err) => {
+                    console.error('Error:', err);
+                    this.error.set('No se pudieron cargar las conversaciones.');
+                    this.loading.set(false);
+                }
+            });
+
+        this.notificationService.notifications$
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe((notification) => {
           this.chats.update(chats => {

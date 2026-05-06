@@ -39,7 +39,7 @@ export class ChatDetailComponent {
 
   constructor() {
     this.otherUserId = Number(this.route.snapshot.paramMap.get('id'));
-    
+
     // Obtener el ID del usuario logueado
     const userId = this.userAPI.getUserId();
     if (!userId) {
@@ -52,12 +52,12 @@ export class ChatDetailComponent {
 
     //Clean notifications when you open the chat
     this.notificationService.clearUnread(this.otherUserId);
-    
+
     this.loadUserData(this.otherUserId);
     this.loadMessageHistory();
-    
+
     this.chatService.connect(this.currentUserId, this.otherUserId);
-    
+
     this.chatService.messages$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((msg) => {
@@ -102,7 +102,8 @@ export class ChatDetailComponent {
   }
 
   loadMessageHistory(): void {
-    this.http.get<ChatMessage[]>(`http://localhost:8000/api/chat/messages/${this.currentUserId}/${this.otherUserId}/`)
+    /*
+      this.http.get<ChatMessage[]>(`http://localhost:8000/api/chat/messages/${this.currentUserId}/${this.otherUserId}/`)
       .subscribe({
         next: (messages) => {
           console.log('📜 Historial cargado:', messages.length, 'mensajes');
@@ -112,6 +113,21 @@ export class ChatDetailComponent {
           console.error('Error cargando historial:', err);
         }
       });
+
+     */
+
+      this.http.get<ChatMessage[]>(`${window.location.origin}/api/chat/messages/${this.currentUserId}/${this.otherUserId}/`)
+          .subscribe({
+              next: (messages) => {
+                  console.log('📜 Historial cargado:', messages.length, 'mensajes');
+                  this.messages.set(messages);
+              },
+              error: (err) => {
+                  console.error('Error cargando historial:', err);
+              }
+          });
+
+
   }
 
   sendMessage(): void {
@@ -125,7 +141,7 @@ export class ChatDetailComponent {
   goBack(): void {
     this.router.navigate(['/chats']);
   }
-  
+
   goToProfile(): void {
     this.router.navigate(['/profile', this.otherUserId]);
   }

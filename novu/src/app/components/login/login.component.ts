@@ -58,14 +58,40 @@ export class LoginComponent {
       this.loading = false;
       if (token.access != null) {
         this.userAPI.saveToken(token.access);
-        
+
         // Conectar notificaciones después del login
         this.notificationService.connect();
 
         this.isRestricted = token.is_restricted;
-        let route: string = token.is_new == true ? "/studies" : "/home";
-        this.router.navigateByUrl(route);
+        if (!this.isRestricted){
+            let route: string = token.is_new == true ? "/studies" : "/home";
+            this.router.navigateByUrl(route);
+        }
+
       }
     });
+    this.userAPI.login(this.formLogin.value).subscribe({
+        next: res => {
+            const token: any = res;
+            this.loading = false;
+            if (token.access != null) {
+                this.userAPI.saveToken(token.access);
+                // Conectar notificaciones después del login
+                this.notificationService.connect();
+
+                this.isRestricted = token.is_restricted;
+                if (!this.isRestricted){
+                    let route: string = token.is_new == true ? "/studies" : "/home";
+                    this.router.navigateByUrl(route);
+                } else{
+                    this.userAPI.logoutJWT()
+                }
+
+            }
+        },error: error => {
+            this.loading = false;
+        }
+
+    })
   }
 }

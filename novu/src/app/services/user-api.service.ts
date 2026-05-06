@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from "@angular/common/http"
 import { Observable, tap } from 'rxjs';
+import {UserProfile} from '../components/home/home.component';
 
 @Injectable({
   providedIn: 'root'
@@ -165,7 +166,7 @@ export class UserAPIService {
     getUserProfiles(){
         const ROUTE:string = `${this.baseServerURL}/profiles/`;
         // return this.http.get(ROUTE, this.authHeaders())
-        return this.http.get(ROUTE)
+        return this.http.get<UserProfile[]>(ROUTE)
     }
     uploadPhoto(id:number, data:any){
         const ROUTE:string = `${this.baseServerURL}/photos/upload/${id}`;
