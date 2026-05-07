@@ -22,6 +22,7 @@ interface Step {
 })
 export class WelcomeComponent {
   private router = inject(Router);
+  menuOpen = false;
 
   currentYear = new Date().getFullYear();
   // signals are like a record to save stuff inside of them. Is like an object
@@ -78,5 +79,9 @@ export class WelcomeComponent {
 
   goToRegister(): void {
     this.router.navigate(['/register']);
+  }
+
+  toggleMenu(): void{
+    this.menuOpen = !this.menuOpen;
   }
 }
