@@ -13,6 +13,9 @@ import {CardTab, CardTabService} from '../../services/card-tab.service';
   styleUrl: './admin-create-users.component.css'
 })
 export class AdminCreateUsersComponent {
+    passwordShowText:string = "Show" // change the toggle button
+    isPasswordHidden:boolean = true // to toggle between showing the password or not
+    showRestrictedSection:boolean = false // this is to show the section in case you want to create a restricted user at first
     userForm = new FormGroup({
         name: new FormControl('', [Validators.required, Validators.maxLength(200)]),
         surnames: new FormControl('', [Validators.required, Validators.maxLength(200)]),
@@ -27,7 +30,7 @@ export class AdminCreateUsersComponent {
         max_age: new FormControl(null, [Validators.min(0)]),
         profile_pic: new FormControl(''),
         max_distance_km: new FormControl(null, [Validators.min(1)]),
-        show_me: new FormControl(true),
+        // show_me: new FormControl(true),
         is_new: new FormControl(true),
         restricted: new FormControl(false),
         restricted_reason: new FormControl('', [Validators.maxLength(100)]),
@@ -36,6 +39,21 @@ export class AdminCreateUsersComponent {
     })
     constructor(private userAPIService: UserAPIService, private router:Router, private userCardService:UserCardService, private cardTabService:CardTabService) {
 
+    }
+    togglePassword(){
+        this.isPasswordHidden = !this.isPasswordHidden; // turn on or off the option to show the password in plain text
+        switch (this.isPasswordHidden) {
+            case true:
+                this.passwordShowText = "Show"
+                break;
+            case false:
+                this.passwordShowText = "Hide"
+                break;
+            default:
+                this.passwordShowText = "Hide"
+                break;
+        }
+        
     }
 
     Submit(){
@@ -64,7 +82,7 @@ export class AdminCreateUsersComponent {
             formData.append('max_distance_km', String(f.max_distance_km));
         }
 
-        formData.append('show_me', String(f.show_me));
+        // formData.append('show_me', String(f.show_me));
         formData.append('is_new', String(f.is_new));
         formData.append('restricted', String(f.restricted));
         formData.append('admin', String(f.admin));
@@ -89,10 +107,10 @@ export class AdminCreateUsersComponent {
                         id_card: userCard.user,
                         body: 'This is the default card tab. Edit it to add more information about you!',
                         header: 'Default Card Tab',
-                        sub_header: 'A ',
+                        sub_header: ' Default header',
                         tab_biography:
                             'This is the default biography. Edit it to add more information about you!',
-                        background_photo: 'A '
+                        background_photo: 'Not uploaded yet'
                     };
                     this.cardTabService.createCardTab(newUser.id, tab).subscribe(res => {console.log(res)})
 

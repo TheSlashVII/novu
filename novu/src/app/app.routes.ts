@@ -97,8 +97,6 @@ export const routes: Routes = [
             },{
                 path:"post_accept", component: AdminPostAcceptRequest,
             }, {
-                path:"create_user", component: AdminCreateUsersComponent
-            }, {
                 path:"post_deny", component: AdminPostDenyRequestComponent
             },{
                 path:'restrict_user',
@@ -119,6 +117,8 @@ export const routes: Routes = [
     },{
         path:'unauthorized',
         component: UnauthorizedComponent
+    }, {
+        path:"create_user", component: AdminCreateUsersComponent
     },
     {
     path: '**',
