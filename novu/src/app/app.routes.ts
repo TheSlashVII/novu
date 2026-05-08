@@ -109,6 +109,9 @@ export const routes: Routes = [
                 path:'delete_user',
                 component: AdminDeleteUserComponent,
                 title:'Novu Admin - Delete User',
+            },
+             {
+                path:"create_user", component: AdminCreateUsersComponent
             }
         ]
     },{
@@ -117,8 +120,6 @@ export const routes: Routes = [
     },{
         path:'unauthorized',
         component: UnauthorizedComponent
-    }, {
-        path:"create_user", component: AdminCreateUsersComponent
     },
     {
     path: '**',
