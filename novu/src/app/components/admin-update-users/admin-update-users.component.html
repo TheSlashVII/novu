@@ -1,0 +1,182 @@
+<main class="flex flex-col bg-[#F0E9E9] min-h-screen justify-center">
+    <nav class="flex flex-row justify-between px-5 py-3 bg-[#2f3a63]">
+        <!--Logo section-->
+        <div class="inline-flex justify-around items-center gap-3">
+            <img src="assets/Images/Novu_logo.svg" alt="Novu logo" class="max-h-10">
+            <div class="flex flex-row gap-1 items-center">
+                <p class="font-[Poppins] font-bold text-white text-lg">Novu</p>
+                <p class="text-white font-light text-lg">Admin</p>
+                <p class="font-bold text-white"> - Create Users</p>
+            </div>
+        </div>
+        <button (click)="logout()" class="hover:cursor-pointer hidden sm:block bg-[#4a90e2] font-[Inter] py-3 px-10 rounded-3xl text-white">Logout</button>
+        <img (click)="logout()" class="hover:cursor-pointer block sm:hidden" src="assets/Images/Logout_admin.svg" alt="Logout">
+    </nav>
+
+    <div class="flex justify-center flex-col lg:px-20 xl:px-40 lg:py-30 px-10 py-5 gap-10">
+
+        <form [formGroup]="userForm" (ngSubmit)="Submit()" class="font-[Inter] flex flex-col gap-3 rounded-lg text-white bg-[#87A0FF] px-0 md:px-20 lg:px-15 py-15">
+            <div class="flex justify-start mx-5 md:mx-0"><h2 class="font-[Poppins] text-lg md:text-2xl lg:text-4xl font-bold">Create a New User</h2></div>
+            <!--Names & surnames-->
+            <section class="flex flex-col gap-3 mx-5 md:mx-0">
+                <div class="flex flex-col sm:grid sm:grid-cols-2 gap-5 ">
+                    <div class="flex flex-col grow gap-2">
+                        <div class=""><h2 class="font-black">Names*</h2></div>
+                        <input [value]="retrievedUser.name" formControlName="name" placeholder="Name" class="h-9 rounded-xl text-black  border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50 px-4 text-[12px] outline-none placeholder:text-gray-400">
+                        @if (userForm.get('name')?.touched)
+                        {
+                            @if (userForm.get('name')?.errors?.['required']) {
+                                <span class="grid-rows-subgrid grid ml-3 text-xs text-red-500">Must not be empty</span>
+                            }
+                            @if (userForm.get('name')?.errors?.['minlength']) {
+                                <span class="subgrid grid ml-3 text-xs text-red-500">2 characters minimum</span>
+                            }
+
+                        }
+                    </div>
+                    <div class="flex flex-col grow gap-2">
+                        <div class=""><h2 class="font-black">Surnames*</h2></div>
+                        <input [value]="retrievedUser." formControlName="surnames" placeholder="Surnames" class="h-9 text-black rounded-xl border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50 px-4 text-[12px] outline-none placeholder:text-gray-400">
+                        @if (userForm.get('surnames')?.touched) {
+                            @if (userForm.get('surnames')?.errors?.['required']) {
+                                <span class="subgrid grid  ml-3 text-xs text-red-500">Los apellidos no pueden quedar vacíos</span>
+                            }
+                            @if (userForm.get('surnames')?.errors?.['minlength']) {
+                                <span class="subgrid grid ml-3 text-xs text-red-500">Mínimo 2 caracteres</span>
+                            }
+                        }
+                    </div>
+
+                </div>
+            </section>
+
+
+            <!--Email-->
+            <section class="flex  flex-col gap-3 mx-5 md:mx-0" >
+                <h2 class="font-black w-100">Email*</h2>
+                <div class="flex flex-col gap-3">
+                    <input formControlName="email" placeholder="student@school.com" class=" h-9 rounded-xl text-black  border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50 px-4 text-[12px] outline-none placeholder:text-gray-400">
+                    @if (userForm.get('email')?.invalid && userForm.get('email')?.touched) {
+                        <span class="block ml-3 text-xs text-red-500"> Invalid Email</span>
+                    }
+                </div>
+            </section>
+            <!--Password-->
+            <section class="flex flex-col gap-3 mx-5 md:mx-0">
+                <h2 class="font-black">Password*</h2>
+                <div class="flex flex-row gap-4 items-center">
+                    <input [type]="isPasswordHidden ? 'password' : 'text'" formControlName="password" placeholder="Password" class="text-black flex-grow-2 h-9 rounded-xl border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50 px-4 text-[12px] outline-none placeholder:text-gray-400">
+                    <button (click)="togglePassword()" class="shrink-2 py-2 text-xs px-7 bg-white text-black rounded-xl font-bold hover:cursor-pointer hover:text-gray-400 transition-all "  >{{this.passwordShowText}}</button>
+                </div>
+            </section>
+
+            <!--School -->
+            <section class="flex flex-col gap-3 mx-5 md:mx-0">
+                <h2 class="font-black">School Name</h2>
+                <input formControlName="school_name" placeholder="School" class="text-black grow h-9 rounded-xl border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50 px-4 text-[12px] outline-none placeholder:text-gray-400">
+            </section>
+
+
+            <!--Gender-->
+            <h2 class="font-black mx-5 md:mx-0">Select gender</h2>
+            <select formControlName="gender" class="mx-5 md:mx-0 h-9 rounded-xl text-black border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50 px-4 text-[12px] outline-none placeholder:text-gray-400">
+                <option value="">Select gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="others">Others</option>
+            </select>
+
+            <section class="flex flex-col gap-3 mx-5 md:mx-0">
+                <h2 class="font-black">Write a biography</h2>
+                <textarea formControlName="biography" placeholder="Bio" class="text-black grow h-9 rounded-xl border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50 px-4 text-[12px] outline-none placeholder:text-gray-400"></textarea>
+            </section>
+
+            <div class="flex flex-col sm:flex-row gap-5 justify-between mx-5 md:mx-0">
+                <section class="grow flex flex-col gap-3">
+                    <h2 class="font-black">Date of Birth*</h2>
+                    <input type="date" formControlName="date_of_birth" class="text-black h-9 rounded-xl border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50 px-4 text-[12px] outline-none placeholder:text-gray-400 focus:ring-0">
+                </section>
+                
+                <section class="grow flex flex-col gap-3">
+                    <h2 class="font-black">Height</h2>
+                    <input formControlName="height" placeholder="Height (cm)" class="h-9 rounded-xl border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50 px-4 text-[12px] outline-none placeholder:text-gray-400 focus:ring-0">
+                </section>
+            </div>
+
+
+            <div class="flex flex-col sm:flex-row justify-around lg:justify-between  mx-5 md:mx-0 gap-5 md:gap-1">
+                <section class="flex flex-col gap-3 grow">
+                    <h2 class="font-black">Ages filter</h2>
+                    <div class="flex flex-col flex-grow lg:flex-row sm:justify-between gap-3 sm:gap-1">
+                        <div class="flex-col flex grow">
+                            <h4>Max age</h4>
+                            <input type="number" formControlName="max_age" placeholder="Max Age" class="text-black h-9 rounded-xl border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50 px-4 text-[12px] outline-none placeholder:text-gray-400">
+                        </div>
+                        <div class="flex flex-col grow">
+                            <h4>Min age</h4>
+                            <input type="number" formControlName="min_age" placeholder="Min Age" class="text-black h-9 rounded-xl border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50 px-4 text-[12px] outline-none placeholder:text-gray-400 ">
+                        </div>
+                        
+                    </div>
+                </section>
+
+                <div class="flex flex-col gap-3 grow">
+                    <h2 class="font-black">Misc</h2>
+                    <div class="flex flex-col lg:flex-row gap-3 sm:gap-1">
+                        <section class="flex-col flex grow">
+                            <h4 >Profile Picture</h4>
+                            <input formControlName="profile_pic" placeholder="Profile pic URL" class="h-9 rounded-xl  border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50 px-4 text-[12px] outline-none placeholder:text-gray-400 focus:ring-0">
+                        </section>
+                    
+                        <section class="flex-col flex grow">
+                            <h4>Max distance filter</h4>
+                            <input type="number" formControlName="max_distance_km" placeholder="Max distance (km)" class="h-9 rounded-xl  border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50 px-4 text-[12px] outline-none placeholder:text-gray-400 focus:ring-0">
+                        </section>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="font-bold mx-5 md:mx-0">Other Options</h3>
+            <section class="flex flex-col sm:flex-row justify-start gap-3 mx-5 md:mx-0">
+                <div class="flex flex-row gap-3">
+                    <label for="admin">
+                        <input id="admin" type="checkbox" formControlName="admin"> Administrative Privileges
+                    </label>
+                </div>
+                <div class="flex flex-row gap-3">
+                    <label for="restricted">
+                        <input [(ngModel)]="showRestrictedSection" id="restricted" type="checkbox" formControlName="restricted"> Restricted
+                    </label>
+                </div>
+            </section>
+
+            <section class="flex flex-col gap-3 mx-5 md:mx-0">
+
+                @if(showRestrictedSection){
+                    <div class="flex flex-col gap-3">
+                        <h4 class="font-bold">Reason for the restriction</h4>
+                        <input formControlName="restricted_reason" placeholder="Restriction reason" class="rounded-xl  bg-white text-black border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent  px-4 py-2 text-[12px] outline-none placeholder:text-gray-400 ">
+                    </div>
+                    
+                    <div class="flex-col flex gap-3">
+                        <h4 class="font-bold">Date user restriction</h4>
+                        <input type="date" formControlName="restricted_at" class="text-black h-9 rounded-xl bg-white border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent px-4 text-[12px] outline-none placeholder:text-gray-400">
+                    </div>
+
+                }
+
+            </section>
+
+
+
+
+            <div class="flex justify-end flex-col-reverse sm:flex-row gap-4 mt-7 mx-5 md:mx-0">
+                <button type="submit" class="hover:cursor-pointer p-3 bg-white text-black px-5 text-sm py-2 font-[Poppins] rounded-3xl font-bold max-w-30">Submit</button>
+                <button (click)="toAdminPanel()" type="button" class="hover:cursor-pointer px-7 text-sm py-2 bg-white text-black font-[Poppins] font-bold rounded-3xl max-w-40">Back to Panel</button>
+            </div>
+
+
+
+        </form>
+    </div>
+</main>

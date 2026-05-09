@@ -30,6 +30,7 @@ import { ChatDetailComponent } from './components/chat-detail/chat-detail.compon
 
 import {GenderComponent} from './components/gender/gender.component';
 import {SettingsComponent} from './components/settings/settings.component';
+import { AdminUpdateUsersComponent } from './components/admin-update-users/admin-update-users.component';
 
 export const routes: Routes = [
     {   path: '',
@@ -120,6 +121,9 @@ export const routes: Routes = [
     },{
         path:'unauthorized',
         component: UnauthorizedComponent
+    },{
+        path:'update/:id',
+        component:AdminUpdateUsersComponent
     },
     {
     path: '**',
