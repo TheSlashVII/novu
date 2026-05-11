@@ -8,6 +8,7 @@ from rest_framework.decorators import action
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import os
 from pathlib import Path
+from ..emailTemplates.emailUtilities import sendPostRegisterEmail
 # Register request controller
 class RequestViewset(viewsets.ModelViewSet):
     queryset = Request.objects.all()
@@ -39,6 +40,7 @@ class RequestViewset(viewsets.ModelViewSet):
     def create(self,request):
         serializer = RequestSerializer(data=request.data)
         if serializer.is_valid():
+            sendPostRegisterEmail(serializer.validated_data['email'])
             serializer.save() # save newly created object to the database
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
