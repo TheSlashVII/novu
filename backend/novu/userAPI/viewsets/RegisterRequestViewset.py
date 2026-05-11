@@ -8,6 +8,10 @@ from rest_framework.decorators import action
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import os
 from pathlib import Path
+from ..face_recognition_utils import verify_face_match
+from ..models import User
+from django.contrib.auth.hashers import make_password
+
 # Register request controller
 class RequestViewset(viewsets.ModelViewSet):
     queryset = Request.objects.all()
@@ -106,3 +110,51 @@ class RequestViewset(viewsets.ModelViewSet):
             {"message": f"Request {id} deleted successfully."},
             status = status.HTTP_204_NO_CONTENT
         )
+        
+    @action(methods=["post"], detail=False)
+    def acceptRequest(self, request, id=None):
+        BASE_DIR = Path(__file__).resolve().parent.parent.parent
+        
+        
+        try:
+            register_request = get_object_or_404(Request, pk=id)
+        except Http404:
+            return JsonResponse({"error:" "Solicitud no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+    
+        #Routes of the photos
+        selfie_path = str(BASE_DIR / str(register_request.photo_id_selfie))
+        id_card_path = str(BASE_DIR / str(register_request.photo_student_id))
+    
+        #Facial verification
+        face_result = verify_face_match(id_card_path, selfie_path)
+    
+        if not face_result.get('match'):
+            return JsonResponse({
+                'error': 'Las caras no coinciden',
+                'details': face_result.get('error', f"Confianza: {face_result.get('confidence', 0)}%")
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        #Create the user
+        try:
+            user = User.objects.create(
+                name=register_request.name,
+                surnames=register_request.surnames,
+                email=register_request.email,
+                password=make_password(register_request.password),
+                date_of_birth=register_request.date_of_birth,
+                is_active=True,
+                is_new=True,
+            )
+        
+            #Update the state of application
+            register_request.status = Request.ACCEPTED
+            register_request.save()
+        
+            return JsonResponse({
+                'message': 'Usuario creado correctamente',
+                'user_id': user.id,
+                'face_confidence': face_result.get('confidence')
+            }, status=status.HTTP_201_CREATED)
+        
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -9,7 +9,7 @@ export class UserAPIService {
     PORT: number = 8000 // django's port
 
     // baseServerURL:string = `http://localhost:${this.PORT}/api/users`;
-    baseServerURL:string = `/api/users`;
+    private baseServerURL:string = `http://localhost:8000/api/users`;
     constructor(private http:HttpClient) { }
 
     /**
@@ -41,6 +41,15 @@ export class UserAPIService {
     }
 
     /**
+     * Function used to accept a register request
+     * @param data
+     */
+    acceptRegisterRequest(id: number): Observable<any> {
+        const ROUTE = `${this.baseServerURL}/accept/request/${id}/`;
+        return this.http.post(ROUTE, {}, this.authHeaders());
+    }
+
+    /**
      * function used to delete a register request
      * @param id
      */
@@ -48,6 +57,7 @@ export class UserAPIService {
         const ROUTE:string = `${this.baseServerURL}/delete/request/${id}/`;
         return this.http.delete(ROUTE, this.authHeaders())
     }
+
     /**
      * Function used to list register requests
      */

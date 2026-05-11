@@ -111,49 +111,24 @@ export class AdminRegisterRequestDetailComponent {
     }
 
     createUser() {
-        let data = {
-            name: this.registerRequest.name,
-            surnames: this.registerRequest.surnames,
-            email: this.registerRequest.email,
-            password: this.registerRequest.password,
-            date_of_birth: this.registerRequest.date_of_birth,
-        };
-        this.userAPI
-            .createUser(
-                data.name,
-                data.surnames,
-                data.email,
-                data.password,
-                data.date_of_birth
-            )
-            .subscribe((res: any) => {
-                console.log(res);
-                let userId = res.id;
+    this.userAPI.acceptRegisterRequest(this.registerRequest.id_request)
+        .subscribe({
+            next: (res: any) => {
+                console.log('Usuario creado:', res);
+                console.log(`Confianza facial: ${res.face_confidence}%`);
                 this.deleteRequest(this.registerRequest.id_request);
-                this.userCard.createUserCard(res.id).subscribe((res) => {
-                    console.log(res);
-                    let tab: CardTab = {
-                        id_section: 1,
-                        id_card: res.user,
-                        body: 'This is the default card tab. Edit it to add more information about you!',
-                        header: 'Default Card Tab',
-                        sub_header: 'A ',
-                        tab_biography:
-                            'This is the default biography. Edit it to add more information about you!',
-                        background_photo: 'A '
-                    };
-                    this.cardTab.createCardTab(userId, tab).subscribe( {
-                        next: value => {
-                            console.log(value);
-                            this.goToAcceptedRequest()
-                        }, error:value => {
-                            console.log(value);
-                        }
-
-                    });
-                });
-            });
-    }
+                this.goToAcceptedRequest();
+            },
+            error: (err) => {
+                console.error('Error:', err);
+                if (err.status === 400) {
+                    alert(`Las caras no coinciden. ${err.error.details}`);
+                } else {
+                    alert('Error al procesar la solicitud');
+                }
+            }
+        });
+}
 
     requestInitializer() {
         return {
