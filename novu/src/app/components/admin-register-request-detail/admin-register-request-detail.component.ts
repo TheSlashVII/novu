@@ -4,6 +4,7 @@ import { UserAPIService } from '../../services/user-api.service';
 import { UserCardService } from '../../services/user-card.service';
 import { CardTabService } from '../../services/card-tab.service';
 import { CardTab } from '../../services/card-tab.service';
+import {EmailServiceService} from '../../services/email-service.service';
 export interface registerRequestInterface {
     id_request: number;
     name: string;
@@ -47,7 +48,8 @@ export class AdminRegisterRequestDetailComponent {
         activatedRoute: ActivatedRoute,
         private userAPI: UserAPIService,
         private userCard: UserCardService,
-        private cardTab: CardTabService
+        private cardTab: CardTabService,
+        private emailService:EmailServiceService
     ) {
         // to get the id inserted by the route on the get request
         this.registerRequest = this.requestInitializer();
@@ -99,7 +101,8 @@ export class AdminRegisterRequestDetailComponent {
         this.userAPI.deleteRegisterRequest(id).subscribe({
             next: ()=>{
                 if(redirect){
-                    this.goToDeniedRequest()
+                    this.emailService.sendDenialEmail(this.registerRequest.email, this.registerRequest.name).subscribe();
+                    this.goToDeniedRequest();
                 }
             }, error: err => {
                 console.log(err);
@@ -126,6 +129,7 @@ export class AdminRegisterRequestDetailComponent {
             )
             .subscribe((res: any) => {
                 console.log(res);
+                this.emailService.sendAcceptanceEmail(this.registerRequest.email, this.registerRequest.name).subscribe();
                 let userId = res.id;
                 this.deleteRequest(this.registerRequest.id_request);
                 this.userCard.createUserCard(res.id).subscribe((res) => {
