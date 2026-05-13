@@ -212,7 +212,9 @@ class UserViewset(viewsets.ViewSet):
         #userList = User.objects.all().order_by(F("likes").desc()) # F allows us to select specific columns and run special functions on them like using desc to return the objects in descending order
         # serializer = UserSerializer(userList, many=True)
         users = User.objects.select_related('usercard').prefetch_related(
-        'usercard__cardtab_set')
+        'usercard__cardtab_set',
+        'interest_set'
+        )
         return JsonResponse( list(UserProfileSerializer(users, many=True).data), safe=False)
     # to eliminate a user
     def destroy(self, request, id=None):

@@ -60,6 +60,8 @@ get_user_profiles = UserController.as_view({"get" : "getUserProfiles"})
 upload_user_photos = PhotoController.as_view({"post" : "uploadPhoto"})
 send_acceptance_email = EmailController.as_view({"post": "sendAcceptedMailHandler"})
 send_denial_email = EmailController.as_view({"post" : "sendDeniedMailHandler"})
+list_all_interests = InterestController.as_view({"get":"list_all"})
+
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
     path("create/", create_user), # creates a user 
@@ -103,4 +105,5 @@ urlpatterns = [
     path("photos/upload/<int:id>", upload_user_photos), #to upload user photos
     path("send_acceptance_mail/", send_acceptance_email), #to send an acceptance email
     path("send_denial_mail/", send_denial_email), # to send a denial email
+    path("interests/all/", list_all_interests),
 ]
