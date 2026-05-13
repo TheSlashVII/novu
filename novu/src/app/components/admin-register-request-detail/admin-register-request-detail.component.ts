@@ -111,20 +111,18 @@ export class AdminRegisterRequestDetailComponent {
     }
 
     createUser() {
-    this.userAPI.acceptRegisterRequest(this.registerRequest.id_request)
-        .subscribe({
-            next: (res: any) => {
-                console.log('Usuario creado:', res);
-                console.log(`Confianza facial: ${res.face_confidence}%`);
-                this.deleteRequest(this.registerRequest.id_request);
-                this.goToAcceptedRequest();
+        this.userAPI.acceptRegisterRequest(this.registerRequest.id_request)
+            .subscribe({
+                next: (res: any) => {
+                    console.log('User created:', res);
+                    this.goToAcceptedRequest(); // ya no hace falta llamar a deleteRequest()
             },
             error: (err) => {
                 console.error('Error:', err);
                 if (err.status === 400) {
-                    alert(`Las caras no coinciden. ${err.error.details}`);
+                    alert(err.error.error);
                 } else {
-                    alert('Error al procesar la solicitud');
+                    alert('Error processing the request.');
                 }
             }
         });

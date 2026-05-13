@@ -15,6 +15,8 @@ export class RegisterComponent {
 
   private studentIdFile:File | null = null;
   private selfieFile:File | null = null;
+  errorMessage: string = '';
+
   constructor(private userAPI: UserAPIService, private router: Router) {}
   formRegister = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
@@ -127,7 +129,13 @@ export class RegisterComponent {
          //console.log(res);
          this.router.navigateByUrl("/postRegister");
        },
-      error: (err) => console.error(err)
+      error: (err) => {
+       if(err.error?.error) {
+        this.errorMessage = err.error.error;
+       } else {
+        this.errorMessage = 'Algo ha ido mal. Intentalo de nuevo.';
+       }
+      }
   });
 
     }

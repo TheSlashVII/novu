@@ -36,7 +36,7 @@ export class UserAPIService {
      */
     createRegisterRequest(data:any){
         //headers = headers.append('enctype', 'multipart/form-data');
-        const ROUTE:string = `${this.baseServerURL}/create/request`;
+        const ROUTE:string = `${this.baseServerURL}/create/request/`;
         return this.http.post(ROUTE, data)
     }
 
