@@ -1,6 +1,7 @@
 # from django.contrib import admin
 from django.urls import path
-from .viewsets import UserViewset, RegisterRequestViewset, InterestViewset, StudiesViewset, SwipeViewset, MatchViewset, UserCardViewset, CardTabViewset, PhotoViewset
+from .viewsets import UserViewset, RegisterRequestViewset, InterestViewset, StudiesViewset, SwipeViewset, MatchViewset, UserCardViewset, CardTabViewset, PhotoViewset, EmailViewset
+
 # the UserViewset is duplicated because the first one is the file name
 # and the second one is tha actual class
 # controller Lists
@@ -13,6 +14,7 @@ MatchController = MatchViewset.MatchViewset
 UserCardController = UserCardViewset.UserCardViewset
 CardTabController = CardTabViewset.CardTabViewset
 PhotoController = PhotoViewset.PhotoViewset
+EmailController = EmailViewset.EmailViewset
 
 login=UserController.as_view({"post" : "retrieveByEmail"})
 create_user=UserController.as_view({"post" : "createFromUser"})
@@ -56,6 +58,8 @@ update_user_age = UserController.as_view({"patch" : "updateUserAge"})
 update_user_gender = UserController.as_view({"patch": "updateUserGender"})
 get_user_profiles = UserController.as_view({"get" : "getUserProfiles"})
 upload_user_photos = PhotoController.as_view({"post" : "uploadPhoto"})
+send_acceptance_email = EmailController.as_view({"post": "sendAcceptedMailHandler"})
+send_denial_email = EmailController.as_view({"post" : "sendDeniedMailHandler"})
 list_all_interests = InterestController.as_view({"get":"list_all"})
 
 urlpatterns = [
@@ -98,6 +102,8 @@ urlpatterns = [
     path("age/update/<int:pk>", update_user_age), # updates the user age
     path("gender/update/<int:pk>", update_user_gender), # updates user gender
     path("profiles/", get_user_profiles), # to get all the users + their cards
-    path("photos/upload/<int:id>", upload_user_photos),
+    path("photos/upload/<int:id>", upload_user_photos), #to upload user photos
+    path("send_acceptance_mail/", send_acceptance_email), #to send an acceptance email
+    path("send_denial_mail/", send_denial_email), # to send a denial email
     path("interests/all/", list_all_interests),
 ]
