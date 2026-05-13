@@ -10,6 +10,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.db.models import F, Q # used to select fields and to execute additional functionality on the columns
+from ..emailTemplates.emailUtilities import *
 # this is the equivalent to a controller
 """
 Documentation for viewsets: https://www.django-rest-framework.org/api-guide/viewsets/#example
@@ -39,6 +40,7 @@ class UserViewset(viewsets.ViewSet):
     def createFromUser(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
+            sendAcceptedEmail(email=str(serializer.validated_data["email"]), name=str(serializer.validated_data["name"]))
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
