@@ -61,6 +61,7 @@ upload_user_photos = PhotoController.as_view({"post" : "uploadPhoto"})
 send_acceptance_email = EmailController.as_view({"post": "sendAcceptedMailHandler"})
 send_denial_email = EmailController.as_view({"post" : "sendDeniedMailHandler"})
 list_all_interests = InterestController.as_view({"get":"list_all"})
+admin_user_update = UserController.as_view({"patch" : "adminUserUpdate"})
 
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
@@ -106,4 +107,5 @@ urlpatterns = [
     path("send_acceptance_mail/", send_acceptance_email), #to send an acceptance email
     path("send_denial_mail/", send_denial_email), # to send a denial email
     path("interests/all/", list_all_interests),
+    path("admin/update/<int:id>/", admin_user_update), # for the admin to update user
 ]

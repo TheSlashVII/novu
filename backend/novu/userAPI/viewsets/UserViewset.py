@@ -26,9 +26,9 @@ class UserViewset(viewsets.ViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def get_permissions(self):
-        if self.action in ['createFromUser', 'list', 'retrieveByEmail', "createFromAdmin", "getMostLikedProfiles", "getUserProfiles"]:   # public routes | create Admin is Public for now 
+        if self.action in ['createFromUser', 'list', 'retrieveByEmail', "createFromAdmin", "getMostLikedProfiles", "getUserProfiles"]:   # public routes
             permission_classes = [permissions.AllowAny]
-        elif self.action in ['retrieve', "retrieveUserById", 'test', "retrieveByName", "partial_update", "modifyUserAccess", "destroy", "activeUsersCount", ]:  # Routes that require authentication
+        elif self.action in ['retrieve',"adminUserUpdate", "retrieveUserById", 'test', "retrieveByName", "partial_update", "modifyUserAccess", "destroy", "activeUsersCount", ]:  # Routes that require authentication
             permission_classes = [permissions.IsAuthenticated]
         else:                                    # PUT, PATCH, DELETE
             permission_classes = [permissions.IsAuthenticated]
@@ -140,9 +140,26 @@ class UserViewset(viewsets.ViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    # to update partially a new model
-    def partial_update(self, request, pk=None):
-        pass
+
+    # admin update method
+    @action(methods=['patch'], detail=True)
+    def adminUserUpdate(self,request,id=None):
+        try:
+            user = get_object_or_404(User, pk=id)
+        except Http404:
+            JsonResponse({"error": "user not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            JsonResponse({"message": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        serializer = UserSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.validated_data["password"] = make_password(serializer.validated_data["password"])
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+        
+
     @action(methods=["patch"], detail=False)
     def updateUserAge(self, request, pk=None):
         try:

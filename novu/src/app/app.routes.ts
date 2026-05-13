@@ -113,6 +113,9 @@ export const routes: Routes = [
             },
              {
                 path:"create_user", component: AdminCreateUsersComponent
+            },{
+                path:'update/:id',
+                component:AdminUpdateUsersComponent
             }
         ]
     },{
@@ -121,9 +124,6 @@ export const routes: Routes = [
     },{
         path:'unauthorized',
         component: UnauthorizedComponent
-    },{
-        path:'update/:id',
-        component:AdminUpdateUsersComponent
     },
     {
     path: '**',

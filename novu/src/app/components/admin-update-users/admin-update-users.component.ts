@@ -37,8 +37,10 @@ export class AdminUpdateUsersComponent implements OnInit {
     isPasswordHidden:boolean = true // to toggle between showing the password or not
     showRestrictedSection:boolean = false // this is to show the section in case you want to create a restricted user at first
     message:string = "";
-    //@ts-ignore
-    retrievedUser: User; 
+    userId:number | null = null;
+    isMessageHidden:boolean = true;
+
+    retrievedUser: User | null = null;
     userForm = new FormGroup({
         name: new FormControl('', [Validators.required, Validators.maxLength(200)]),
         surnames: new FormControl('', [Validators.required, Validators.maxLength(200)]),
@@ -61,18 +63,39 @@ export class AdminUpdateUsersComponent implements OnInit {
         admin: new FormControl(false),
     })
     constructor(private userAPIService: UserAPIService, private router:Router, private userCardService:UserCardService, private cardTabService:CardTabService, private activatedRoute:ActivatedRoute) {
-        
+
     }
 
+    /**
+     * Function ran on load to fetch data.
+     */
     ngOnInit(): void {
         this.activatedRoute.paramMap.subscribe(params => {
             let user_id = Number(params.get('id'));
+            this.userId = user_id
             this.userAPIService.getUserById(user_id).subscribe(res => {
                 let data:any = res;
-                this.retrievedUser = data 
+                this.retrievedUser = data
+                console.log(this.retrievedUser)
+                this.userForm.patchValue({
+                    name: this.retrievedUser?.name,
+                    surnames:this.retrievedUser?.surnames,
+                    email:this.retrievedUser?.email,
+                    school_name:this.retrievedUser?.school_name,
+                    gender:this.retrievedUser?.gender,
+                    biography:this.retrievedUser?.biography,
+                    height:String(this.retrievedUser?.height),
+                    date_of_birth:this.retrievedUser?.date_of_birth,
+                    min_age:this.retrievedUser?.min_age,
+                    profile_pic:String(this.retrievedUser?.profile_pic),
+                    is_new:this.retrievedUser?.is_new,
+                    restricted:this.retrievedUser?.restricted,
+                    restricted_reason:String(this.retrievedUser?.restricted_reason),
+                    admin:this.retrievedUser?.admin
+                })
             })
-
         })
+
     }
     togglePassword(){
         this.isPasswordHidden = !this.isPasswordHidden; // turn on or off the option to show the password in plain text
@@ -91,6 +114,7 @@ export class AdminUpdateUsersComponent implements OnInit {
     }
 
     Submit(){
+        this.isMessageHidden = true;
         const f = this.userForm.value;
         const formData = new FormData();
 
@@ -131,6 +155,18 @@ export class AdminUpdateUsersComponent implements OnInit {
                 new Date(f.restricted_at).toISOString().split('T')[0]
             );
         }
+        this.userAPIService.adminUpdateUser(formData, this.userId!).subscribe({
+            next:  (res)=> {
+                this.message = "The user was updated successfully"
+                this.isMessageHidden = false;
+                console.log(res)
+            }, error: (res)=> {
+                this.message = "There was an issue while trying to update this user"
+                this.isMessageHidden = false;
+                console.log(res)
+            }
+        })
+
         /*
         this.userAPIService.adminCreateUser(formData).subscribe({
             next: (res) => {

@@ -16,6 +16,8 @@ export class AdminCreateUsersComponent {
     passwordShowText:string = "Show" // change the toggle button
     isPasswordHidden:boolean = true // to toggle between showing the password or not
     showRestrictedSection:boolean = false // this is to show the section in case you want to create a restricted user at first
+    isMessageHidden:boolean = true;
+    message:string = "";
     userForm = new FormGroup({
         name: new FormControl('', [Validators.required, Validators.maxLength(200)]),
         surnames: new FormControl('', [Validators.required, Validators.maxLength(200)]),
@@ -53,10 +55,11 @@ export class AdminCreateUsersComponent {
                 this.passwordShowText = "Hide"
                 break;
         }
-        
+
     }
 
     Submit(){
+        this.isMessageHidden = true;
         const f = this.userForm.value;
         const formData = new FormData();
 
@@ -113,11 +116,14 @@ export class AdminCreateUsersComponent {
                         background_photo: 'Not uploaded yet'
                     };
                     this.cardTabService.createCardTab(newUser.id, tab).subscribe(res => {console.log(res)})
-
+                    this.message = "The user was created successfully"
+                    this.isMessageHidden = false;
                 })
 
             },
             error: err => {
+                this.message = "Something went wrong";
+                this.isMessageHidden = false;
                 console.log(err.error.message);
             }
         })

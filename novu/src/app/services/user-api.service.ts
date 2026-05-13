@@ -9,7 +9,7 @@ import {UserProfile} from '../components/home/home.component';
 export class UserAPIService {
     PORT: number = 8000 // django's port
 
-    // baseServerURL:string = `http://localhost:${this.PORT}/api/users`;
+    //baseServerURL:string = `http://localhost:${this.PORT}/api/users`;
     baseServerURL:string = `/api/users`;
     constructor(private http:HttpClient) { }
 
@@ -108,9 +108,22 @@ export class UserAPIService {
         return this.http.put(ROUTE, data, this.authHeaders())
     }
 
+    /**
+     * Api endpoint to get the amount of users accounts in the website
+     */
     adminGetActiveUserCount():Observable<{count:number}>{
         const ROUTE:string = `${this.baseServerURL}/admin/count/`;
         return this.http.get<{count:number}>(ROUTE, this.authHeaders());
+    }
+
+    /**
+     * Endpoint to update users via admin panel
+     * @param data New user data
+     * @param id User's id
+     */
+    adminUpdateUser(data:any, id:number){
+        const ROUTE:string = `${this.baseServerURL}/admin/update/${id}/`;
+        return this.http.patch(ROUTE, data, this.authHeaders())
     }
 
     /**
