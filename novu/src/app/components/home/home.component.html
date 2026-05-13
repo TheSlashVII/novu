@@ -1,3 +1,4 @@
+<app-filter-panel />
 <div class="min-h-screen bg-white flex flex-col font-poppins select-none"
      (mousemove)="onMouseMove($event)"
      (mouseup)="onMouseUp()">
@@ -168,7 +169,7 @@
     <!-- Separador vertical -->
     <img src="assets/Images/Vector.svg" alt="" class="h-8 opacity-20"/>
 
-    <button (click)="goToSearch()"
+    <button (click)="toggleFilters()"
             class="p-2 rounded-xl text-gray-400 hover:text-violet-600 transition-colors">
       <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24"
            stroke="currentColor" stroke-width="1.5">

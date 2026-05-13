@@ -56,6 +56,8 @@ update_user_age = UserController.as_view({"patch" : "updateUserAge"})
 update_user_gender = UserController.as_view({"patch": "updateUserGender"})
 get_user_profiles = UserController.as_view({"get" : "getUserProfiles"})
 upload_user_photos = PhotoController.as_view({"post" : "uploadPhoto"})
+list_all_interests = InterestController.as_view({"get":"list_all"})
+
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
     path("create/", create_user), # creates a user 
@@ -97,4 +99,5 @@ urlpatterns = [
     path("gender/update/<int:pk>", update_user_gender), # updates user gender
     path("profiles/", get_user_profiles), # to get all the users + their cards
     path("photos/upload/<int:id>", upload_user_photos),
+    path("interests/all/", list_all_interests),
 ]

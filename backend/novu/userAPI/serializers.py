@@ -98,6 +98,7 @@ class UserSearchSerializer(serializers.Serializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     amount_tabs = serializers.IntegerField(source='usercard.amount_tabs')
     tabs = CardTabSerializer(source='usercard.cardtab_set', many=True)
+    interests = InterestSerializer(many=True, read_only=True, source='interest_set')
 
     class Meta:
         model = User
@@ -106,7 +107,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'id', 'name', 'surnames', 'email',
             'gender', 'age','height', 'date_of_birth',
             'profile_pic', 'likes', 'school_name',
-            'amount_tabs', 'tabs',   
+            'amount_tabs', 'tabs','interests'   
         ]
 
 

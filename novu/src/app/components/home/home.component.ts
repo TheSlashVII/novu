@@ -2,6 +2,8 @@ import {Component, inject, afterNextRender, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { UserAPIService } from '../../services/user-api.service';
+import { PanelServiceService } from '../../services/panel-service.service';
+import { FilterPanelComponent } from '../filter-panel/filter-panel.component';
 
 interface Profile {
   id: number;
@@ -18,6 +20,7 @@ interface UserProfile {
     date_of_birth: string;
     amount_tabs:number;
     tabs:CardTab[];
+    interests: Interest[];
 }
 
 interface CardTab {
@@ -30,18 +33,22 @@ interface CardTab {
   background_photo: string;
 }
 
+interface Interest{
+  name: string;
+}
 
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [],
+  imports: [FilterPanelComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
   private http = inject(HttpClient);
-    userProfiles: UserProfile[] = [];
+  userProfiles: UserProfile[] = [];
+  allUserProfiles: UserProfile[] = [];
   profiles: Profile[] = [];
   currentIndex: number = 0;
   loading: boolean = true;
@@ -50,13 +57,14 @@ export class HomeComponent {
   isDragging: boolean = false;
   dragX: number = 0;
   dragStartX: number = 0;
-    isLoggedIn: boolean;
+  isLoggedIn: boolean;
   private likeAnimation: boolean = false;
   private dislikeAnimation: boolean = false;
 
 
-  constructor(private userAPIService: UserAPIService, private router:Router) {
+  constructor(private userAPIService: UserAPIService, private router:Router, public filterPanel:PanelServiceService) {
       this.isLoggedIn = this.userAPIService.isLoggedIn();
+      this.filterPanel.onApply = () => this.applyFilters();
         if(this.userAPIService.getToken() == null){
             this.router.navigateByUrl('');
         }
@@ -85,43 +93,65 @@ export class HomeComponent {
       });
     });
   }
+  
     // for you page algorithm
     retrieveUsers(){
       const token = this.userAPIService.decodeToken()
-        const userID = token.user_id;
+      const userID = token.user_id;
+
       this.userAPIService.getUserProfiles().subscribe({
-          next: (data) => {
-              let res:any = data
-              this.userProfiles = res;
-              this.userProfiles = this.userProfiles.filter(user => user.tabs != null && user.id != userID);
-              // console.log(this.userProfiles);
+          next: (data: any) => {
+              const filtered = (data as UserProfile[]).filter(
+                user => user.tabs != null && user.id != userID
+              );
+              this.allUserProfiles = filtered;
+              this.userProfiles = [...filtered];
+              this.loading = false;
+          },
+          error: () =>{
+            this.error = 'No se pudieron cargar los perfiles';
+            this.loading = false;
           }
-      })
+      }
+    )
     }
 
+  
+  //Filtros
+  applyFilters(): void{
+    const f = this.filterPanel.filters;
+    this.currentIndex = 0;
 
+    this.userProfiles = this.allUserProfiles.filter(user => {
+      const ageOk = user.age >= f.ageMin && user.age <= f.ageMax;
 
+      let interestsOk = true;
+      if(f.interests.length > 0){
+        const userInterestNames = (user.interests ?? []).map(i => i.name.toLowerCase());
+        interestsOk = f.interests.some(sel => userInterestNames.includes(sel.toLowerCase()))
+      }
 
+      return ageOk && interestsOk;
+    })
 
-
-
-
-
+    this.filterPanel.close()
+  }
 
 
   getCurrentProfile(): UserProfile | null {
     return this.userProfiles[this.currentIndex] ?? null;
   }
-    getCurrentBackgroundPicture(tab:number = 0){
+
+  getCurrentBackgroundPicture(tab:number = 0){
       let user = this.getCurrentProfile();
       let bg = user?.tabs[tab].background_photo!;
       if(bg != null){
           return `http://localhost:8000/${user?.tabs[tab].background_photo!}`
       }
       return "assets/Images/backgroundless_cardtab.svg";
+  }
 
 
-    }
   getCardRotation(): string {
     const deg = this.dragX * 0.08;
     return `translateX(${this.dragX}px) rotate(${deg}deg)`;
@@ -175,78 +205,45 @@ export class HomeComponent {
   }
 
    like(): void {
-    const currentProfile = this.getCurrentProfile();
-    if(!currentProfile) return;
+    const profile = this.getCurrentProfile();
+    if(!profile) return;
 
-    // Mostrar animación de like
     this.likeAnimation = true;
-    setTimeout(() => {
-      this.likeAnimation = false;
-    }, 300);
+    setTimeout(()=>{this.likeAnimation = false;}, 300);
 
-    // Registrar el like en la base de datos
-    const token = this.userAPIService.decodeToken();
-    const originUserId = Number(token?.user_id);
-    const targetUserId = currentProfile.id;
+    const originUserId = Number(this.userAPIService.decodeToken()?.user_id);
+    if(!originUserId){this.resetAndNext(); return;}
 
-    if(originUserId){
-      this.userAPIService.registerSwipe(originUserId, targetUserId, true).subscribe({
-        next: (response: any) => {
-          console.log('Like registrado:', response);
-
-          // Si hay match, mostrar notificación
-          if(response.match_created){
-            this.showMatchNotification(currentProfile);
-          }
-
-          // Resetear dragX y pasar al siguiente perfil
-          this.resetAndNext();
-        },
-        error: (err) => {
-          console.error('Error al registrar like:', err);
-          this.resetAndNext();
-        }
-      });
-    } else {
-      this.resetAndNext();
-    }
+    this.userAPIService.registerSwipe(originUserId, profile.id, true).subscribe({
+      next: (response: any) => {
+        if(response.match_created) this.showMatchNotification(profile);
+        this.resetAndNext();
+      },
+      error: () => this.resetAndNext()
+    })
   }
 
   dislike(): void {
-    const currentProfile = this.getCurrentProfile();
-    if(!currentProfile) return;
-
-    // Mostrar animación de NOPE
+    const profile = this.getCurrentProfile();
+    if (!profile) return;
+ 
     this.dislikeAnimation = true;
-    setTimeout(() => {
-      this.dislikeAnimation = false;
-    }, 300);
-
-    // Registrar el SKIP en la base de datos
-    const token = this.userAPIService.decodeToken();
-    const originUserId = token?.user_id;
-    const targetUserId = currentProfile.id;
-
-    if(originUserId){
-      this.userAPIService.registerSwipe(originUserId, targetUserId, false).subscribe({
-        next: (response) => {
-          console.log('kip registrado');
-          this.resetAndNext();
-        },
-        error: (err) => {
-          console.error('Error al registrar skip:', err);
-          this.resetAndNext();
-        }
-      });
-    } else {
-      this.resetAndNext();
-    }
+    setTimeout(() => { this.dislikeAnimation = false; }, 300);
+ 
+    const originUserId = this.userAPIService.decodeToken()?.user_id;
+    if (!originUserId) { this.resetAndNext(); return; }
+ 
+    this.userAPIService.registerSwipe(originUserId, profile.id, false).subscribe({
+      next:  () => this.resetAndNext(),
+      error: () => this.resetAndNext()
+    });
   }
 
   //Metodo para resetear y pasar al siguiente perfil
   private resetAndNext(): void{
     this.dragX = 0;
-    this.nextProfile();
+    if (this.currentIndex < this.userProfiles.length - 1) this.currentIndex++;
+    else console.log('No hay más perfiles para mostrar');
   }
 
   //Metodo para pasar al siguiente perfil
@@ -285,7 +282,8 @@ export class HomeComponent {
   goToChat(): void { this.router.navigate(['/chat']); }
   goToProfile(): void { this.router.navigateByUrl('/settings'); }
   goToDiscover(): void { this.router.navigate(['/discover']); }
-  goToSearch(): void { this.router.navigate(['/search']); }
-
+  toggleFilters(){
+    this.filterPanel.isOpen = !this.filterPanel.isOpen
+  }
 
 }
