@@ -19,7 +19,7 @@ export class CardTabService {
     PORT: number = 8000; // django's port
 
     // baseServerURL: string = `http://localhost:${this.PORT}/api/users`;
-    baseServerURL: string = `/api/users`;
+    baseServerURL: string = `http://localhost:8000/api/users`;
     constructor(private http: HttpClient) {}
 
     //GET /api/users/tabs/?user_id=1

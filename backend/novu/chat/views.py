@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.db.models import Q, Max
-from userAPI.models import Message, User
+from userAPI.models import Message, User, Match
 import pytz
 
 def get_conversations(request, user_id):
@@ -27,6 +27,28 @@ def get_conversations(request, user_id):
                     'name': other_user.name,
                     'lastMessage': m.content,
                     'lastMessageTime': local_time.strftime('%H:%M') if local_time else '',
+                    'avatar': '',
+                    'unreadCount': 0,
+                })
+            except User.DoesNotExist:
+                pass
+
+    # --- Matches sin mensajes todavía ---
+    matches = Match.objects.filter(
+        Q(user1_id_id=user_id) | Q(user2_id_id=user_id),
+        active=True
+    )
+    for match in matches:
+        other_id = match.user2_id_id if match.user1_id_id == int(user_id) else match.user1_id_id
+        if other_id not in seen:
+            seen.add(other_id)
+            try:
+                other_user = User.objects.get(id=other_id)
+                conversations.append({
+                    'id': other_id,
+                    'name': other_user.name,
+                    'lastMessage': '🎉 ¡Es un match! Di hola',
+                    'lastMessageTime': '',
                     'avatar': '',
                     'unreadCount': 0,
                 })

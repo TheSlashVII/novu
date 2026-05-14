@@ -200,11 +200,8 @@
             <button
               type="submit"
               [disabled]="!isFormReady"
-              [class.bg-\[#FF6D6D\]]="isFormReady"
-              [class.hover\:brightness-95]="isFormReady"
-              [class.bg-gray-400]="!isFormReady"
-              [class.opacity-60]="!isFormReady"
-              [class.cursor-not-allowed]="!isFormReady"
+              [class.btn-active]="isFormReady"
+              [class.btn-inactive]="!isFormReady"
               class="h-12 w-[240px] rounded-full border-2 border-black text-white font-bold text-[16px] transition active:scale-[0.99]">
               Crear cuenta
             </button>

@@ -111,11 +111,16 @@ export class AdminRegisterRequestDetailComponent {
     }
 
     createUser() {
-        this.userAPI.acceptRegisterRequest(this.registerRequest.id_request)
-            .subscribe({
-                next: (res: any) => {
-                    console.log('User created:', res);
-                    this.goToAcceptedRequest(); // ya no hace falta llamar a deleteRequest()
+    if (this.registerRequest.id_request === -1) {
+        alert('Request not loaded yet, please wait.');
+        return;
+    }
+    console.log("ID de la request:", this.registerRequest.id_request);
+    this.userAPI.acceptRegisterRequest(this.registerRequest.id_request)
+        .subscribe({
+            next: (res: any) => {
+                console.log('User created:', res);
+                this.goToAcceptedRequest();
             },
             error: (err) => {
                 console.error('Error:', err);

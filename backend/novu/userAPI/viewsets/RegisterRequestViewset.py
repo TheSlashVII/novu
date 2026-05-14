@@ -11,7 +11,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 import os
 from pathlib import Path
 
-from ..models import Request, User
+from ..models import Request, User, UserCard, CardTab
 from ..serializers import RequestSerializer
 from ..face_recognition_utils import verificar_caras
 
@@ -162,8 +162,9 @@ class RequestViewset(viewsets.ModelViewSet):
         POST /api/users/accept/request/<id>/
         Accepts a pending register request and creates the user account.
         """
+        request_id = self.kwargs.get('id') or id
         try:
-            register_request = get_object_or_404(Request, pk=id)
+            register_request = get_object_or_404(Request, pk=request_id)
         except Http404:
             return JsonResponse({"error": "Request not found."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -173,13 +174,23 @@ class RequestViewset(viewsets.ModelViewSet):
                 name=register_request.name,
                 surnames=register_request.surnames,
                 email=register_request.email,
-                password=make_password(register_request.password),
+                password=register_request.password,
                 date_of_birth=register_request.date_of_birth,
                 is_active=True,
                 is_new=True,
             )
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        user_card = UserCard.objects.create(user=user, amount_tabs=1)
+        CardTab.objects.create(
+            id_card=user_card,
+            id_section=1,
+            header='',
+            sub_header='',
+            tab_biography='',
+            background_photo='',
+        )
 
         # --- Delete the request after creating the user ---
         register_request.delete()
