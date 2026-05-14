@@ -51,6 +51,9 @@ export class AdminPanelComponent {
             this.activeUserCount = res.count;
         })
     }
+    goToUpdateUser(){
+        this.router.navigateByUrl("/admin/update_user");
+    }
 
 
 

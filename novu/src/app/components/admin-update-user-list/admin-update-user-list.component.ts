@@ -46,7 +46,7 @@ export class AdminUpdateUserListComponent {
     }
 
     goToUpdateUserDetail(id: number){
-
+        this.router.navigateByUrl(`/admin/update/${id}`)
 
     }
     goToPanel(){

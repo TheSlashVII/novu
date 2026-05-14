@@ -150,9 +150,11 @@ class UserViewset(viewsets.ViewSet):
             JsonResponse({"error": "user not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             JsonResponse({"message": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        serializer = UserSerializer(user, data=request.data)
+        serializer = UserSerializer(user, data=request.data, partial=True)
+        userPassword = str(request.data.get("password"))
         if serializer.is_valid():
-            serializer.validated_data["password"] = make_password(serializer.validated_data["password"])
+            if(not check_password(userPassword, user.password)):
+                serializer.validated_data["password"] = make_password(serializer.validated_data["password"])
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -31,11 +31,11 @@
                 </div>
             </div>
             <div class="min-w-[5rem] min-h-[3rem] md:min-h-[10rem] md:min-w-[20rem] bg-white flex flex-col justify-start p-3 md:p-5">
-                <!--Reports-->
+                <!--Restrict user account-->
                 <div class="inline-flex justify-start gap-3 items-center">
-                    <img src="assets/Images/ReportsIcon.svg" alt="User Icon" class="w-[2rem] md:w-[5rem]">
+                    <img src="assets/Images/RestrictUser.svg" alt="Restrict user" class="w-[1.5rem] sm:w-[2rem]">
                     <div class="inline-flex flex-col justify-start">
-                        <p class="font-[Inter] text-sm md:text-lg font-medium">Pending reports</p>
+                        <p class="font-[Inter] text-sm md:text-lg font-medium">Restrict User Account</p>
                     </div>
 
                 </div>
@@ -43,7 +43,7 @@
                     <p class="font-[Inter] font-light sm:text-xl  text-red-700">4</p>
                 </div>
                 <div class="flex flex-row justify-center w-full py-5">
-                    <button class="hover:cursor-pointer rounded-3xl bg-[#ff6b6b] text-white text-sm px-[1rem] sm:px-[3rem] py-1">Review</button>
+                    <button (click)="goToRegisterRequestList()" class="hover:cursor-pointer rounded-3xl bg-[#ff6b6b] text-white text-sm px-[1rem] sm:px-[3rem] py-1">Review</button>
                 </div>
             </div>
         </div>
@@ -85,6 +85,13 @@
 
     <!--User management-->
     <div class="flex flex-col sm:flex-row gap-3 justify-center px-10">
+        <div class="sm:max-w-[20rem] flex sm:inline-flex flex-row flex-grow sm:flex-col justify-start items-center gap-4 sm:gap-1 bg-white px-3 sm:p-4 rounded-4xl sm:rounded-[0]">
+            <div class="sm:min-h-[4rem] py-2 flex flex-row  justify-center items-center gap-3">
+                <img src="assets/Images/update_users.svg" alt="Restrict user" class="w-[1.5rem] sm:w-[2rem] text-white">
+                <p>Update User</p>
+            </div>
+            <button (click)="goToUpdateUser()" class="hover:cursor-pointer hidden sm:block rounded-3xl bg-[#FF6B6B] text-white font-[Inter] px-3 sm:px-10">Update</button>
+        </div>
         <div class="sm:max-w-[20rem] flex sm:inline-flex rounded-4xl sm:rounded-[0] flex-grow flex-row sm:flex-col justify-start items-center gap-4 sm:gap-1 bg-white px-3 sm:p-4">
             <div class="sm:min-h-[4rem]  gap-3 flex flex-row justify-center items-center">
                 <img src="assets/Images/CreateUser.svg" alt="Create user" class="mb-3">
@@ -92,19 +99,12 @@
             </div>
             <button (click)="goToCreateUser()" class="hover:cursor-pointer hidden sm:block rounded-3xl bg-[#4A90E2] text-white font-[Inter] px-3 sm:px-10">Create user</button>
         </div>
-        <div class="sm:max-w-[20rem] flex sm:inline-flex flex-row flex-grow sm:flex-col justify-start items-center gap-4 sm:gap-1 bg-white px-3 sm:p-4 rounded-4xl sm:rounded-[0]">
-            <div class="sm:min-h-[4rem] py-2 flex flex-row  justify-center items-center gap-3">
-                <img src="assets/Images/RestrictUser.svg" alt="Restrict user" class="w-[1.5rem] sm:w-[2rem]">
-                <p >Restrict user</p>
-            </div>
-            <button (click)="goToRestrictUsers()" class="hover:cursor-pointer hidden sm:block rounded-3xl bg-[#FF6B6B] text-white font-[Inter] px-3 sm:px-10">Restrict</button>
-        </div>
         <div class="sm:max-w-[20rem] flex sm:inline-flex flex-row flex-grow sm:flex-col justify-start items-center gap-4 sm:gap-1 rounded-4xl sm:rounded-[0] px-3  sm:p-4 bg-white ">
             <div class="sm:min-h-[4rem] flex flex-row justify-center items-center">
                 <img src="assets/Images/DeleteUser.svg" alt="Delete user" class="w-[2.8rem]">
                 <p class="font-[Inter] text-sm">Delete user</p>
             </div>
-            <button (click)="goToDeleteUsers()" class="hover:cursor-pointer hidden sm:block rounded-3xl bg-[#4A90E2] text-white font-[Inter] px-3 sm:px-10">Delete</button>
+            <button (click)="goToDeleteUsers()" class="hover:cursor-pointer hidden sm:block rounded-3xl bg-[#ff6b6b] text-white font-[Inter] px-3 sm:px-10">Delete</button>
         </div>
     </div>
 
