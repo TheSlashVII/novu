@@ -5,8 +5,9 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
   providedIn: 'root'
 })
 export class EmailServiceService {
-    PORT: number = 8000 // django's port
-    baseServerURL:string = `http://localhost:${this.PORT}/api/users`;
+    // PORT: number = 8000 // django's port
+    // baseServerURL:string = `http://localhost:${this.PORT}/api/users`;
+    baseServerURL:string = `/api/users`;
   constructor(private http:HttpClient) { }
     private authHeaders(): { headers: HttpHeaders } {
         return {
