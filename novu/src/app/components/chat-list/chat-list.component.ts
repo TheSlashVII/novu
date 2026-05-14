@@ -113,4 +113,8 @@ export class ChatListComponent {
     );
     this.router.navigate(['/chat', userId]);
   }
+
+  goToHome(): void {
+  this.router.navigate(['/home']);
+  }
 }

@@ -114,50 +114,27 @@ export class AdminRegisterRequestDetailComponent {
     }
 
     createUser() {
-        let data = {
-            name: this.registerRequest.name,
-            surnames: this.registerRequest.surnames,
-            email: this.registerRequest.email,
-            password: this.registerRequest.password,
-            date_of_birth: this.registerRequest.date_of_birth,
-        };
-        this.userAPI
-            .createUser(
-                data.name,
-                data.surnames,
-                data.email,
-                data.password,
-                data.date_of_birth
-            )
-            .subscribe((res: any) => {
-                console.log(res);
-                this.emailService.sendAcceptanceEmail(this.registerRequest.email, this.registerRequest.name).subscribe();
-                let userId = res.id;
-                this.deleteRequest(this.registerRequest.id_request);
-                this.userCard.createUserCard(res.id).subscribe((res) => {
-                    console.log(res);
-                    let tab: CardTab = {
-                        id_section: 1,
-                        id_card: res.user,
-                        body: 'This is the default card tab. Edit it to add more information about you!',
-                        header: 'Default Card Tab',
-                        sub_header: 'A ',
-                        tab_biography:
-                            'This is the default biography. Edit it to add more information about you!',
-                        background_photo: 'A '
-                    };
-                    this.cardTab.createCardTab(userId, tab).subscribe( {
-                        next: value => {
-                            console.log(value);
-                            this.goToAcceptedRequest()
-                        }, error:value => {
-                            console.log(value);
-                        }
-
-                    });
-                });
-            });
+    if (this.registerRequest.id_request === -1) {
+        alert('Request not loaded yet, please wait.');
+        return;
     }
+    console.log("ID de la request:", this.registerRequest.id_request);
+    this.userAPI.acceptRegisterRequest(this.registerRequest.id_request)
+        .subscribe({
+            next: (res: any) => {
+                console.log('User created:', res);
+                this.goToAcceptedRequest();
+            },
+            error: (err) => {
+                console.error('Error:', err);
+                if (err.status === 400) {
+                    alert(err.error.error);
+                } else {
+                    alert('Error processing the request.');
+                }
+            }
+        });
+}
 
     requestInitializer() {
         return {

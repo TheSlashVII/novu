@@ -47,7 +47,7 @@ export class NotificationService {
 
         // const wsUrl = `ws://localhost:8000/ws/notifications/${userId}/?token=${token}`;
         const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-        const wsUrl = `${protocol}://${window.location.host}/ws/notifications/${userId}/?token=${token}`;
+        const wsUrl = `ws://localhost:8000/ws/notifications/${userId}/?token=${token}`;
         this.socket$ = webSocket({
             url: wsUrl,
             openObserver: {

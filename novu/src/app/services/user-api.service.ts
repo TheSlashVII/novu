@@ -36,8 +36,17 @@ export class UserAPIService {
      */
     createRegisterRequest(data:any){
         //headers = headers.append('enctype', 'multipart/form-data');
-        const ROUTE:string = `${this.baseServerURL}/create/request`;
+        const ROUTE:string = `${this.baseServerURL}/create/request/`;
         return this.http.post(ROUTE, data)
+    }
+
+    /**
+     * Function used to accept a register request
+     * @param data
+     */
+    acceptRegisterRequest(id: number): Observable<any> {
+        const ROUTE = `${this.baseServerURL}/accept/request/${id}/`;
+        return this.http.post(ROUTE, {}, this.authHeaders());
     }
 
     /**
@@ -48,6 +57,7 @@ export class UserAPIService {
         const ROUTE:string = `${this.baseServerURL}/delete/request/${id}/`;
         return this.http.delete(ROUTE, this.authHeaders())
     }
+
     /**
      * Function used to list register requests
      */

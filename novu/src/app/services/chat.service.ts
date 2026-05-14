@@ -32,8 +32,7 @@ export class ChatService {
 
     // const wsUrl = `ws://localhost:8000/ws/chat/${userId}/${otherUserId}/?token=${token}`;
       const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-      const wsUrl =
-          `${protocol}://${window.location.host}/ws/chat/${userId}/${otherUserId}/?token=${token}`;
+      const wsUrl = `ws://localhost:8000/ws/chat/${userId}/${otherUserId}/?token=${token}`;
 
     this.socket$ = webSocket({
       url: wsUrl,

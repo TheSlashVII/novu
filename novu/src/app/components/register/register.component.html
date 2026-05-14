@@ -191,12 +191,18 @@
 
         <!-- Botón -->
         <section class="pt-4">
+           @if (errorMessage) {
+    <div class="mb-4 mx-auto max-w-[400px] rounded-2xl bg-red-50 border border-red-200 px-4 py-3 text-center">
+      <p class="text-xs text-red-500 font-medium">{{ errorMessage }}</p>
+    </div>
+  }
           <div class="flex justify-center">
             <button
               type="submit"
               [disabled]="!isFormReady"
-              class="h-12 w-[240px] rounded-full border-2 border-black text-white font-bold text-[16px] transition active:scale-[0.99]"
-              [ngClass]="isFormReady ? 'bg-[#FF6D6D] hover:brightness-95' : 'bg-gray-400 opacity-60 cursor-not-allowed'">
+              [class.btn-active]="isFormReady"
+              [class.btn-inactive]="!isFormReady"
+              class="h-12 w-[240px] rounded-full border-2 border-black text-white font-bold text-[16px] transition active:scale-[0.99]">
               Crear cuenta
             </button>
           </div>

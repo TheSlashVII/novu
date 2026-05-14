@@ -1,0 +1,13 @@
+.btn-active {
+  background-color: #FF6D6D;
+}
+
+.btn-active:hover {
+  filter: brightness(0.95);
+}
+
+.btn-inactive {
+  background-color: #9ca3af;
+  opacity: 0.6;
+  cursor: not-allowed;
+}

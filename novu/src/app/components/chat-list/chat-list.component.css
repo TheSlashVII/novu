@@ -140,3 +140,19 @@
   min-width: 20px;
   text-align: center;
 }
+
+.back-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #667eea;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: background 0.2s;
+  line-height: 1;
+}
+
+.back-button:hover {
+  background: #f0f0f0;
+}
