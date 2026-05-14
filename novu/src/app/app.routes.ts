@@ -27,6 +27,9 @@ import {AdminDeleteUserComponent} from './components/admin-delete-user/admin-del
 import {CardCreationComponent} from './components/card-creation/card-creation.component';
 import {GenderComponent} from './components/gender/gender.component';
 import {SettingsComponent} from './components/settings/settings.component';
+import { RelationPreferencesComponent } from './components/relation-preferences/relation-preferences.component';
+
+
 
 export const routes: Routes = [
     {   path: '',
@@ -48,6 +51,10 @@ export const routes: Routes = [
     {
         path: 'studies',
         component: StudiesComponent
+    },
+    {
+        path: 'relationship-preferences',
+        component: RelationPreferencesComponent
     },
     {
         path: 'interests',
