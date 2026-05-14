@@ -2,15 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from "@angular/common/http"
 import { Observable, tap } from 'rxjs';
 import {UserProfile} from '../components/home/home.component';
-
+import {baseServerURL} from '../baseURLconfig';
 @Injectable({
   providedIn: 'root'
 })
 export class UserAPIService {
-    PORT: number = 8000 // django's port
-
+    // PORT: number = 8000 // django's port
     // baseServerURL:string = `http://localhost:${this.PORT}/api/users`;
-    baseServerURL:string = `/api/users`;
+    baseServerURL:string = baseServerURL;
     constructor(private http:HttpClient) { }
 
     /**
@@ -270,7 +269,7 @@ export class UserAPIService {
     */
 
     checkMatch(userId: number, targetUserId: number){
-        const ROUTE = `http://localhost:${this.PORT}/matches/check/`;
+        const ROUTE = `${this.baseServerURL}/matches/check/`;
         return this.http.get(`${ROUTE}?user1=${userId}&user2=${targetUserId}`);
     }
 }

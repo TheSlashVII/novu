@@ -86,6 +86,7 @@ export class AdminUpdateUsersComponent implements OnInit {
                     biography:this.retrievedUser?.biography,
                     height:String(this.retrievedUser?.height),
                     date_of_birth:this.retrievedUser?.date_of_birth,
+                    password: this.retrievedUser?.password,
                     min_age:this.retrievedUser?.min_age,
                     profile_pic:String(this.retrievedUser?.profile_pic),
                     is_new:this.retrievedUser?.is_new,
@@ -121,7 +122,12 @@ export class AdminUpdateUsersComponent implements OnInit {
         formData.append('name', f.name!);
         formData.append('surnames', f.surnames!);
         formData.append('email', f.email!);
-        formData.append('password', f.password!);
+        if (f.password != this.retrievedUser?.password! ){
+            formData.append('password', f.password!);
+        } else {
+            formData.append('password', this.retrievedUser?.password!);
+        }
+
 
         formData.append('school_name', f.school_name || '');
         formData.append('gender', f.gender || '');

@@ -2,7 +2,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
 import { CardTab } from './card-tab.service';
-
+import {baseServerURL} from '../baseURLconfig';
 export interface UserCard {
   user: number;
   amount_tabs: number;
@@ -15,7 +15,7 @@ export class UserCardService {
   PORT: number = 8000 // django's port
 
 //   baseServerURL:string = `http://localhost:${this.PORT}/api/users`;
-    baseServerURL:string = `/api/users`;
+    baseServerURL:string = baseServerURL;
     private authHeaders(): { headers: HttpHeaders } {
         return {
             headers: new HttpHeaders({ "Authorization": "Bearer " + this.getToken() })

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable} from '@angular/core';
-
+import {baseServerURL} from '../baseURLconfig';
 export interface StudentFilters{
   ageMin: number;
   ageMax: number;
@@ -45,8 +45,9 @@ export class PanelServiceService {
   //Intereses
   public loadingInterests(): void{
     this.isLoadingInterests = true;
-    this.http.get<{name:string}[]>('http://localhost:8000/api/users/interests/all/').subscribe({
+    this.http.get<{name:string}[]>(`${baseServerURL}/api/users/interests/all/`).subscribe({
       next: (data) => {
+          //@ts-ignore
         const unique = [...new Set(data.map(i => i.name))].sort();
         this.allInterests = unique;
         this.isLoadingInterests = false;

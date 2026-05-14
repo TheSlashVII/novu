@@ -12,8 +12,8 @@ def generateNewName(model, file:str):
 # renames the user files
 def fileRename(model, file:str):
     newname=generateNewName(model, file)
-    return os.path.join(f'{BASE_URL}/photos/user/', newname)
+    return f'photos/user/{newname}'
 # renames files for register requests
 def fileRenameRegister(model, file:str):
     newname=generateNewName(model, file)
-    return os.path.join(f'{BASE_URL}/photos/register_request/', newname)
+    return f'register_request/{newname}'

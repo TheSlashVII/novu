@@ -151,9 +151,9 @@ class UserViewset(viewsets.ViewSet):
         except Exception as e:
             JsonResponse({"message": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         serializer = UserSerializer(user, data=request.data, partial=True)
-        userPassword = str(request.data.get("password"))
+        
         if serializer.is_valid():
-            if(not check_password(userPassword, user.password)):
+            if(not serializer.validated_data["password"] == user.password):
                 serializer.validated_data["password"] = make_password(serializer.validated_data["password"])
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
