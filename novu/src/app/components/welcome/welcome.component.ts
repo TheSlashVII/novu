@@ -29,13 +29,13 @@ export class WelcomeComponent {
   steps: Step[] = [
     {
       number: '01',
-      title: 'Regístrate con tu correo universitario',
-      description: 'Solo se admiten cuentas con dominio de universidad reconocida. Tu identidad queda verificada desde el primer momento.',
+      title: 'Regístrate con tu carnet de estudiante',
+      description: 'Abierto a estudiantes de FP, bachillerato y universidad. Tu identidad queda verificada con tu carnet desde el primer momento.',
     },
     {
       number: '02',
       title: 'Crea tu perfil y elige tus intereses',
-      description: 'Añade tu carrera, universidad, hobbies y lo que buscas. Cuanto más completo, mejores conexiones.',
+      description: 'Añade tus estudios, universidad, hobbies y lo que buscas. Cuanto más completo, mejores conexiones.',
     },
     {
       number: '03',
