@@ -7,6 +7,7 @@ import { ChatService, ChatMessage } from '../../services/chat.service';
 import { HttpClient } from '@angular/common/http';
 import { UserAPIService } from '../../services/user-api.service';
 import { NotificationService } from '../../services/notification.service';
+import {development} from '../../baseURLconfig';
 
 @Component({
   selector: 'app-chat-detail',
@@ -102,30 +103,31 @@ export class ChatDetailComponent {
   }
 
   loadMessageHistory(): void {
-    /*
-      this.http.get<ChatMessage[]>(`http://localhost:8000/api/chat/messages/${this.currentUserId}/${this.otherUserId}/`)
-      .subscribe({
-        next: (messages) => {
-          console.log('📜 Historial cargado:', messages.length, 'mensajes');
-          this.messages.set(messages);
-        },
-        error: (err) => {
-          console.error('Error cargando historial:', err);
-        }
-      });
+      if(development){
+          this.http.get<ChatMessage[]>(`http://localhost:8000/api/chat/messages/${this.currentUserId}/${this.otherUserId}/`)
+              .subscribe({
+                  next: (messages) => {
+                      console.log('📜 Historial cargado:', messages.length, 'mensajes');
+                      this.messages.set(messages);
+                  },
+                  error: (err) => {
+                      console.error('Error cargando historial:', err);
+                  }
+              });
+      } else {
+          this.http.get<ChatMessage[]>(`${window.location.origin}/api/chat/messages/${this.currentUserId}/${this.otherUserId}/`)
+              .subscribe({
+                  next: (messages) => {
+                      console.log('📜 Historial cargado:', messages.length, 'mensajes');
+                      this.messages.set(messages);
+                  },
+                  error: (err) => {
+                      console.error('Error cargando historial:', err);
+                  }
+              });
+      }
 
-     */
 
-      this.http.get<ChatMessage[]>(`${window.location.origin}/api/chat/messages/${this.currentUserId}/${this.otherUserId}/`)
-          .subscribe({
-              next: (messages) => {
-                  console.log('📜 Historial cargado:', messages.length, 'mensajes');
-                  this.messages.set(messages);
-              },
-              error: (err) => {
-                  console.error('Error cargando historial:', err);
-              }
-          });
 
 
   }
