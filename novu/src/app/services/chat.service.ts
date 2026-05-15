@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { UserAPIService } from './user-api.service';
+import {development} from '../baseURLconfig';
 
 export interface ChatMessage {
   type?: string;
@@ -32,7 +33,7 @@ export class ChatService {
 
     // const wsUrl = `ws://localhost:8000/ws/chat/${userId}/${otherUserId}/?token=${token}`;
       const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-      const wsUrl = `ws://localhost:8000/ws/chat/${userId}/${otherUserId}/?token=${token}`;
+      const wsUrl = development ? `${protocol}://localhost:8000/ws/chat/${userId}/${otherUserId}/?token=${token}` : `${protocol}:${window.location.origin}/ws/chat/${userId}/${otherUserId}/?token=${token}`;
 
     this.socket$ = webSocket({
       url: wsUrl,
