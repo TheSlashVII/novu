@@ -16,4 +16,4 @@ def fileRename(model, file:str):
 # renames files for register requests
 def fileRenameRegister(model, file:str):
     newname=generateNewName(model, file)
-    return f'register_request/{newname}'
+    return f'photos/register_request/{newname}'

@@ -37,6 +37,7 @@ EMAIL_HOST_PASSWORD = "78d13276c91b99564a4dac3f6a546dc2"
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,7 +46,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'userAPI',
-    'corsheaders',
     'channels',
     'chat',
 ]

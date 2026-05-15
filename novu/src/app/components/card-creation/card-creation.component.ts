@@ -142,9 +142,4 @@ export class CardCreationComponent {
         }
 
     }
-    newBackgroundPhoto(event:any, fileName:string){
-        const inputField:any = event.target as HTMLInputElement;
-        const file = inputField.files![0];
-        console.log(file.name);
-    }
 }

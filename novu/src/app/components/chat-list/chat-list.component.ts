@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { UserAPIService } from '../../services/user-api.service';
 import { NotificationService } from '../../services/notification.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {baseChatURL, development} from '../../baseURLconfig';
 
 interface ChatPreview {
   id: number;
@@ -42,43 +43,45 @@ export class ChatListComponent {
         this.router.navigate(['/login']);
         return;
       }
-/*
-      this.http.get<ChatPreview[]>(`http://localhost:8000/api/chat/conversations/${userId}/`)
-        .subscribe({
-          next: (data) => {
-            console.log('unreadCounts al cargar:', this.notificationService.unreadCounts);
-            const chatsWithUnread = data.map(chat => ({
-              ...chat,
-              unreadCount: this.notificationService.unreadCounts[chat.id] || 0
-            }));
-            this.chats.set(chatsWithUnread);
-            this.loading.set(false);
-          },
-          error: (err) => {
-            console.error('Error:', err);
-            this.error.set('No se pudieron cargar las conversaciones.');
-            this.loading.set(false);
-          }
-        });
- */
+      if (!development){
+          this.http.get<ChatPreview[]>(`${window.location.origin}/api/chat/conversations/${userId}/`)
+              .subscribe({
+                  next: (data) => {
+                      console.log('unreadCounts al cargar:', this.notificationService.unreadCounts);
+                      const chatsWithUnread = data.map(chat => ({
+                          ...chat,
+                          unreadCount: this.notificationService.unreadCounts[chat.id] || 0
+                      }));
+                      this.chats.set(chatsWithUnread);
+                      this.loading.set(false);
+                  },
+                  error: (err) => {
+                      console.error('Error:', err);
+                      this.error.set('No se pudieron cargar las conversaciones.');
+                      this.loading.set(false);
+                  }
+              });
 
-        this.http.get<ChatPreview[]>(`${window.location.origin}/api/chat/conversations/${userId}/`)
-            .subscribe({
-                next: (data) => {
-                    console.log('unreadCounts al cargar:', this.notificationService.unreadCounts);
-                    const chatsWithUnread = data.map(chat => ({
-                        ...chat,
-                        unreadCount: this.notificationService.unreadCounts[chat.id] || 0
-                    }));
-                    this.chats.set(chatsWithUnread);
-                    this.loading.set(false);
-                },
-                error: (err) => {
-                    console.error('Error:', err);
-                    this.error.set('No se pudieron cargar las conversaciones.');
-                    this.loading.set(false);
-                }
-            });
+      } else {
+          this.http.get<ChatPreview[]>(`http://localhost:8000/api/chat/conversations/${userId}/`)
+              .subscribe({
+                  next: (data) => {
+                      console.log('unreadCounts al cargar:', this.notificationService.unreadCounts);
+                      const chatsWithUnread = data.map(chat => ({
+                          ...chat,
+                          unreadCount: this.notificationService.unreadCounts[chat.id] || 0
+                      }));
+                      this.chats.set(chatsWithUnread);
+                      this.loading.set(false);
+                  },
+                  error: (err) => {
+                      console.error('Error:', err);
+                      this.error.set('No se pudieron cargar las conversaciones.');
+                      this.loading.set(false);
+                  }
+              });
+      }
+
 
         this.notificationService.notifications$
         .pipe(takeUntilDestroyed(this.destroyRef))

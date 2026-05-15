@@ -25,6 +25,10 @@ export class LoginComponent {
   ) {
     this.isLoggedIn = this.userAPI.isLoggedIn();
     if (this.userAPI.isLoggedIn()) {
+        if(this.userAPI.isTokenExpired(this.userAPI.getToken()!)){
+            this.userAPI.logoutJWT()
+            this.router.navigateByUrl('login');
+        }
       this.router.navigateByUrl('home');
     }
   }

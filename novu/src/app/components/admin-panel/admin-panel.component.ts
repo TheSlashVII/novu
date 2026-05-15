@@ -19,7 +19,6 @@ export class AdminPanelComponent {
     activeUserCount:number = 0;
     constructor(private userAPI:UserAPIService, private router:Router) {
         this.userAPI.getRegisterRequestCount().subscribe(res => {
-            console.log(res);
             this.setRegisterRequestCount(res)
         })
         this.getActiveUserCount()

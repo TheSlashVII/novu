@@ -16,6 +16,8 @@ export class RegisterComponent {
   private studentIdFile:File | null = null;
   private selfieFile:File | null = null;
   errorMessage: string = '';
+  studentSelfieButtonLabel:string = 'Choose a file...'
+  studentIdButtonLabel:string = 'Choose a file...'
 
   constructor(private userAPI: UserAPIService, private router: Router) {}
   formRegister = new FormGroup({
@@ -70,9 +72,11 @@ export class RegisterComponent {
       // check if the field is the student ID field or the selfie with the id field
       if (fieldName === "photo_student_id"){
         this.studentIdFile = file // set the variable as the file
+          this.studentIdButtonLabel = file.name
       }
       if (fieldName === "photo_id_selfie"){
         this.selfieFile = file // set the variable as the file
+          this.studentSelfieButtonLabel = file.name
       }
       this.formRegister.get(fieldName)?.setValue(file.name); // set the name of the file in the field
       this.formRegister.get(fieldName)?.markAsTouched();

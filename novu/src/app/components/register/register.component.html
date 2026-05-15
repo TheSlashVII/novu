@@ -171,9 +171,9 @@
                 <img src="assets/Images/Id_card.svg" alt="Icono carnet" class="w-[1.5rem]">
               <div class="min-w-0 flex-1">
                 <p class="text-sm font-semibold text-slate-900 leading-tight">Carnet de estudiante</p>
-                <p class="text-[11px] text-slate-500 leading-tight">Arrastra o sube una foto de tu carnet</p>
+                <p class="text-[11px] text-slate-500 leading-tight">Sube una foto de tu carnet</p>
               </div>
-              <span class="text-xs text-slate-400 whitespace-nowrap">Choose file...</span>
+              <span class="text-xs text-slate-400 whitespace-nowrap">{{this.studentIdButtonLabel}}</span>
               <input type="file" (change)="onFileChange($event,'photo_student_id')" accept="image/*" class="hidden" />
             </label>
 
@@ -183,7 +183,7 @@
                 <p class="text-sm font-semibold text-slate-900 leading-tight">Selfie con tu carnet</p>
                 <p class="text-[11px] text-slate-500 leading-tight">Tómate una foto sosteniendo tu carnet</p>
               </div>
-              <span class="text-xs text-slate-400 whitespace-nowrap">Choose file...</span>
+              <span class="text-xs text-slate-400 whitespace-nowrap">{{this.studentSelfieButtonLabel}}</span>
               <input type="file" (change)="onFileChange($event,'photo_id_selfie')" accept="image/*" class="hidden" />
             </label>
           </div>

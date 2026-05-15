@@ -63,7 +63,7 @@ send_denial_email = EmailController.as_view({"post" : "sendDeniedMailHandler"})
 list_all_interests = InterestController.as_view({"get":"list_all"})
 admin_user_update = UserController.as_view({"patch" : "adminUserUpdate"})
 accept_request = RegisterRequestController.as_view({"post": "acceptRequest"})
-
+check_admin_status = UserController.as_view({"post": "isUserAdmin"})
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
     path("create/", create_user), # creates a user 
@@ -110,4 +110,5 @@ urlpatterns = [
     path("interests/all/", list_all_interests),
     path("admin/update/<int:id>/", admin_user_update), # for the admin to update user
     path("accept/request/<int:id>/", accept_request),
+    path("status/admin/<int:id>", check_admin_status), 
 ]

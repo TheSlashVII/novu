@@ -75,6 +75,12 @@ class RequestViewset(viewsets.ModelViewSet):
     @action(methods=["delete"], detail=False)
     def deleteRequest(self, request, id=None):
         """Deletes a register request and its associated photos."""
+        try:
+            user = get_object_or_404(User, pk=id)
+        except Http404:
+            return JsonResponse({"error": "user not found"}, status=status.HTTP_404_NOT_FOUND)
+        if(not user.admin):
+            return JsonResponse({"error": "not authorized to access this endpoint"}, status=status.HTTP_401_UNAUTHORIZED)
         BASE_DIR = Path(__file__).resolve().parent.parent.parent
         try:
             register_request = get_object_or_404(Request, pk=id)

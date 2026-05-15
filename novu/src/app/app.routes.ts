@@ -35,8 +35,7 @@ import {AdminUpdateUserListComponent} from './components/admin-update-user-list/
 
 export const routes: Routes = [
     {   path: '',
-        component: WelcomeComponent,
-        title: "Novu - Home"
+        component: WelcomeComponent
     },
     {
         path: 'register',

@@ -4,7 +4,7 @@ from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.http import JsonResponse, Http404
-from ..models import User, UserCard, Block, Swipe
+from ..models import User, UserCard, Block, Swipe, CardTab
 from django.contrib.auth.hashers import check_password, make_password
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -21,12 +21,14 @@ class UserViewset(viewsets.ViewSet):
     # to list every model
     authentication_classes = [JWTAuthentication] # type of authentication
     def list(self, request):
+        if(not request.data.get("is_admin")):
+            return JsonResponse({"message":"Unauthorized Access"}, status=status.HTTP_401_UNAUTHORIZED)
         queryset = User.objects.all()
         serializer = UserSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def get_permissions(self):
-        if self.action in ['createFromUser', 'list', 'retrieveByEmail', "createFromAdmin", "getMostLikedProfiles", "getUserProfiles"]:   # public routes
+        if self.action in ['isUserAdmin','createFromUser', 'retrieveByEmail', "createFromAdmin", "getMostLikedProfiles", "getUserProfiles"]:   # public routes
             permission_classes = [permissions.AllowAny]
         elif self.action in ['retrieve',"adminUserUpdate", "retrieveUserById", 'test', "retrieveByName", "partial_update", "modifyUserAccess", "destroy", "activeUsersCount", ]:  # Routes that require authentication
             permission_classes = [permissions.IsAuthenticated]
@@ -34,6 +36,16 @@ class UserViewset(viewsets.ViewSet):
             permission_classes = [permissions.IsAuthenticated]
         return [permission() for permission in permission_classes]
     
+
+    @action(methods=["post"], detail=True)
+    def isUserAdmin(self, request, id=None):
+        try:
+            user = get_object_or_404(User, pk=id)
+        except Http404:
+            JsonResponse({"message": "no user was found"})
+        except Exception:
+            JsonResponse({"message": "something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return JsonResponse({"is_admin" : user.admin}, status=status.HTTP_200_OK)
 
     # to create a new model inside the database
     @action(methods=["post"], detail=False)
@@ -48,6 +60,7 @@ class UserViewset(viewsets.ViewSet):
     # separate user creation for admins
     @action(methods=["post"], detail=False)
     def createFromAdmin(self, request):
+        
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.validated_data["password"] = make_password(serializer.validated_data["password"]) # overrides the plain text password inserted by the admin

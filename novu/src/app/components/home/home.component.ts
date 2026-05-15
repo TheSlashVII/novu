@@ -121,6 +121,7 @@ export class HomeComponent {
               const filtered = (data as UserProfile[]).filter(
                 user => user.tabs != null && user.id != userID
               );
+
               this.allUserProfiles = filtered;
               this.userProfiles = [...filtered];
               this.loading = false;
@@ -128,6 +129,7 @@ export class HomeComponent {
           error: () =>{
             this.error = 'No se pudieron cargar los perfiles';
             this.loading = false;
+            
           }
       }
     )

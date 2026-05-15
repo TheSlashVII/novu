@@ -55,7 +55,7 @@ export class UserAPIService {
      */
     deleteRegisterRequest(id:number){
         const ROUTE:string = `${this.baseServerURL}/delete/request/${id}/`;
-        return this.http.delete(ROUTE, this.authHeaders())
+        return this.http.delete(ROUTE,this.authHeaders())
     }
 
     /**
@@ -63,7 +63,6 @@ export class UserAPIService {
      */
     listRegisterRequests(){
         const ROUTE:string = `${this.baseServerURL}/list/request/`;
-        console.log(localStorage.getItem("access_token"));
         // console.log(this.isTokenExpired(localStorage.getItem("access_token")!));
         return this.http.get(ROUTE, this.authHeaders())
     }
