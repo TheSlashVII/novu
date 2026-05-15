@@ -28,6 +28,7 @@ import {CardCreationComponent} from './components/card-creation/card-creation.co
 import {GenderComponent} from './components/gender/gender.component';
 import {SettingsComponent} from './components/settings/settings.component';
 import { RelationPreferencesComponent } from './components/relation-preferences/relation-preferences.component';
+import { LegalComponent } from './components/legal/legal.component';
 
 
 
@@ -105,7 +106,13 @@ export const routes: Routes = [
     {
         path: 'card_creation',
         component: CardCreationComponent,
-    },{
+    },
+    {
+        path: 'legal',
+        component: LegalComponent,
+        title: 'Novu - Aviso Legal'
+    },
+    {
         path:'unauthorized',
         component: UnauthorizedComponent
     },{

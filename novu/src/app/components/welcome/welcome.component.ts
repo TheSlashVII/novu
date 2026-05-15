@@ -81,6 +81,10 @@ export class WelcomeComponent {
     this.router.navigate(['/register']);
   }
 
+  goToLegal(): void {
+    this.router.navigate(['/legal']);
+  }
+
   toggleMenu(): void{
     this.menuOpen = !this.menuOpen;
   }
