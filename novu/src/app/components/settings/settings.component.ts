@@ -7,7 +7,7 @@ import {UserProfile} from '../home/home.component';
 import {CardTab} from '../../services/card-tab.service';
 import {development} from '../../baseURLconfig';
 
-export type SettingsSection = 'profile' | 'card' | 'preferences';
+export type SettingsSection = 'profile' | 'card';
 
 
 
@@ -37,6 +37,7 @@ export interface UserPreferences {
 export class SettingsComponent {
     loggedUserProfile: UserProfile | null = null;
     userID:number = 0
+    cardTabSectionTracker:number = 0;
     constructor(private router:Router, private userAPI:UserAPIService) {
         const userID:number = Number(this.userAPI.decodeToken().user_id)
         this.userID = userID;
@@ -65,6 +66,7 @@ export class SettingsComponent {
                     tab_biography: c.tab_biography,
                     background_photo: development ? `http://localhost:8000${c.background_photo}` : `${window.location.origin}${c.background_photo}`,
                 }])
+                this.cardTabSectionTracker = c.id_section!
             }
 
         })
@@ -122,11 +124,6 @@ export class SettingsComponent {
             icon: `<svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>`,
         },
         */
-        {
-            id: 'preferences',
-            label: 'Preferences',
-            icon: `<svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M12 3a9 9 0 1 0 0 18A9 9 0 0 0 12 3z"/><path d="M12 8v4l3 3"/></svg>`,
-        },
     ];
     logout(){
         this.userAPI.logoutJWT();
@@ -155,15 +152,21 @@ export class SettingsComponent {
     }
 
     addTab(): void {
-        const id = Date.now();
         this.tabs.update((tabs) => [
             ...tabs,
-            { id_card: this.userID, header: '', sub_header: '', tab_biography: '', background_photo: "" },
+            {id_card: this.userID, id_section: ++this.cardTabSectionTracker,header: 'Default header', sub_header: 'Default subheader', tab_biography: 'your tab biography goes here', background_photo: "" },
         ]);
     }
 
     removeTab(id: number): void {
-        this.tabs.update((tabs) => tabs.filter((t) => t.id_section !== id));
+        if(id > 1){
+            this.cardTabSectionTracker--;
+            this.tabs.update((tabs) => tabs.filter((t) => {
+                console.log(this.cardTabSectionTracker);
+                return t.id_section !== id
+            }));
+        }
+
     }
 
     updateTab(id: number, field: keyof CardTab, value: string): void {
