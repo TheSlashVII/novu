@@ -9,7 +9,7 @@ export interface CardTab {
     header: string;
     sub_header: string;
     tab_biography: string;
-    background_photo: string | File;
+    background_photo: string | File | undefined;
 }
 
 @Injectable({

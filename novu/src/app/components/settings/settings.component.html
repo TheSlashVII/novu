@@ -179,7 +179,7 @@
                             <div class="relative max-w-[350px] min-w-[270px] rounded-3xl overflow-hidden shadow-xl ">
 
                                 <!-- Blurred background image (scaled up to hide blur edge bleed) -->
-                                <img [src]="tab.background_photo"
+                                <img [src]="getTabBgPreview(tab.background_photo!)"
                                      class="absolute inset-0 w-full h-full object-cover scale-110 blur-[3px] pointer-events-none"
                                      onerror="this.src='assets/Images/backgroundless_cardtab.svg'"/>
 
@@ -260,7 +260,7 @@
                                     <label class="block text-[11px] font-medium text-[#8b829e] uppercase tracking-[0.06em] mb-2">Background photo</label>
                                     @if (tab.background_photo) {
                                         <div class="relative h-24 rounded-lg overflow-hidden group">
-                                            <img [src]="tab.background_photo" alt="Background preview" class="w-full h-full object-cover" />
+                                            <img [src]="getTabBgPreview(tab.background_photo!)" alt="Background preview" class="w-full h-full object-cover" />
                                             <label [for]="'tabBg' + tab.id_section"
                                                    class="absolute inset-0 flex items-center justify-center bg-black/50 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer">
                                                 Change
