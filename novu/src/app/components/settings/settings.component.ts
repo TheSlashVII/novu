@@ -3,30 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {Router} from '@angular/router';
 import {UserAPIService} from '../../services/user-api.service';
+import {UserProfile} from '../home/home.component';
+import {CardTab} from '../../services/card-tab.service';
+import {development} from '../../baseURLconfig';
 
 export type SettingsSection = 'profile' | 'card' | 'preferences';
 
-/**
- * Used for previewing the user card
- */
-export interface CardTab {
-    id: number;
-    header: string;
-    subHeader: string;
-    biography: string;
-    backgroundPreview: string | null;
-}
 
-export interface UserProfile {
-    name: string;
-    surnames: string;
-    email: string;
-    dateOfBirth: string;
-    gender: string;
-    height: string;
-    schoolName: string;
-    avatarPreview: string | null;
-}
+
 
 export interface UserPreferences {
     maxDistanceKm: number;
@@ -51,23 +35,55 @@ export interface UserPreferences {
   `],
 })
 export class SettingsComponent {
+    loggedUserProfile: UserProfile | null = null;
+    userID:number = 0
     constructor(private router:Router, private userAPI:UserAPIService) {
+        const userID:number = Number(this.userAPI.decodeToken().user_id)
+        this.userID = userID;
+        this.userAPI.getUserProfile(userID).subscribe({
+            next: result => {
+                this.loggedUserProfile = result;
+                this.profile.set({
+                    amount_tabs: result.amount_tabs,
+                    date_of_birth: result.date_of_birth,
+                    gender: result.gender,
+                    height: result.height,
+                    id: result.id,
+                    interests: result.interests,
+                    is_new: false,
+                    name: result.name,
+                    profile_pic: result.profile_pic,
+                    school_name: result.school_name,
+                    surnames: result.surnames,
+                    tabs: result.tabs,
+                    age:result.age})
+                let c = this.profile().tabs[0]
+                this.tabs.set([{
+                    id_card: this.userID, id_section: c.id_section,
+                    header: c.header,
+                    sub_header: c.sub_header,
+                    tab_biography: c.tab_biography,
+                    background_photo: development ? `http://localhost:8000${c.background_photo}` : `${window.location.origin}${c.background_photo}`,
+                }])
+            }
+
+        })
     }
     activeSection = signal<SettingsSection>('profile'); // signals are like the useState() hook in react
 
     profile = signal<UserProfile>({
+        age: 0, amount_tabs: 0, id: 0, interests: [], is_new: false, tabs: [],
         name: '',
         surnames: '',
-        email: '',
-        dateOfBirth: '',
+        date_of_birth: '',
         gender: '',
-        height: '',
-        schoolName: '',
-        avatarPreview: null,
+        height: 0,
+        school_name: '',
+        profile_pic: null
     });
 
     tabs = signal<CardTab[]>([
-        { id: 1, header: '', subHeader: '', biography: '', backgroundPreview: null },
+        { id_card: this.userID ,id_section: 1, header: '', sub_header: '', tab_biography: '', background_photo: "" },
     ]);
 
     photoSlots = signal<(string | null)[]>(Array(6).fill(null));
@@ -129,7 +145,7 @@ export class SettingsComponent {
         if (!file) return;
         const reader = new FileReader();
         reader.onload = (e) => {
-            this.profile.update((p) => ({ ...p, avatarPreview: e.target?.result as string }));
+            this.profile.update((p) => ({ ...p, profile_pic: e.target?.result as string }));
         };
         reader.readAsDataURL(file);
     }
@@ -142,17 +158,17 @@ export class SettingsComponent {
         const id = Date.now();
         this.tabs.update((tabs) => [
             ...tabs,
-            { id, header: '', subHeader: '', biography: '', backgroundPreview: null },
+            { id_card: this.userID, header: '', sub_header: '', tab_biography: '', background_photo: "" },
         ]);
     }
 
     removeTab(id: number): void {
-        this.tabs.update((tabs) => tabs.filter((t) => t.id !== id));
+        this.tabs.update((tabs) => tabs.filter((t) => t.id_section !== id));
     }
 
     updateTab(id: number, field: keyof CardTab, value: string): void {
         this.tabs.update((tabs) =>
-            tabs.map((t) => (t.id === id ? { ...t, [field]: value } : t))
+            tabs.map((t) => (t.id_section === id ? { ...t, [field]: value } : t))
         );
     }
 
@@ -164,7 +180,7 @@ export class SettingsComponent {
         reader.onload = (e) => {
             this.tabs.update((tabs) =>
                 tabs.map((t) =>
-                    t.id === id ? { ...t, backgroundPreview: e.target?.result as string } : t
+                    t.id_section === id ? { ...t, background_photo: e.target?.result as string } : t
                 )
             );
         };

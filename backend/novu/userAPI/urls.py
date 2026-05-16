@@ -32,7 +32,7 @@ save_study = StudiesController.as_view({"post":"saveStudy"})
 list_studies = StudiesController.as_view({"get":"list"})
 retrieve_study = StudiesController.as_view({"get":"retrieveStudyById"})
 update_study = StudiesController.as_view({"put":"update"})
-list_users = UserController.as_view({"get": "list"})
+list_users = UserController.as_view({"post": "list"})
 test_api = UserController.as_view({"post" : "test"})
 admin_search_user = UserController.as_view({"post" : "retrieveByName"}) # functionality to search users by name
 admin_modify_access = UserController.as_view({"put" : "modifyUserAccess"})
@@ -64,6 +64,9 @@ list_all_interests = InterestController.as_view({"get":"list_all"})
 admin_user_update = UserController.as_view({"patch" : "adminUserUpdate"})
 accept_request = RegisterRequestController.as_view({"post": "acceptRequest"})
 check_admin_status = UserController.as_view({"post": "isUserAdmin"})
+delete_user_photo = PhotoController.as_view({"delete" : "deletePhoto"})
+update_user_profile_picture = PhotoController.as_view({"patch" : "updateProfilePicture"})
+get_user_profile = UserController.as_view({"get" : "getUserProfile"})
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
     path("create/", create_user), # creates a user 
@@ -110,5 +113,8 @@ urlpatterns = [
     path("interests/all/", list_all_interests),
     path("admin/update/<int:id>/", admin_user_update), # for the admin to update user
     path("accept/request/<int:id>/", accept_request),
-    path("status/admin/<int:id>", check_admin_status), 
+    path("status/admin/", check_admin_status), 
+    path("photos/delete/<int:id>/", delete_user_photo), # to delete an user's photo
+    path("update/profile_picture/<int:id>/", update_user_profile_picture), # to update a user's profile picture
+    path("profile/<int:id>/", get_user_profile), # to get a user's profile
 ]

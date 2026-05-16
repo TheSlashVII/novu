@@ -66,7 +66,7 @@
                 <h2 class="font-black">Password*</h2>
                 <div class="flex flex-row gap-4 items-center">
                     <input [type]="isPasswordHidden ? 'password' : 'text'" formControlName="password" placeholder="Password" class="text-black flex-grow-2 h-9 rounded-xl border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50 px-4 text-[12px] outline-none placeholder:text-gray-400">
-                    <button (click)="togglePassword()" class="shrink-2 py-2 text-xs px-7 bg-white text-black rounded-xl font-bold hover:cursor-pointer hover:text-gray-400 transition-all "  >{{this.passwordShowText}}</button>
+                    <div (click)="togglePassword()" class="select-none shrink-2 py-2 text-xs px-7 bg-white text-black rounded-xl font-bold hover:cursor-pointer hover:text-gray-400 transition-all "  >{{this.passwordShowText}}</div>
                 </div>
             </section>
 
@@ -85,12 +85,12 @@
                 <option value="female">Female</option>
                 <option value="others">Others</option>
             </select>
-
+<!--
             <section class="flex flex-col gap-3 mx-5 md:mx-0">
                 <h2 class="font-black">Write a biography</h2>
                 <textarea formControlName="biography" placeholder="Bio" class="text-black grow h-9 rounded-xl border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-gray-50 px-4 text-[12px] outline-none placeholder:text-gray-400"></textarea>
             </section>
-
+-->
             <div class="flex flex-col sm:flex-row gap-5 justify-between mx-5 md:mx-0">
                 <section class="grow flex flex-col gap-3">
                     <h2 class="font-black">Date of Birth*</h2>

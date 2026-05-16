@@ -18,9 +18,12 @@ export class AdminUpdateUserListComponent {
     })
 
     constructor(private userAPI:UserAPIService, private router: Router) {
-        this.userAPI.listAllUsers().subscribe((res:any) => {
-            this.results = res;
-        })
+        this.userAPI.isAdmin().subscribe(status => {
+            this.userAPI.listAllUsers(status.is_admin).subscribe((res:any) => {
+                this.results = res;
+            })
+
+        });
 
     }
 

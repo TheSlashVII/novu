@@ -48,7 +48,7 @@ export class AdminUpdateUsersComponent implements OnInit {
         password: new FormControl('', [Validators.required, Validators.minLength(6)]),
         school_name: new FormControl('', [Validators.maxLength(150)]),
         gender: new FormControl(''),
-        biography: new FormControl('', [Validators.maxLength(150)]),
+        //biography: new FormControl('', [Validators.maxLength(150)]),
         height: new FormControl('', [Validators.pattern(/^[0-9]{1,3}$/)]),
         date_of_birth: new FormControl('', [Validators.required]),
         min_age: new FormControl(0, [Validators.min(0)]),
@@ -83,7 +83,7 @@ export class AdminUpdateUsersComponent implements OnInit {
                     email:this.retrievedUser?.email,
                     school_name:this.retrievedUser?.school_name,
                     gender:this.retrievedUser?.gender,
-                    biography:this.retrievedUser?.biography,
+                    // biography:this.retrievedUser?.biography,
                     height:String(this.retrievedUser?.height),
                     date_of_birth:this.retrievedUser?.date_of_birth,
                     password: this.retrievedUser?.password,
@@ -131,7 +131,7 @@ export class AdminUpdateUsersComponent implements OnInit {
 
         formData.append('school_name', f.school_name || '');
         formData.append('gender', f.gender || '');
-        formData.append('biography', f.biography || '');
+        // formData.append('biography', f.biography || '');
         formData.append('height', f.height || '');
 
         formData.append(

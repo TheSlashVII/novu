@@ -28,6 +28,11 @@ export class UserAPIService {
         const ROUTE:string = `${this.baseServerURL}/login/`;
         return this.http.post<{access:string, refresh:string, is_new:boolean, is_restricted:boolean, error:string}> (ROUTE, data)
     }
+
+    getUserProfile(id:number){
+        const ROUTE:string = `${this.baseServerURL}/profile/${id}/`;
+        return this.http.get<UserProfile>(ROUTE, this.authHeaders())
+    }
     // register request functions
 
     /**
@@ -42,7 +47,7 @@ export class UserAPIService {
 
     /**
      * Function used to accept a register request
-     * @param data
+     * @param id
      */
     acceptRegisterRequest(id: number): Observable<any> {
         const ROUTE = `${this.baseServerURL}/accept/request/${id}/`;
@@ -155,14 +160,19 @@ export class UserAPIService {
     /**
      * Function used to list all users available in the database
      */
-    listAllUsers(){
-        const ROUTE:string = `${this.baseServerURL}/list/`;
-        return this.http.get(ROUTE)
+    listAllUsers(adminStatus:boolean = false) {
+        const ROUTE: string = `${this.baseServerURL}/list/`;
+        return this.http.post(ROUTE,{"is_admin":adminStatus} , this.authHeaders())
+    }
+    isAdmin(){
+        const ROUTE:string = `${this.baseServerURL}/status/admin/`;
+        return this.http.post<{is_admin:boolean}>(ROUTE, {"user_id": Number(this.decodeToken().user_id)},this.authHeaders())
     }
     updateIsUserNewStatus(id:number){
         const ROUTE:string = `${this.baseServerURL}/update/status/${id}`;
         return this.http.put(ROUTE,{is_new:0} ,this.authHeaders())
     }
+
 
     /**
      * Function used to update a user's age
@@ -274,11 +284,10 @@ export class UserAPIService {
     /**
         * Verificar si dos usuarios ya han hecho match
         * @param userId - ID del usuario actual
-        * @param targetUserId - ID del otro usuario
     */
 
-    checkMatch(userId: number, targetUserId: number){
-        const ROUTE = `${this.baseServerURL}/matches/check/`;
-        return this.http.get(`${ROUTE}?user1=${userId}&user2=${targetUserId}`);
+    checkMatch(userId: number){
+        const ROUTE = `${this.baseServerURL}/matches/user/${userId}`;
+        return this.http.get<{id:number, active:boolean, user1_id:number, user2_id:number}[]>(ROUTE, this.authHeaders());
     }
 }

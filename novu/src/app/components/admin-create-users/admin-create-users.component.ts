@@ -25,7 +25,7 @@ export class AdminCreateUsersComponent {
         password: new FormControl('', [Validators.required, Validators.minLength(6)]),
         school_name: new FormControl('', [Validators.maxLength(150)]),
         gender: new FormControl(''),
-        biography: new FormControl('', [Validators.maxLength(150)]),
+        // biography: new FormControl('', [Validators.maxLength(150)]),
         height: new FormControl('', [Validators.pattern(/^[0-9]{1,3}$/)]),
         date_of_birth: new FormControl('', [Validators.required]),
         min_age: new FormControl(0, [Validators.min(0)]),
@@ -70,7 +70,7 @@ export class AdminCreateUsersComponent {
 
         formData.append('school_name', f.school_name || '');
         formData.append('gender', f.gender || '');
-        formData.append('biography', f.biography || '');
+        // formData.append('biography', f.biography || '');
         formData.append('height', f.height || '');
 
         formData.append(

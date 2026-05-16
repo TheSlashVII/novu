@@ -38,9 +38,10 @@ class UserViewset(viewsets.ViewSet):
     
 
     @action(methods=["post"], detail=True)
-    def isUserAdmin(self, request, id=None):
+    def isUserAdmin(self, request):
+        userID = request.data.get("user_id")
         try:
-            user = get_object_or_404(User, pk=id)
+            user = get_object_or_404(User, pk=int(userID))
         except Http404:
             JsonResponse({"message": "no user was found"})
         except Exception:
@@ -248,6 +249,15 @@ class UserViewset(viewsets.ViewSet):
         'interest_set'
         )
         return JsonResponse( list(UserProfileSerializer(users, many=True).data), safe=False)
+    @action(detail=False, methods=["get"])
+    def getUserProfile(self, request, id=None):
+        #userList = User.objects.all().order_by(F("likes").desc()) # F allows us to select specific columns and run special functions on them like using desc to return the objects in descending order
+        # serializer = UserSerializer(userList, many=True)
+        users = User.objects.select_related('usercard').prefetch_related(
+        'usercard__cardtab_set',
+        'interest_set'
+        ).get(id=id)
+        return JsonResponse(UserProfileSerializer(users).data, safe=False)
     # to eliminate a user
     def destroy(self, request, id=None):
         try:

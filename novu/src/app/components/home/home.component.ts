@@ -1,9 +1,11 @@
-import {Component, inject, afterNextRender, OnInit} from '@angular/core';
-import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { UserAPIService } from '../../services/user-api.service';
-import { PanelServiceService } from '../../services/panel-service.service';
-import { FilterPanelComponent } from '../filter-panel/filter-panel.component';
+import {afterNextRender, Component, inject} from '@angular/core';
+import {Router} from '@angular/router';
+import {HttpClient} from '@angular/common/http';
+import {UserAPIService} from '../../services/user-api.service';
+import {PanelServiceService} from '../../services/panel-service.service';
+import {FilterPanelComponent} from '../filter-panel/filter-panel.component';
+import {CardTab} from '../../services/card-tab.service';
+import {development} from '../../baseURLconfig';
 
 interface Profile {
   id: number;
@@ -16,22 +18,20 @@ interface Profile {
 export interface UserProfile {
     id: number;
     name: string;
+    surnames: string;
+    gender: string;
+    height:number
     age: number;
     date_of_birth: string;
     amount_tabs:number;
+    is_new: boolean;
     tabs:CardTab[];
     interests: Interest[];
+    school_name:string;
+    profile_pic:string | null;
 }
 
-interface CardTab {
-  id: number;
-  card: number;
-  header: string;
-  sub_header: string;
-  body: string;
-  tab_biography: string;
-  background_photo: string;
-}
+
 
 interface Interest{
   name: string;
@@ -61,7 +61,14 @@ export class HomeComponent {
   private likeAnimation: boolean = false;
   private dislikeAnimation: boolean = false;
 
-
+  public randomizeProfiles(array:UserProfile[]){
+      let newArray:UserProfile[] = array;
+      for (let i = 0; i < array.length; i++) {
+          let randomIndex = Math.floor(Math.random() * (i+1));
+          [newArray[i], newArray[randomIndex]] = [newArray[randomIndex], newArray[i]];
+      }
+      return newArray;
+  }
   constructor(private userAPIService: UserAPIService, private router:Router, public filterPanel:PanelServiceService) {
       this.isLoggedIn = this.userAPIService.isLoggedIn();
       this.filterPanel.onApply = () => this.applyFilters();
@@ -110,32 +117,52 @@ export class HomeComponent {
          */
     });
   }
-  
+
     // for you page algorithm
     retrieveUsers(){
       const token = this.userAPIService.decodeToken()
-      const userID = token.user_id;
+      const userID = Number(token.user_id);
+      const userMatches:{id:number, active:boolean, user1_id:number, user2_id:number}[] = []
+    this.userAPIService.checkMatch(Number(userID)).subscribe(res => {
+        // adds user ids that are not from the logged user
+        res.forEach(match => {
+            if (!userMatches.some(existingMatch => existingMatch.id === match.id )){
+                userMatches.push(match)
+            }
+        })
 
-      this.userAPIService.getUserProfiles().subscribe({
-          next: (data: any) => {
-              const filtered = (data as UserProfile[]).filter(
-                user => user.tabs != null && user.id != userID
-              );
 
-              this.allUserProfiles = filtered;
-              this.userProfiles = [...filtered];
-              this.loading = false;
-          },
-          error: () =>{
-            this.error = 'No se pudieron cargar los perfiles';
-            this.loading = false;
-            
-          }
-      }
-    )
+        this.userAPIService.getUserProfiles().subscribe({
+                next: (data: any) => {
+                    let filtered = (data as UserProfile[]).filter(
+                        user => user.tabs != null && user.id != userID && user.is_new == false
+                    );
+
+                    userMatches.forEach(currentExistingMatch => {
+                        // filters already matched users
+                        filtered = filtered.filter((currentUser) =>  currentUser.id != currentExistingMatch.user1_id && currentUser.id != currentExistingMatch.user2_id );
+                    })
+
+
+
+                    this.allUserProfiles = this.randomizeProfiles(filtered); // randomizes the users
+                    console.log(this.randomizeProfiles(filtered));
+                    this.userProfiles = [...filtered];
+                    this.loading = false;
+                },
+                error: () =>{
+                    this.error = 'No se pudieron cargar los perfiles';
+                    this.loading = false;
+
+                }
+            }
+        )
+
+        })
+
     }
 
-  
+
   //Filtros
   applyFilters(): void{
     const f = this.filterPanel.filters;
@@ -163,9 +190,9 @@ export class HomeComponent {
 
   getCurrentBackgroundPicture(tab:number = 0){
       let user = this.getCurrentProfile();
-      let bg:string = user?.tabs[tab].background_photo!;
+      let bg:string | File = user?.tabs[tab].background_photo!;
       if(bg != null){
-          return `${window.location.origin}/${user?.tabs[tab].background_photo!}`
+          return development ? `http://localhost:8000${user?.tabs[tab].background_photo!} ` : `${window.location.origin}/${user?.tabs[tab].background_photo!}`
       }
       return "assets/Images/backgroundless_cardtab.svg";
   }
@@ -245,13 +272,13 @@ export class HomeComponent {
   dislike(): void {
     const profile = this.getCurrentProfile();
     if (!profile) return;
- 
+
     this.dislikeAnimation = true;
     setTimeout(() => { this.dislikeAnimation = false; }, 300);
- 
+
     const originUserId = this.userAPIService.decodeToken()?.user_id;
     if (!originUserId) { this.resetAndNext(); return; }
- 
+
     this.userAPIService.registerSwipe(originUserId, profile.id, false).subscribe({
       next:  () => this.resetAndNext(),
       error: () => this.resetAndNext()

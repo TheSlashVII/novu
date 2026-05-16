@@ -47,7 +47,7 @@ export class CardCreationComponent {
     onPhotoChange(event: Event) {
         const file = (event.target as HTMLInputElement).files?.[0] ?? null;
         this.form.patchValue({ photo: file });
-        this.choosePhoto = "Una foto de fondo ha sido elegida"
+        this.choosePhoto = `Se ha elegido: "${file!.name}". (Los otros usuarios podran ver la foto de fondo)`
     }
 
     updateUserAge(){
