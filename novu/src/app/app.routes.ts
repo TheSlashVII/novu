@@ -27,7 +27,7 @@ import {AdminDeleteUserComponent} from './components/admin-delete-user/admin-del
 import {CardCreationComponent} from './components/card-creation/card-creation.component';
 import { ChatListComponent } from './components/chat-list/chat-list.component';
 import { ChatDetailComponent } from './components/chat-detail/chat-detail.component';
-
+import { PrivacyComponent } from './components/privacy/privacy.component';
 import {GenderComponent} from './components/gender/gender.component';
 import {SettingsComponent} from './components/settings/settings.component';
 
@@ -80,6 +80,9 @@ export const routes: Routes = [
     },
     {
         path: 'chat/:id', component: ChatDetailComponent
+    },
+    {
+        path: 'privacy', component: PrivacyComponent, title: 'Novu - Política de privacidad'
     },
 
     //Route admin

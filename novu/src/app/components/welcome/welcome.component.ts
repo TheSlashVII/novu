@@ -79,4 +79,8 @@ export class WelcomeComponent {
   goToRegister(): void {
     this.router.navigate(['/register']);
   }
+  goToPrivacy(): void {
+    this.router.navigate(['/privacy']);
+  }
+  
 }
