@@ -10,6 +10,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.db.models import F, Q # used to select fields and to execute additional functionality on the columns
+from ..emailTemplates.emailUtilities import *
 # this is the equivalent to a controller
 """
 Documentation for viewsets: https://www.django-rest-framework.org/api-guide/viewsets/#example
@@ -25,9 +26,9 @@ class UserViewset(viewsets.ViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def get_permissions(self):
-        if self.action in ['createFromUser', 'list', 'retrieveByEmail', "createFromAdmin"]:   # public routes | create Admin is Public for now 
+        if self.action in ['createFromUser', 'list', 'retrieveByEmail', "createFromAdmin", "getMostLikedProfiles", "getUserProfiles"]:   # public routes | create Admin is Public for now 
             permission_classes = [permissions.AllowAny]
-        elif self.action in ['retrieve', "retrieveUserById", 'test', "retrieveByName", "partial_update", "modifyUserAccess", "destroy", "activeUsersCount", "getMostLikedProfiles"]:  # Routes that require authentication
+        elif self.action in ['retrieve', "retrieveUserById", 'test', "retrieveByName", "partial_update", "modifyUserAccess", "destroy", "activeUsersCount", ]:  # Routes that require authentication
             permission_classes = [permissions.IsAuthenticated]
         else:                                    # PUT, PATCH, DELETE
             permission_classes = [permissions.IsAuthenticated]
@@ -39,6 +40,7 @@ class UserViewset(viewsets.ViewSet):
     def createFromUser(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
+            sendAcceptedEmail(email=str(serializer.validated_data["email"]), name=str(serializer.validated_data["name"]))
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -78,9 +80,9 @@ class UserViewset(viewsets.ViewSet):
             try:
                 user = User.objects.get(email=email) # user search
             except User.DoesNotExist:
-                user = User.objects.get(email=email) # user search
-            except User.DoesNotExist:
                 # catch the error in case of the user not being found
+                return JsonResponse({"error": "No se encontró un usuario con las mismas credenciales"}, status=status.HTTP_401_UNAUTHORIZED)
+            except:
                 return JsonResponse({"error": "No se encontró un usuario con las mismas credenciales"}, status=status.HTTP_401_UNAUTHORIZED)
             # compare the passwords inserted into the database and the ones queried by the user
             if check_password(password=password, encoded=user.password):
@@ -202,9 +204,18 @@ class UserViewset(viewsets.ViewSet):
         #userList = User.objects.all().order_by(F("likes").desc()) # F allows us to select specific columns and run special functions on them like using desc to return the objects in descending order
         # serializer = UserSerializer(userList, many=True)
         users = User.objects.select_related('usercard').prefetch_related(
-        'usercard__cardtab_set').order_by(F('likes').desc())
+        'usercard__cardtab_set').order_by(F('likes').desc())[:2]
         return JsonResponse({"join_test" : list(UserProfileSerializer(users, many=True).data)}, safe=False)
 
+    @action(detail=False, methods=["get"])
+    def getUserProfiles(self, request):
+        #userList = User.objects.all().order_by(F("likes").desc()) # F allows us to select specific columns and run special functions on them like using desc to return the objects in descending order
+        # serializer = UserSerializer(userList, many=True)
+        users = User.objects.select_related('usercard').prefetch_related(
+        'usercard__cardtab_set',
+        'interest_set'
+        )
+        return JsonResponse( list(UserProfileSerializer(users, many=True).data), safe=False)
     # to eliminate a user
     def destroy(self, request, id=None):
         try:

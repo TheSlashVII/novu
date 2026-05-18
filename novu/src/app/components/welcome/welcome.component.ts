@@ -22,19 +22,20 @@ interface Step {
 })
 export class WelcomeComponent {
   private router = inject(Router);
+  menuOpen = false;
 
   currentYear = new Date().getFullYear();
   // signals are like a record to save stuff inside of them. Is like an object
   steps: Step[] = [
     {
       number: '01',
-      title: 'Regístrate con tu correo universitario',
-      description: 'Solo se admiten cuentas con dominio de universidad reconocida. Tu identidad queda verificada desde el primer momento.',
+      title: 'Regístrate con tu carnet de estudiante',
+      description: 'Abierto a estudiantes de FP, bachillerato y universidad. Tu identidad queda verificada con tu carnet desde el primer momento.',
     },
     {
       number: '02',
       title: 'Crea tu perfil y elige tus intereses',
-      description: 'Añade tu carrera, universidad, hobbies y lo que buscas. Cuanto más completo, mejores conexiones.',
+      description: 'Añade tus estudios, universidad, hobbies y lo que buscas. Cuanto más completo, mejores conexiones.',
     },
     {
       number: '03',
@@ -78,5 +79,13 @@ export class WelcomeComponent {
 
   goToRegister(): void {
     this.router.navigate(['/register']);
+  }
+
+  goToLegal(): void {
+    this.router.navigate(['/legal']);
+  }
+
+  toggleMenu(): void{
+    this.menuOpen = !this.menuOpen;
   }
 }

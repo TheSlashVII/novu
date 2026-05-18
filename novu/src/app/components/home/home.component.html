@@ -1,3 +1,4 @@
+<app-filter-panel />
 <div class="min-h-screen bg-white flex flex-col font-poppins select-none"
      (mousemove)="onMouseMove($event)"
      (mouseup)="onMouseUp()">
@@ -31,7 +32,7 @@
     } @else if (error) {
       <div class="text-center space-y-3">
         <p class="text-rose-500 font-semibold">{{ error }}</p>
-        <button (click)="reloadProfiles()"
+        <button (click)="retrieveUsers()"
                 class="px-6 py-2 rounded-full bg-violet-600 text-white text-sm
                        font-semibold hover:bg-violet-700 transition-colors">
           Reintentar
@@ -70,23 +71,37 @@
              (touchend)="onTouchEnd()">
 
           <!-- Foto -->
-          <img [src]="getCurrentProfile()!.image"
-               [alt]="getCurrentProfile()!.name"
-               class="w-full h-[480px] object-cover pointer-events-none"
-               onerror="this.src='https://ui-avatars.com/api/?name=Perfil&background=7c3aed&color=fff&size=400'"/>
 
-          <!-- Gradiente encima de la foto -->
-          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent
+            <!--
+                            <img [src]="getCurrentBackgroundPicture()"
+                 [alt]="getCurrentProfile()!.name"
+                 class="w-full h-[480px] object-cover pointer-events-none"
+                 onerror="this.src='https://ui-avatars.com/api/?name=Perfil&background=7c3aed&color=fff&size=400'"/>
+
+            -->
+            <img [src]="getCurrentBackgroundPicture()"
+                 [alt]="getCurrentProfile()!.name"
+                 class="w-full h-[480px] object-cover pointer-events-none"
+                 onerror="this.src='https://ui-avatars.com/api/?name=Perfil&background=7c3aed&color=fff&size=400'"/>
+
+
+          <!-- Gradiente encima de la foto bg-gradient-to-t from-black/70 via-black/10 to-transparent -->
+          <div class="absolute inset-0
                       flex flex-col justify-between p-5">
 
             <!-- Nombre y bio arriba -->
             <div>
               <h2 class="text-white font-poppins font-bold text-2xl">
-                {{ getCurrentProfile()!.name }} {{ getCurrentProfile()!.age }}
+                {{ getCurrentProfile()!.name }}, {{ getCurrentProfile()!.age }}
               </h2>
-              <p class="text-white/80 text-sm mt-1">
-                {{ getCurrentProfile()!.bio }}
+                <h4 class="text-white font-bold">{{getCurrentProfile()!.tabs[0].header}}</h4>
+                <h5 class="text-white">
+                    {{getCurrentProfile()!.tabs[0].sub_header}}
+                </h5>
+              <p class="text-white/80 text-xs mt-5">
+                {{ getCurrentProfile()!.tabs[0].tab_biography }}
               </p>
+
             </div>
 
             <!-- Botones dislike / like -->
@@ -154,7 +169,7 @@
     <!-- Separador vertical -->
     <img src="assets/Images/Vector.svg" alt="" class="h-8 opacity-20"/>
 
-    <button (click)="goToSearch()"
+    <button (click)="toggleFilters()"
             class="p-2 rounded-xl text-gray-400 hover:text-violet-600 transition-colors">
       <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24"
            stroke="currentColor" stroke-width="1.5">
@@ -162,7 +177,7 @@
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
       </svg>
     </button>
-
+    
   </nav>
 
 </div>

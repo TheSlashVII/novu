@@ -1,14 +1,14 @@
 <div class="flex h-screen w-full font-poppins">
 
   <!-- Sidebar — oculto en móvil, visible desde md -->
-  <aside class="hidden md:flex w-150 min-h-screen flex-col bg-gradient-to-b from-[#5872D4] to-[#471767] px-8 py-6 flex-shrink-0">
+  <aside class="hidden md:flex w-80 min-h-screen flex-col bg-gradient-to-b from-[#5872D4] to-[#471767] px-8 py-6 flex-shrink-0">
     <div class="flex items-center gap-2 mb-16">
       <img src="assets/Images/Novu_logo.svg" alt="Novu" class="w-9 h-9 object-contain"/>
       <span class="text-white text-xl font-bold tracking-tight">novu</span>
     </div>
     <div class="mt-4">
       <p class="text-white text-lg font-bold leading-snug">
-        Selecciona tu genero para poder conectarte con las personas indicadas
+        Dinos qué tipo de relación estás buscando para conectarte mejor
       </p>
     </div>
   </aside>
@@ -24,27 +24,27 @@
 
     <!-- Título -->
     <h1 class="text-white text-2xl md:text-4xl font-bold pt-8 pb-4 tracking-tight text-center w-full">
-      ¿Como te identificas?
+      ¿Qué estás buscando?
     </h1>
 
     <!-- Chips centrados verticalmente -->
-<div class="flex-1 flex items-center justify-center">
-  <div class="flex flex-wrap justify-center gap-4 w-full px-8 xl:px-32 2xl:px-64">
-    @for (gender of genders; track gender.label) {
-      <button
-        (click)="toggleGender(gender)"
-        class="px-8 py-3 rounded-full font-bold text-base md:text-lg cursor-pointer transition-all duration-200 border-2"
-        [class.bg-violet-900]="gender.selected"
-        [class.text-white]="gender.selected"
-        [class.border-violet-900]="gender.selected"
-        [class.bg-white]="!gender.selected"
-        [class.text-gray-900]="!gender.selected"
-        [class.border-white]="!gender.selected">
-        {{ gender.label }}
-      </button>
-    }
-  </div>
-</div>
+    <div class="flex-1 flex items-center justify-center">
+      <div class="flex flex-wrap justify-center gap-4 w-full px-8 xl:px-32 2xl:px-64">
+        @for (preference of preferences; track preference.label) {
+          <button
+            (click)="togglePreference(preference)"
+            class="px-8 py-3 rounded-full font-bold text-base md:text-lg cursor-pointer transition-all duration-200 border-2"
+            [class.bg-violet-900]="preference.selected"
+            [class.text-white]="preference.selected"
+            [class.border-violet-900]="preference.selected"
+            [class.bg-white]="!preference.selected"
+            [class.text-gray-900]="!preference.selected"
+            [class.border-white]="!preference.selected">
+            {{ preference.label }}
+          </button>
+        }
+      </div>
+    </div>
 
     <!-- Botón siguiente -->
     <div class="flex justify-end pb-8">

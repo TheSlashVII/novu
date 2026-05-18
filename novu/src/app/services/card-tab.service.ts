@@ -9,7 +9,7 @@ export interface CardTab {
     header: string;
     sub_header: string;
     tab_biography: string;
-    background_photo: string;
+    background_photo: string | File;
 }
 
 @Injectable({
@@ -59,7 +59,7 @@ export class CardTabService {
     patchCardTab(
         userId: number,
         idSection: number,
-        tab: Partial<CardTab>
+        tab:any
     ): Observable<CardTab> {
         return this.http.patch<CardTab>(
             `${this.baseServerURL}/tabs/patch/${userId}/${idSection}/`,
