@@ -19,7 +19,6 @@ export class AdminPanelComponent {
     activeUserCount:number = 0;
     constructor(private userAPI:UserAPIService, private router:Router) {
         this.userAPI.getRegisterRequestCount().subscribe(res => {
-            console.log(res);
             this.setRegisterRequestCount(res)
         })
         this.getActiveUserCount()
@@ -50,6 +49,9 @@ export class AdminPanelComponent {
         this.userAPI.adminGetActiveUserCount().subscribe(res => {
             this.activeUserCount = res.count;
         })
+    }
+    goToUpdateUser(){
+        this.router.navigateByUrl("/admin/update_user");
     }
 
 

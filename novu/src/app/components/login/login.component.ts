@@ -25,6 +25,10 @@ export class LoginComponent {
   ) {
     this.isLoggedIn = this.userAPI.isLoggedIn();
     if (this.userAPI.isLoggedIn()) {
+        if(this.userAPI.isTokenExpired(this.userAPI.getToken()!)){
+            this.userAPI.logoutJWT()
+            this.router.navigateByUrl('login');
+        }
       this.router.navigateByUrl('home');
     }
   }
@@ -58,14 +62,72 @@ export class LoginComponent {
       this.loading = false;
       if (token.access != null) {
         this.userAPI.saveToken(token.access);
-        
+
         // Conectar notificaciones después del login
         this.notificationService.connect();
 
         this.isRestricted = token.is_restricted;
-        let route: string = token.is_new == true ? "/studies" : "/home";
-        this.router.navigateByUrl(route);
+        if (!this.isRestricted){
+            let route: string = token.is_new == true ? "/studies" : "/home";
+            this.router.navigateByUrl(route);
+        }
+
       }
     });
+    this.userAPI.login(this.formLogin.value).subscribe(
+        /*
+        {
+        next: res => {
+            const token: any = res;
+            this.loading = false;
+            if (token.access != null) {
+                this.userAPI.saveToken(token.access);
+                // Conectar notificaciones después del login
+                this.notificationService.connect();
+
+                this.isRestricted = token.is_restricted;
+                if (!this.isRestricted){
+                    let route: string = token.is_new == true ? "/studies" : "/home";
+                    this.router.navigateByUrl(route);
+                } else{
+                    this.userAPI.logoutJWT()
+                }
+
+            }
+        },error: error => {
+            this.loading = false;
+        }
+
+    }
+
+         */
+        {          next: res => {
+                const token: any = res
+                this.loading = false;
+                if (token.access != null) {
+                    this.userAPI.saveToken(token.access) // save the token inside the browser
+                    // console.log(token)
+                    let route: string = token.is_new == true ? "/studies" : "/home";
+                    this.isRestricted = token.is_restricted;
+                    // console.log(this.isRestricted);
+                    if (!this.isRestricted) {
+                        this.isRestricted = false;
+                        this.router.navigateByUrl(route)
+                    } else {
+                        // console.log(`this account is restricted. Status: ${this.isRestricted}`);
+                        localStorage.removeItem("access_token")
+                    }
+
+                } else {
+                    this.loading = false;
+                    this.error = "Error while creating token";
+                }
+            }, error: err => {
+                this.loading = false;
+                this.error = err.error.error;
+                console.log(err)
+            }
+        }
+    )
   }
 }

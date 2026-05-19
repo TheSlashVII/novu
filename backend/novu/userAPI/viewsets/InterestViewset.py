@@ -36,6 +36,18 @@ class InterestViewset(viewsets.ModelViewSet):
         interests = Interest.objects.filter(user_id=user_id)
         serializer = InterestSerializer(interests, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    # GET /api/users/interests/all/
+    # Devuelve todos los nombres de intereses únicos para el panel de filtros
+    @action(methods=['get'], detail=False)
+    def list_all(self, request):
+        names = (
+            Interest.objects
+            .values_list('name',flat=True)
+            .distinct()
+            .order_by('name')
+        )
+        return Response([{'name':n} for n in names] , status=status.HTTP_200_OK)
     
     #POST /api/interests
     @action(methods=["post"], detail=False)

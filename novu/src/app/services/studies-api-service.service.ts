@@ -1,7 +1,7 @@
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-
+import {baseServerURL} from '../baseURLconfig';
 @Injectable({
   providedIn: 'root'
 })
@@ -10,7 +10,7 @@ export class StudiesApiServiceService {
   PORT: number = 8000; // django's port
 
   // baseServerURL: string = `http://localhost:${this.PORT}/api/users`;
-    baseServerURL: string = `http://localhost:8000/api/users`;
+    baseServerURL: string = baseServerURL;
   constructor(private http: HttpClient) {}
     private authHeaders(): { headers: HttpHeaders } {
         return {

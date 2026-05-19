@@ -26,11 +26,18 @@ SECRET_KEY = 'django-insecure-h7jss@d4oii+x^fa=e@_dvq4n5in^=n+%%q78y&nzk9=m^rs+g
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
-
+# email configuration
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "live.smtp.mailtrap.io"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "api"
+EMAIL_HOST_PASSWORD = "78d13276c91b99564a4dac3f6a546dc2"
+# RESEND_API_KEY = "re_anM2xTVw_NYFSGs6nsd7yvh7zdNQByGgb"
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,7 +46,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'userAPI',
-    'corsheaders',
     'channels',
     'chat',
 ]
@@ -91,7 +97,9 @@ ROOT_URLCONF = 'novu.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR / "userAPI" / "emailTemplates"
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

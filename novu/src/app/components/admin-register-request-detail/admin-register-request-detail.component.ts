@@ -4,6 +4,9 @@ import { UserAPIService } from '../../services/user-api.service';
 import { UserCardService } from '../../services/user-card.service';
 import { CardTabService } from '../../services/card-tab.service';
 import { CardTab } from '../../services/card-tab.service';
+import {EmailServiceService} from '../../services/email-service.service';
+import {development} from '../../baseURLconfig';
+
 export interface registerRequestInterface {
     id_request: number;
     name: string;
@@ -47,7 +50,8 @@ export class AdminRegisterRequestDetailComponent {
         activatedRoute: ActivatedRoute,
         private userAPI: UserAPIService,
         private userCard: UserCardService,
-        private cardTab: CardTabService
+        private cardTab: CardTabService,
+        private emailService:EmailServiceService
     ) {
         // to get the id inserted by the route on the get request
         this.registerRequest = this.requestInitializer();
@@ -74,22 +78,22 @@ export class AdminRegisterRequestDetailComponent {
     }
     getStudentIdImage(){
         // const server = "http://localhost:8000/";
-        const server = window.location.origin;
+        const server = development ? "http://localhost:8000" : window.location.origin;
         const path = `${server}${this.registerRequest.photo_student_id}`;
         return path;
     }
     getStudentSelfieImage(){
         // const server = "http://localhost:8000/";
-        const server = window.location.origin;
+        const server = development ? "http://localhost:8000" : window.location.origin;
         const path = `${server}${this.registerRequest.photo_id_selfie}`;
         return path;
     }
     checkStudentIdImage(){
-        const path = this.getStudentSelfieImage()
+        const path = this.getStudentIdImage()
         window.open(path, "_blank");
     }
     checkStudentIdSelfieImage() {
-        window.open(this.registerRequest.photo_id_selfie, '_blank');
+        window.open(this.getStudentSelfieImage(), '_blank');
     }
 
     /**
@@ -101,7 +105,8 @@ export class AdminRegisterRequestDetailComponent {
         this.userAPI.deleteRegisterRequest(id).subscribe({
             next: ()=>{
                 if(redirect){
-                    this.goToDeniedRequest()
+                    this.emailService.sendDenialEmail(this.registerRequest.email, this.registerRequest.name).subscribe();
+                    this.goToDeniedRequest();
                 }
             }, error: err => {
                 console.log(err);

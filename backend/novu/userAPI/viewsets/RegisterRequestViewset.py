@@ -10,6 +10,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import os
 from pathlib import Path
+from ..emailTemplates.emailUtilities import sendPostRegisterEmail
 
 from ..models import Request, User, UserCard, CardTab
 from ..serializers import RequestSerializer
@@ -44,6 +45,25 @@ class RequestViewset(viewsets.ModelViewSet):
         numRegisterRequest = self.queryset.count()
         return JsonResponse({"request_count": numRegisterRequest})
 
+    # to create a new request inisde the database
+    def create(self,request):
+        serializer = RequestSerializer(data=request.data)
+        if serializer.is_valid():
+            sendPostRegisterEmail(serializer.validated_data['email'])
+            serializer.save() # save newly created object to the database
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # to get a specific request based on primary key
+    """
+    
+    def retrieve(self,request,pk=None):
+        queryset = Request.objects.all() # gets all Register Requests from the database
+        register_request = get_object_or_404(queryset, pk=pk) # searches for a specific register request
+        serializer = RequestSerializer(register_request)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    """
+    # to get a specific request based on primary key. (But cleaner)
     @action(methods=["get"], detail=False)
     def retrieveRequest(self, request, id=None):
         """Retrieves a specific register request by its ID."""
@@ -55,6 +75,12 @@ class RequestViewset(viewsets.ModelViewSet):
     @action(methods=["delete"], detail=False)
     def deleteRequest(self, request, id=None):
         """Deletes a register request and its associated photos."""
+        try:
+            user = get_object_or_404(User, pk=id)
+        except Http404:
+            return JsonResponse({"error": "user not found"}, status=status.HTTP_404_NOT_FOUND)
+        if(not user.admin):
+            return JsonResponse({"error": "not authorized to access this endpoint"}, status=status.HTTP_401_UNAUTHORIZED)
         BASE_DIR = Path(__file__).resolve().parent.parent.parent
         try:
             register_request = get_object_or_404(Request, pk=id)

@@ -30,15 +30,17 @@ import { ChatDetailComponent } from './components/chat-detail/chat-detail.compon
 import { PrivacyComponent } from './components/privacy/privacy.component';
 import {GenderComponent} from './components/gender/gender.component';
 import {SettingsComponent} from './components/settings/settings.component';
+import { AdminUpdateUsersComponent } from './components/admin-update-users/admin-update-users.component';
+import {AdminUpdateUserListComponent} from './components/admin-update-user-list/admin-update-user-list.component';
 
 export const routes: Routes = [
     {   path: '',
-        component: WelcomeComponent,
-        title: "Novu - Home"
+        component: WelcomeComponent
     },
     {
         path: 'register',
-        component: RegisterComponent
+        component: RegisterComponent,
+        title: "Novu - Register"
     },
     {
         path: 'login',
@@ -76,10 +78,12 @@ export const routes: Routes = [
         component: UnauthorizedComponent
     },
     {
-        path: 'chats', component: ChatListComponent
+        path: 'chats', component: ChatListComponent,
+        title:"Novu - Chats"
     },
     {
-        path: 'chat/:id', component: ChatDetailComponent
+        path: 'chat/:id', component: ChatDetailComponent,
+        title:"Novu - Chat"
     },
     {
         path: 'privacy', component: PrivacyComponent, title: 'Novu - Política de privacidad'
@@ -92,28 +96,46 @@ export const routes: Routes = [
         title: "Admin Panel",
         children: [
             {path:'', component: AdminPanelComponent, pathMatch: 'full'},
-            {path:'request', component: AdminRegisterRequestListComponent},
+            {
+                path:'request',
+                component: AdminRegisterRequestListComponent,
+                title:"Novu Admin - Register Request (List)"
+            },
             {
                 path: 'detail/request/:id',
                 component: AdminRegisterRequestDetailComponent,
-                title: "Admin - Register Request",
+                title: "Novu Admin - Register Request",
             },{
                 path:"post_accept", component: AdminPostAcceptRequest,
+                title: "Novu Admin - Accept",
             }, {
-                path:"create_user", component: AdminCreateUsersComponent
-            }, {
-                path:"post_deny", component: AdminPostDenyRequestComponent
+                path:"post_deny", component: AdminPostDenyRequestComponent,
+                title: "Novu Admin - Deny Request",
             },{
                 path:'restrict_user',
-                component: AdminRestrictUserComponent
+                component: AdminRestrictUserComponent,
+                title: "Novu Admin - Restrict User (List)",
             },
             {
                 path:'restrict_user/detail/:id',
                 component: AdminRestrictUserDetailComponent,
+                title:'Novu Admin - Restrict User Detail',
             },{
                 path:'delete_user',
                 component: AdminDeleteUserComponent,
                 title:'Novu Admin - Delete User',
+            },
+             {
+                path:"create_user", component: AdminCreateUsersComponent,
+                title: "Novu Admin - Create User",
+            },{
+                path:'update/:id',
+                component:AdminUpdateUsersComponent,
+                title: "Novu Admin - Update User Detail",
+            }, {
+                path:'update_user',
+                component:AdminUpdateUserListComponent,
+                title: "Novu Admin - Update User (List)",
             }
         ]
     },{

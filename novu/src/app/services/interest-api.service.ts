@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
+import {baseServerURL} from '../baseURLconfig';
 @Injectable({
     providedIn: 'root'
 })
@@ -10,7 +10,7 @@ export class InterestApiService {
     PORT: number = 8000 // django's port
 
     // baseServerURL:string = `http://localhost:${this.PORT}/api/users`;
-    baseServerURL: string = `http://localhost:8000/api/users`;
+    baseServerURL:string = baseServerURL;
     constructor(private http: HttpClient) {}
     getToken(): string | null {
         return localStorage.getItem('access_token');

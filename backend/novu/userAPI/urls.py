@@ -1,6 +1,7 @@
 # from django.contrib import admin
 from django.urls import path
-from .viewsets import UserViewset, RegisterRequestViewset, InterestViewset, StudiesViewset, SwipeViewset, MatchViewset, UserCardViewset, CardTabViewset, PhotoViewset
+from .viewsets import UserViewset, RegisterRequestViewset, InterestViewset, StudiesViewset, SwipeViewset, MatchViewset, UserCardViewset, CardTabViewset, PhotoViewset, EmailViewset
+
 # the UserViewset is duplicated because the first one is the file name
 # and the second one is tha actual class
 # controller Lists
@@ -13,6 +14,7 @@ MatchController = MatchViewset.MatchViewset
 UserCardController = UserCardViewset.UserCardViewset
 CardTabController = CardTabViewset.CardTabViewset
 PhotoController = PhotoViewset.PhotoViewset
+EmailController = EmailViewset.EmailViewset
 
 login=UserController.as_view({"post" : "retrieveByEmail"})
 create_user=UserController.as_view({"post" : "createFromUser"})
@@ -30,7 +32,7 @@ save_study = StudiesController.as_view({"post":"saveStudy"})
 list_studies = StudiesController.as_view({"get":"list"})
 retrieve_study = StudiesController.as_view({"get":"retrieveStudyById"})
 update_study = StudiesController.as_view({"put":"update"})
-list_users = UserController.as_view({"get": "list"})
+list_users = UserController.as_view({"post": "list"})
 test_api = UserController.as_view({"post" : "test"})
 admin_search_user = UserController.as_view({"post" : "retrieveByName"}) # functionality to search users by name
 admin_modify_access = UserController.as_view({"put" : "modifyUserAccess"})
@@ -56,8 +58,15 @@ update_user_age = UserController.as_view({"patch" : "updateUserAge"})
 update_user_gender = UserController.as_view({"patch": "updateUserGender"})
 get_user_profiles = UserController.as_view({"get" : "getUserProfiles"})
 upload_user_photos = PhotoController.as_view({"post" : "uploadPhoto"})
+send_acceptance_email = EmailController.as_view({"post": "sendAcceptedMailHandler"})
+send_denial_email = EmailController.as_view({"post" : "sendDeniedMailHandler"})
+list_all_interests = InterestController.as_view({"get":"list_all"})
+admin_user_update = UserController.as_view({"patch" : "adminUserUpdate"})
 accept_request = RegisterRequestController.as_view({"post": "acceptRequest"})
-
+check_admin_status = UserController.as_view({"post": "isUserAdmin"})
+delete_user_photo = PhotoController.as_view({"delete" : "deletePhoto"})
+update_user_profile_picture = PhotoController.as_view({"patch" : "updateProfilePicture"})
+get_user_profile = UserController.as_view({"get" : "getUserProfile"})
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
     path("create/", create_user), # creates a user 
@@ -98,6 +107,14 @@ urlpatterns = [
     path("age/update/<int:pk>", update_user_age), # updates the user age
     path("gender/update/<int:pk>", update_user_gender), # updates user gender
     path("profiles/", get_user_profiles), # to get all the users + their cards
-    path("photos/upload/<int:id>", upload_user_photos),
+    path("photos/upload/<int:id>", upload_user_photos), #to upload user photos
+    path("send_acceptance_mail/", send_acceptance_email), #to send an acceptance email
+    path("send_denial_mail/", send_denial_email), # to send a denial email
+    path("interests/all/", list_all_interests),
+    path("admin/update/<int:id>/", admin_user_update), # for the admin to update user
     path("accept/request/<int:id>/", accept_request),
+    path("status/admin/", check_admin_status), 
+    path("photos/delete/<int:id>/", delete_user_photo), # to delete an user's photo
+    path("update/profile_picture/<int:id>/", update_user_profile_picture), # to update a user's profile picture
+    path("profile/<int:id>/", get_user_profile), # to get a user's profile
 ]

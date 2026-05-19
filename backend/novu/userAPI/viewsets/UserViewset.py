@@ -4,12 +4,13 @@ from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.http import JsonResponse, Http404
-from ..models import User, UserCard, Block, Swipe
+from ..models import User, UserCard, Block, Swipe, CardTab
 from django.contrib.auth.hashers import check_password, make_password
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.db.models import F, Q # used to select fields and to execute additional functionality on the columns
+from ..emailTemplates.emailUtilities import *
 # this is the equivalent to a controller
 """
 Documentation for viewsets: https://www.django-rest-framework.org/api-guide/viewsets/#example
@@ -20,25 +21,39 @@ class UserViewset(viewsets.ViewSet):
     # to list every model
     authentication_classes = [JWTAuthentication] # type of authentication
     def list(self, request):
+        if(not request.data.get("is_admin")):
+            return JsonResponse({"message":"Unauthorized Access"}, status=status.HTTP_401_UNAUTHORIZED)
         queryset = User.objects.all()
         serializer = UserSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def get_permissions(self):
-        if self.action in ['createFromUser', 'list', 'retrieveByEmail', "createFromAdmin", "getMostLikedProfiles", "getUserProfiles"]:   # public routes | create Admin is Public for now 
+        if self.action in ['isUserAdmin','createFromUser', 'retrieveByEmail', "createFromAdmin", "getMostLikedProfiles", "getUserProfiles"]:   # public routes
             permission_classes = [permissions.AllowAny]
-        elif self.action in ['retrieve', "retrieveUserById", 'test', "retrieveByName", "partial_update", "modifyUserAccess", "destroy", "activeUsersCount", ]:  # Routes that require authentication
+        elif self.action in ['retrieve',"adminUserUpdate", "retrieveUserById", 'test', "retrieveByName", "partial_update", "modifyUserAccess", "destroy", "activeUsersCount", ]:  # Routes that require authentication
             permission_classes = [permissions.IsAuthenticated]
         else:                                    # PUT, PATCH, DELETE
             permission_classes = [permissions.IsAuthenticated]
         return [permission() for permission in permission_classes]
     
 
+    @action(methods=["post"], detail=True)
+    def isUserAdmin(self, request):
+        userID = request.data.get("user_id")
+        try:
+            user = get_object_or_404(User, pk=int(userID))
+        except Http404:
+            JsonResponse({"message": "no user was found"})
+        except Exception:
+            JsonResponse({"message": "something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return JsonResponse({"is_admin" : user.admin}, status=status.HTTP_200_OK)
+
     # to create a new model inside the database
     @action(methods=["post"], detail=False)
     def createFromUser(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
+            sendAcceptedEmail(email=str(serializer.validated_data["email"]), name=str(serializer.validated_data["name"]))
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -46,6 +61,7 @@ class UserViewset(viewsets.ViewSet):
     # separate user creation for admins
     @action(methods=["post"], detail=False)
     def createFromAdmin(self, request):
+        
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.validated_data["password"] = make_password(serializer.validated_data["password"]) # overrides the plain text password inserted by the admin
@@ -138,9 +154,28 @@ class UserViewset(viewsets.ViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    # to update partially a new model
-    def partial_update(self, request, pk=None):
-        pass
+
+    # admin update method
+    @action(methods=['patch'], detail=True)
+    def adminUserUpdate(self,request,id=None):
+        try:
+            user = get_object_or_404(User, pk=id)
+        except Http404:
+            JsonResponse({"error": "user not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            JsonResponse({"message": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        serializer = UserSerializer(user, data=request.data, partial=True)
+        
+        if serializer.is_valid():
+            if(not serializer.validated_data["password"] == user.password):
+                serializer.validated_data["password"] = make_password(serializer.validated_data["password"])
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+        
+
     @action(methods=["patch"], detail=False)
     def updateUserAge(self, request, pk=None):
         try:
@@ -210,8 +245,19 @@ class UserViewset(viewsets.ViewSet):
         #userList = User.objects.all().order_by(F("likes").desc()) # F allows us to select specific columns and run special functions on them like using desc to return the objects in descending order
         # serializer = UserSerializer(userList, many=True)
         users = User.objects.select_related('usercard').prefetch_related(
-        'usercard__cardtab_set')
+        'usercard__cardtab_set',
+        'interest_set'
+        )
         return JsonResponse( list(UserProfileSerializer(users, many=True).data), safe=False)
+    @action(detail=False, methods=["get"])
+    def getUserProfile(self, request, id=None):
+        #userList = User.objects.all().order_by(F("likes").desc()) # F allows us to select specific columns and run special functions on them like using desc to return the objects in descending order
+        # serializer = UserSerializer(userList, many=True)
+        users = User.objects.select_related('usercard').prefetch_related(
+        'usercard__cardtab_set',
+        'interest_set'
+        ).get(id=id)
+        return JsonResponse(UserProfileSerializer(users).data, safe=False)
     # to eliminate a user
     def destroy(self, request, id=None):
         try:
