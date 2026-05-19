@@ -50,6 +50,7 @@ export class AdminRegisterRequestListComponent {
     }
     requestlistSetter(data:any){
         this.requests = data
+        this.requests = this.requests.sort((a, b) => b.date_of_birth.localeCompare(a.date_of_birth));
         // console.log(this.requests);
     }
     goToAdminPanel(){

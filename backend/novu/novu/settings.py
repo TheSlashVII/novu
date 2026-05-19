@@ -37,6 +37,7 @@ EMAIL_HOST_PASSWORD = "78d13276c91b99564a4dac3f6a546dc2"
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,7 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'userAPI',
-    'corsheaders'
+    'channels',
+    'chat',
 ]
 
 MIDDLEWARE = [
@@ -84,7 +86,12 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_HEADERS = [
     "authorization",
     "content-type",
+    "accept",
+    "origin",
+    "x-requested-with",
 ]
+CORS_ALLOW_CREDENTIALS = True
+
 ROOT_URLCONF = 'novu.urls'
 
 TEMPLATES = [
@@ -105,6 +112,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'novu.wsgi.application'
+ASGI_APPLICATION = 'novu.asgi.application'
+
 
 
 # Database
@@ -144,7 +153,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Madrid'
 
 USE_I18N = True
 
@@ -163,3 +172,13 @@ STATICFILES_DIRS = [
     BASE_DIR / "photos",
     "/var/www/photos/",
 ]
+
+# Channels
+ASGI_APPLICATION = 'novu.asgi.application'
+
+# Usar capa en memoria para desarrollo
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}

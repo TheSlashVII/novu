@@ -33,7 +33,7 @@ save_study = StudiesController.as_view({"post":"saveStudy"})
 list_studies = StudiesController.as_view({"get":"list"})
 retrieve_study = StudiesController.as_view({"get":"retrieveStudyById"})
 update_study = StudiesController.as_view({"put":"update"})
-list_users = UserController.as_view({"get": "list"})
+list_users = UserController.as_view({"post": "list"})
 test_api = UserController.as_view({"post" : "test"})
 admin_search_user = UserController.as_view({"post" : "retrieveByName"}) # functionality to search users by name
 admin_modify_access = UserController.as_view({"put" : "modifyUserAccess"})
@@ -62,6 +62,12 @@ upload_user_photos = PhotoController.as_view({"post" : "uploadPhoto"})
 send_acceptance_email = EmailController.as_view({"post": "sendAcceptedMailHandler"})
 send_denial_email = EmailController.as_view({"post" : "sendDeniedMailHandler"})
 list_all_interests = InterestController.as_view({"get":"list_all"})
+admin_user_update = UserController.as_view({"patch" : "adminUserUpdate"})
+accept_request = RegisterRequestController.as_view({"post": "acceptRequest"})
+check_admin_status = UserController.as_view({"post": "isUserAdmin"})
+delete_user_photo = PhotoController.as_view({"delete" : "deletePhoto"})
+update_user_profile_picture = PhotoController.as_view({"patch" : "updateProfilePicture"})
+get_user_profile = UserController.as_view({"get" : "getUserProfile"})
 save_relationship_preference = RelationshipPreferenceController.as_view({"post": "save_preference"})
 get_relationship_preference = RelationshipPreferenceController.as_view({"get": "list"})
 list_all_studies = StudiesController.as_view({"get": "list_all"})
@@ -69,7 +75,7 @@ list_all_studies = StudiesController.as_view({"get": "list_all"})
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
     path("create/", create_user), # creates a user 
-    path("create/request", create_register_request), # creates a register request
+    path("create/request/", create_register_request), # creates a register request
     path("login/", login), # login API
     path("detail/request/<int:id>/", register_request_detail), # retrieves a specific register request
     path("count/request/", register_request_count), # counts the amount of active register requests
@@ -110,7 +116,13 @@ urlpatterns = [
     path("send_acceptance_mail/", send_acceptance_email), #to send an acceptance email
     path("send_denial_mail/", send_denial_email), # to send a denial email
     path("interests/all/", list_all_interests),
+    path("admin/update/<int:id>/", admin_user_update), # for the admin to update user
+    path("accept/request/<int:id>/", accept_request),
+    path("status/admin/", check_admin_status), 
+    path("photos/delete/<int:id>/", delete_user_photo), # to delete an user's photo
+    path("update/profile_picture/<int:id>/", update_user_profile_picture), # to update a user's profile picture
+    path("profile/<int:id>/", get_user_profile), # to get a user's profile
     path("relationship-preference/", get_relationship_preference),       # GET ?user_id=1
     path("relationship-preference/save/", save_relationship_preference), # POST
-    path("studies/all/", list_all_studies)
+    path("studies/all/", list_all_studies),
 ]

@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-
+import {baseServerURL} from '../baseURLconfig';
 @Injectable({
   providedIn: 'root'
 })
 export class EmailServiceService {
-    PORT: number = 8000 // django's port
-    baseServerURL:string = `http://localhost:${this.PORT}/api/users`;
+    // PORT: number = 8000 // django's port
+    // baseServerURL:string = `http://localhost:${this.PORT}/api/users`;
+    baseServerURL:string = baseServerURL;
   constructor(private http:HttpClient) { }
     private authHeaders(): { headers: HttpHeaders } {
         return {

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
-
+import {baseServerURL} from '../baseURLconfig';
 export interface CardTab {
     id_section?: number;
     id_card: number;
@@ -9,16 +9,17 @@ export interface CardTab {
     header: string;
     sub_header: string;
     tab_biography: string;
-    background_photo: string | File;
+    background_photo: string | File | undefined;
 }
 
 @Injectable({
     providedIn: 'root',
 })
 export class CardTabService {
-    PORT: number = 8000; // django's port
+    //PORT: number = 8000; // django's port
 
-    baseServerURL: string = `http://localhost:${this.PORT}/api/users`;
+    // baseServerURL: string = `http://localhost:${this.PORT}/api/users`;
+    baseServerURL: string = baseServerURL;
     constructor(private http: HttpClient) {}
 
     //GET /api/users/tabs/?user_id=1

@@ -86,6 +86,9 @@ export class WelcomeComponent {
   }
 
   toggleMenu(): void{
-    this.menuOpen = !this.menuOpen;
+    this.menuOpen = !this.menuOpen;}
+  goToPrivacy(): void {
+    this.router.navigate(['/privacy']);
   }
+  
 }

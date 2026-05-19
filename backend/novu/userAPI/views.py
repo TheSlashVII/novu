@@ -13,7 +13,7 @@ from .models import *
 @api_view(['GET'])
 def getUsers(request):
     Users = User.objects.all()
-    serialization = UserSeralizer(Users, many=True)
+    serialization = UserSerializer(Users, many=True)
     return Response(serialization)
 
 @api_view(['GET'])
