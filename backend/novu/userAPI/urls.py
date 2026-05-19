@@ -64,6 +64,7 @@ send_denial_email = EmailController.as_view({"post" : "sendDeniedMailHandler"})
 list_all_interests = InterestController.as_view({"get":"list_all"})
 save_relationship_preference = RelationshipPreferenceController.as_view({"post": "save_preference"})
 get_relationship_preference = RelationshipPreferenceController.as_view({"get": "list"})
+list_all_studies = StudiesController.as_view({"get": "list_all"})
 
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
@@ -111,4 +112,5 @@ urlpatterns = [
     path("interests/all/", list_all_interests),
     path("relationship-preference/", get_relationship_preference),       # GET ?user_id=1
     path("relationship-preference/save/", save_relationship_preference), # POST
+    path("studies/all/", list_all_studies)
 ]
