@@ -17,7 +17,7 @@
         <a (click)="goToLogin()" class="text-sm text-gray-500 hover:text-gray-900 transition-colors hover:cursor-pointer">Iniciar Sesión</a>
         <a (click)="goToRegister()" class="text-sm text-gray-500 hover:text-gray-900 transition-colors hover:cursor-pointer">Registrarse</a>
         <a href="#" class="text-sm text-gray-500 hover:text-gray-900 transition-colors">Política de privacidad</a>
-        <a href="#" class="text-sm text-gray-500 hover:text-gray-900 transition-colors">Aviso Legal</a>
+        <a (click)="goToLegal()" class="text-sm text-gray-500 hover:text-gray-900 transition-colors hover:cursor-pointer">Aviso Legal</a>
       </div>
 
       <!-- Mobile button -->
@@ -42,7 +42,7 @@
         <a (click)="goToLogin(); toggleMenu()" class="text-sm text-gray-500 hover:text-gray-900 transition-colors cursor-pointer py-2 border-b border-gray-50">Iniciar Sesión</a>
         <a (click)="goToRegister(); toggleMenu()" class="text-sm text-gray-500 hover:text-gray-900 transition-colors cursor-pointer py-2 border-b border-gray-50">Registrarse</a>
         <a href="#" class="text-sm text-gray-500 hover:text-gray-900 transition-colors py-2 border-b border-gray-50">Política de privacidad</a>
-        <a href="#" class="text-sm text-gray-500 hover:text-gray-900 transition-colors py-2">Aviso Legal</a>
+        <a (click)="goToLegal(); toggleMenu()" class="text-sm text-gray-500 hover:text-gray-900 transition-colors cursor-pointer py-2">Aviso Legal</a>
       </div>
     }
   </nav>
@@ -249,8 +249,8 @@
 
       <div class="flex items-center gap-6">
         <a href="#" class="text-xs text-gray-400 hover:text-gray-600 transition-colors">Términos de uso</a>
-        <a href="#" class="text-xs text-gray-400 hover:text-gray-600 transition-colors">Cookies</a>
         <a href="#" class="text-xs text-gray-400 hover:text-gray-600 transition-colors">Contacto</a>
+        <a (click)="goToLegal()" class="text-xs text-gray-400 hover:text-gray-600 transition-colors hover:cursor-pointer">Aviso Legal</a>
       </div>
 
     </div>

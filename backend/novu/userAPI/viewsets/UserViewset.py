@@ -434,7 +434,8 @@ class UserViewset(viewsets.ViewSet):
         # serializer = UserSerializer(userList, many=True)
         users = User.objects.select_related('usercard').prefetch_related(
         'usercard__cardtab_set',
-        'interest_set'
+        'interest_set',
+        'study_set'
         )
         return JsonResponse( list(UserProfileSerializer(users, many=True).data), safe=False)
     @action(detail=False, methods=["get"])

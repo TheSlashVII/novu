@@ -18,7 +18,7 @@ class StudyViewset(viewsets.ModelViewSet):
     
     def get_permissions(self):
         
-        if self.action in ['createFromUser', 'list', 'retrieveByEmail', "createFromAdmin"]:   # public routes | create Admin is Public for now 
+        if self.action in ['createFromUser', 'list', 'retrieveByEmail', "createFromAdmin", "list_all"]:   # public routes | create Admin is Public for now 
             permission_classes = [permissions.AllowAny]
         elif self.action in ["retrieveStudyById", "saveStudy"]:  # Routes that require authentication
             permission_classes = [permissions.IsAuthenticated]
@@ -105,3 +105,13 @@ class StudyViewset(viewsets.ModelViewSet):
             {'message':'Estudio actualizado correctamente'},
             status=status.HTTP_200_OK
         )
+    
+    @action(methods=['get'], detail=False)
+    def list_all(self, request):
+        names = (
+            Study.objects
+            .values_list('name',flat=True)
+            .distinct()
+            .order_by('name')
+        )
+        return Response([{'name': n} for n in names], status=status.HTTP_200_OK)
