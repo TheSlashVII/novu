@@ -53,22 +53,27 @@ export const routes: Routes = [
     },
     {
         path: 'postRegister',
-        component: PostRegisterComponent
+        component: PostRegisterComponent,
+        title: "Novu - Notice"
     },
     {
         path: 'studies',
-        component: StudiesComponent
+        component: StudiesComponent,
+        title: "Novu - Estudios"
     },
     {
         path: 'relationship-preferences',
-        component: RelationPreferencesComponent
+        component: RelationPreferencesComponent,
+        title: "Novu - Preferencias de relación"
     },
     {
         path: 'interests',
-        component: InterestsComponent
+        component: InterestsComponent,
+        title: "Novu - Intereses"
     },{
         path:'gender',
         component: GenderComponent,
+        title: "Novu - Genero"
     },{
         path: 'home',
         component: HomeComponent,
@@ -76,14 +81,16 @@ export const routes: Routes = [
     },{
         path:'settings',
         component:SettingsComponent,
-        title:"Novu - Settings",
+        title:"Novu - Ajustes",
     },
     {
         path: 'home',
-        component: HomeComponent
+        component: HomeComponent,
+        title: "Novu - Home"
     },{
         path:'unauthorized',
-        component: UnauthorizedComponent
+        component: UnauthorizedComponent,
+        title: "Acceso denegado"
     },
     {
         path: 'chats', component: ChatListComponent,
@@ -146,6 +153,7 @@ export const routes: Routes = [
     },{
         path: 'card_creation',
         component: CardCreationComponent,
+        title: "Novu - Crea tu primera card"
     },
     {
         path: 'legal',
@@ -153,11 +161,8 @@ export const routes: Routes = [
         title: 'Novu - Aviso Legal'
     },
     {
-        path:'unauthorized',
-        component: UnauthorizedComponent
-    },
-    {
     path: '**',
-        component: NotFoundComponent
+        component: NotFoundComponent,
+        title: "Novu - 404 Not found"
     },
 ];
