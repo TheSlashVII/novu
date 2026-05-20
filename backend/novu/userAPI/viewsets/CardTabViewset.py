@@ -12,9 +12,9 @@ class CardTabViewset(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication] # type of authentication
     
     def get_permissions(self):
-        if self.action in ["createCardTab","partial_update", "list"]:   # public routes | create Admin is Public for now 
+        if self.action in ["partial_update", "list"]:  
             permission_classes = [permissions.AllowAny]
-        elif self.action in ["retrieve" , "update", "destroy"]:  # Routes that require authentication
+        elif self.action in ["retrieve" , "update", "destroy", "createCardTab"]:  # Routes that require authentication
             permission_classes = [permissions.IsAuthenticated]
         else:                                    # PUT, PATCH, DELETE
             permission_classes = [permissions.IsAuthenticated]
@@ -36,7 +36,9 @@ class CardTabViewset(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"])
     def createCardTab(self, request):
         user_id = request.data.get('user_id')
-
+        user_requesting_creation = get_object_or_404(User, email=request.user)
+        if not user_requesting_creation.admin == True or not user_requesting_creation.id == int(user_id):
+            return JsonResponse({"error" : "you are not authorized to perform this action"}, status=status.HTTP_401_UNAUTHORIZED)
         if not user_id:
             return Response(
                 {'error':'Falta el user_id'},
@@ -98,6 +100,11 @@ class CardTabViewset(viewsets.ModelViewSet):
 
     # PATCH /api/tabs/<pk>/
     def partial_update(self, request, pk=None, id_section=None):
+        # user validation
+        user_requesting_patching = get_object_or_404(User, email=request.user)
+        if not user_requesting_patching.id == pk:
+            return JsonResponse({"error": "you are not allowed to perform this action"}, status=status.HTTP_401_UNAUTHORIZED)
+
         try:
             tab = get_object_or_404(CardTab, id_card__user_id=pk, id_section=id_section)
         except:
@@ -105,18 +112,8 @@ class CardTabViewset(viewsets.ModelViewSet):
             user_card,created = UserCard.objects.get_or_create(user=user)
             tab = CardTab.objects.create(id_section=1, id_card=user_card)
         # to save the foto
-        reqData = request.data.copy()
         serializer = CardTabSerializer(tab, data=request.data, partial=True) # transform the data into json 
-        # check if the user has uploaded a photo 
-        # if not reqData['background_photo'] == '':
-        #     # photoInfo = {"user_id": pk, "url": reqData['background_photo'], "visible":True}
-        #     # imageSerializer = PhotoSerializer(data=photoInfo)
-            
-        #     # if imageSerializer.is_valid():
-        #     #     imageSerializer.save()
-        #     newPhoto = Photo.objects.filter(user_id=pk).last()
         if serializer.is_valid():
-            # serializer.validated_data["background_photo"] = newPhoto.url
             serializer.save()
             return JsonResponse(serializer.data, status=status.HTTP_200_OK, safe=False)
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

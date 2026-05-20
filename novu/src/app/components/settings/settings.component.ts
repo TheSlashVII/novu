@@ -86,7 +86,7 @@ export class SettingsComponent {
                                 header: tab.header,
                                 sub_header: tab.sub_header,
                                 tab_biography: tab.tab_biography,
-                                background_photo: development ? `http://localhost:8000${tab.background_photo}` : `${window.location.origin}${c.background_photo}`,
+                                background_photo: development ? `http://localhost:8000/${tab.background_photo}` : `${window.location.origin}/${c.background_photo}`,
                                 // background_photo: c.background_photo,
                             }
                         ])
@@ -315,12 +315,16 @@ export class SettingsComponent {
             let background_photo: string;
 
             if(typeof tab.background_photo === 'string' && tab.background_photo.startsWith('/')){
-                background_photo = tab.background_photo.slice(1)
+                do {
+                    background_photo = tab.background_photo.slice(1)
+                }
+                while (typeof tab.background_photo === 'string' && tab.background_photo.startsWith('/'))
+
             } else if (typeof tab.background_photo === 'string' && tab.background_photo.startsWith('data:')) {
-                // New base64 upload — send as-is
+                // New base64 upload - send as-is
                 background_photo = tab.background_photo;
             } else if (typeof tab.background_photo === 'string' && tab.background_photo.trim() !== '') {
-                // Existing server path — strip the origin prefix before sending
+                // Existing server path - strip the origin prefix before sending
                 background_photo = tab.background_photo
                     .replace(`http://localhost:8000`, '')
                     .replace(window.location.origin, '');
@@ -372,7 +376,7 @@ export class SettingsComponent {
         const payload = this.preparePayload();
         if (!payload) return; // validation failed, toast already shown
 
-        // Example call — replace with your actual endpoint and service method:
+        // Example call - replace with your actual endpoint and service method:
         this.userAPI.updateUserProfile(payload).subscribe({
            next: (res) => {
              this.toastMessage = 'Changes saved';

@@ -299,10 +299,7 @@ class UserViewset(viewsets.ViewSet):
                 header, b64 = raw.split(",", 1)
                 ext      = header.split("/")[1].split(";")[0]
                 filename = f"{uuid.uuid4()}.{ext}"
-                print(f"[tab_bg] Generated filename: {filename}")
-                
                 file_content = ContentFile(base64.b64decode(b64), name=filename)
-                print(f"[tab_bg] ContentFile created, size: {len(file_content)}")
 
                 photo = Photo.objects.create(
                     user_id=user,
