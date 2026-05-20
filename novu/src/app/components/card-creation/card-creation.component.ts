@@ -80,8 +80,9 @@ export class CardCreationComponent {
         photoToUpload.append("background_photo", this.form.value.photo!)
         this.userAPI.uploadPhoto(Number(token.user_id), photoToUpload).subscribe(
             {
-                next: (res:any) => {
-                    formData.append("background_photo",res.photo.url);
+                next: (res) => {
+                    let newBackgroundPhotoUrl = res.photo.url.slice(1)
+                    formData.append("background_photo",newBackgroundPhotoUrl);
                     formData.append("header", this.form.value.cardTitle!);
                     formData.append("sub_header",this.form.value.cardSubtitle!);
                     formData.append("tab_biography", this.form.value.cardBiography!)

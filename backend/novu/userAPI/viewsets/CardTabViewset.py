@@ -50,12 +50,10 @@ class CardTabViewset(viewsets.ModelViewSet):
             )
 
         try:
-            user_card = get_object_or_404(UserCard, user_id=user_id) # Get the user's card, if it doesn't exist, return a 404 error
+            user_card = UserCard.objects.get(user_id=user_id)
+            # get_object_or_404(UserCard, user_id=user_id) # Get the user's card, if it doesn't exist, return a 404 error
         except UserCard.DoesNotExist:
-            return Response(
-                {'error':f'No existe ninguna tarjeta de usuario con id {user_id}'},
-                status=status.HTTP_404_NOT_FOUND
-            )
+            user_card = UserCard.objects.create(user_id=user_id)
 
         current_tab_id = CardTab.objects.filter(id_card=user_card.user_id).count() + 1 # Get the current number of tabs for the user's card and increment by 1 for the new tab ID
 
@@ -102,8 +100,10 @@ class CardTabViewset(viewsets.ModelViewSet):
     def partial_update(self, request, pk=None, id_section=None):
         try:
             tab = get_object_or_404(CardTab, id_card__user_id=pk, id_section=id_section)
-        except :
-            return JsonResponse({"user not found"}, status=status.HTTP_404_NOT_FOUND)
+        except:
+            user = get_object_or_404(User, id=pk)
+            user_card,created = UserCard.objects.get_or_create(user=user)
+            tab = CardTab.objects.create(id_section=1, id_card=user_card)
         # to save the foto
         reqData = request.data.copy()
         serializer = CardTabSerializer(tab, data=request.data, partial=True) # transform the data into json 

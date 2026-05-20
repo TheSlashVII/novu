@@ -1,16 +1,18 @@
 from django.shortcuts import get_object_or_404
-from ..serializers import UserSerializer, LoginSerializer, UserSearchSerializer, UserProfileSerializer
+from ..serializers import UserSerializer, LoginSerializer, UserSearchSerializer, UserProfileSerializer, CardTabSerializer, PhotoSerializer
 from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.http import JsonResponse, Http404
-from ..models import User, UserCard, Block, Swipe, CardTab
+from ..models import User, UserCard, Block, Swipe, CardTab, Photo
 from django.contrib.auth.hashers import check_password, make_password
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.db.models import F, Q # used to select fields and to execute additional functionality on the columns
 from ..emailTemplates.emailUtilities import *
+from django.core.files.base import ContentFile
+import uuid, base64
 # this is the equivalent to a controller
 """
 Documentation for viewsets: https://www.django-rest-framework.org/api-guide/viewsets/#example
@@ -21,8 +23,9 @@ class UserViewset(viewsets.ViewSet):
     # to list every model
     authentication_classes = [JWTAuthentication] # type of authentication
     def list(self, request):
-        if(not request.data.get("is_admin")):
-            return JsonResponse({"message":"Unauthorized Access"}, status=status.HTTP_401_UNAUTHORIZED)
+        user_requesting_search = get_object_or_404(User, email=request.user)
+        if not user_requesting_search.admin:
+            return JsonResponse({"error": "user not allowed to enter this endpoint"})
         queryset = User.objects.all()
         serializer = UserSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -61,8 +64,14 @@ class UserViewset(viewsets.ViewSet):
     # separate user creation for admins
     @action(methods=["post"], detail=False)
     def createFromAdmin(self, request):
-        
-        serializer = UserSerializer(data=request.data)
+        #user_requesting_creation_email = request.user
+        new_user = request.data
+        #user_requesting_creation = get_object_or_404(User, email=user_requesting_creation_email)
+
+        #if not user_requesting_creation.admin:
+        #    return JsonResponse({"error": "user not allowed to access this endpoint"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        serializer = UserSerializer(data=new_user)
         if serializer.is_valid():
             serializer.validated_data["password"] = make_password(serializer.validated_data["password"]) # overrides the plain text password inserted by the admin
             serializer.validated_data["is_active"] = True # to enforce that the session is created correctly
@@ -118,6 +127,9 @@ class UserViewset(viewsets.ViewSet):
     @action(methods=["post"], detail=False)
     def retrieveByName(self, request):
         serializer = UserSearchSerializer(data=request.data) # serialize the HTTP request body
+        user_requesting_search = get_object_or_404(User, email=request.user)
+        if not user_requesting_search.admin:
+            return JsonResponse({"error": "user not allowed to enter this endpoint"})
         if serializer.is_valid():
             userList = User.objects.all()
             
@@ -131,6 +143,9 @@ class UserViewset(viewsets.ViewSet):
     @action(methods=["put"], detail=False)
     def modifyUserAccess(self, request):
         serializer = UserSerializer(data=request.data, partial=True) # serialize the HTTP request body
+        user_requesting = get_object_or_404(User, email=request.user)
+        if not user_requesting.admin:
+            return JsonResponse({"error": "user not allowed to enter this endpoint"})
         if serializer.is_valid():
             user_id = request.data.get("id")
             try:
@@ -148,6 +163,9 @@ class UserViewset(viewsets.ViewSet):
             
     # to update a specific model 
     def update(self, request, pk=None):
+        user_requesting_update = get_object_or_404(User, email=request.user)
+        if not user_requesting_update.admin:
+            return JsonResponse({"error": "user not allowed to enter this endpoint"})
         user = get_object_or_404(User, pk=pk)
         serializer = UserSerializer(user, data=request.data)
         if serializer.is_valid():
@@ -158,6 +176,9 @@ class UserViewset(viewsets.ViewSet):
     # admin update method
     @action(methods=['patch'], detail=True)
     def adminUserUpdate(self,request,id=None):
+        user_requesting = get_object_or_404(User, email=request.user)
+        if not user_requesting.admin:
+            return JsonResponse({"error": "user not allowed to enter this endpoint"})
         try:
             user = get_object_or_404(User, pk=id)
         except Http404:
@@ -195,15 +216,7 @@ class UserViewset(viewsets.ViewSet):
         user.gender = str(request.data.get("gender"))
         user.save()
         return JsonResponse({"message" : "Gender updated"},status=status.HTTP_200_OK, safe=False)
-    
-    """
-    # update user
-    def updateUser(self, request, id=None):
-        try:
-            user = get_object_or_404(User, pk=id)
-        except Http404:
-            return JsonResponse({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
-    """        
+         
         
     @action(detail=False, methods=["put"])
     def updateIsNewStatus(self, request, id=None):
@@ -225,6 +238,175 @@ class UserViewset(viewsets.ViewSet):
         except:
             return JsonResponse({"error" : "something went wrong"})
         return JsonResponse({"message":"Updated status"}, status=status.HTTP_200_OK)
+    """
+    @action(detail=False, methods=["put"])
+    def updateUserProfile(self, request):
+        user_email = request.user # gets the user email
+        user = get_object_or_404(User, email=user_email)
+        user_card = get_object_or_404(UserCard, pk=user.id)
+        cardTabList = CardTabSerializer(data=request.data.get("tabs"), many=True)
+        
+        if cardTabList.is_valid():
+            # Delete old tabs and replace with new ones
+            CardTab.objects.filter(id_card=user_card).delete()
+            for tab in cardTabList.validated_data:
+                photoInfo = {"user_id": data['id_card'], "url": data['background_photo'], "visible":True}
+                imageSerializer = PhotoSerializer(data=photoInfo)
+                if imageSerializer.is_valid():
+                    imageSerializer.save()
+                CardTab.objects.create(**tab, id_card=user_card)
+            user_card.amount_tabs = user_card.cardtab_set.count() # update amount of tabs inside the user card
+            user_card.save()
+            return Response({"cardTabList": cardTabList.data}, status=status.HTTP_200_OK)
+        return Response({"errors": cardTabList.errors}, status=status.HTTP_400_BAD_REQUEST)    
+    """
+    """
+    
+    
+    @staticmethod
+    def handle_tab_background(raw: str, user: User) -> str:
+        if not raw or (isinstance(raw, str) and raw.strip() in ("", " ")):
+            return ""
+
+        if isinstance(raw, str) and raw.startswith("data:"):
+            try:
+                header, b64 = raw.split(",", 1)
+                ext      = header.split("/")[1].split(";")[0]
+                filename = f"{uuid.uuid4()}.{ext}"
+                file_content = ContentFile(base64.b64decode(b64), name=filename)
+
+                photo = Photo.objects.create(
+                    user_id=user,
+                    url=file_content,
+                    visible=True
+                )
+                photo.refresh_from_db()
+                return photo.url.url
+
+            except Exception as e:
+                print(f"Tab background upload failed: {e}")
+                return ""
+        return raw
+    """
+    @staticmethod
+    def handle_tab_background(raw: str, user: User) -> str:
+        if not raw or (isinstance(raw, str) and raw.strip() in ("", " ")):
+            print(f"[tab_bg] Empty or sentinel value, returning ''")
+            return ""
+
+        if isinstance(raw, str) and raw.startswith("data:"):
+            try:
+                header, b64 = raw.split(",", 1)
+                ext      = header.split("/")[1].split(";")[0]
+                filename = f"{uuid.uuid4()}.{ext}"
+                print(f"[tab_bg] Generated filename: {filename}")
+                
+                file_content = ContentFile(base64.b64decode(b64), name=filename)
+                print(f"[tab_bg] ContentFile created, size: {len(file_content)}")
+
+                photo = Photo.objects.create(
+                    user_id=user,
+                    url=file_content,
+                    visible=True
+                )
+                print(f"[tab_bg] Photo created, pk: {photo.pk}, url field before refresh: {photo.url}")
+
+                photo.refresh_from_db()
+                print(f"[tab_bg] After refresh, url field: {photo.url}, url.url: {photo.url.url}")
+
+                return photo.url
+
+            except Exception as e:
+                print(f"[tab_bg] Upload failed at: {e}")
+                return ""
+
+        print(f"[tab_bg] Raw value passed through: {raw}")
+        return raw
+
+    def updateUserProfile(self, request):
+        #  1. Fetch the user 
+        user = get_object_or_404(User, email=request.user)
+
+        profile_data = request.data.get("profile", {})
+        tabs_data    = request.data.get("tabs", [])
+        new_password = request.data.get("newPassword")
+
+        #  2. Update profile fields 
+        allowed_fields = {"name", "surnames", "date_of_birth", "gender", "height", "school_name"}
+        for field in allowed_fields:
+            if field in profile_data:
+                setattr(user, field, profile_data[field])
+
+        #  3. Handle profile picture (base64) 
+        raw_pic = profile_data.get("profile_pic", "")
+        if raw_pic and raw_pic.startswith("data:"):
+            try:
+                header, b64 = raw_pic.split(",", 1)
+                ext      = header.split("/")[1].split(";")[0]
+                filename = f"{uuid.uuid4()}.{ext}"
+                user.profile_pic = filename
+            except Exception:
+                return Response({"error": "Invalid profile picture"}, status=status.HTTP_400_BAD_REQUEST)
+
+        #  4. Handle password change 
+        if new_password:
+            if len(new_password) < 8:
+                return Response({"error": "Password must be at least 8 characters"}, status=status.HTTP_400_BAD_REQUEST)
+            user.set_password(new_password)
+
+        user.save()
+
+        #  5. Update card tabs 
+        try:
+            user_card = UserCard.objects.get(pk=user.id)
+        except UserCard.DoesNotExist:
+            return Response({"error": "UserCard not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        existing_sections = set(
+            CardTab.objects.filter(id_card=user_card).values_list("id_section", flat=True)
+        )
+        incoming_sections = set()
+
+        for tab in tabs_data:
+            id_section = tab.get("id_section")
+            if id_section is None:
+                continue
+
+            incoming_sections.add(id_section)
+            background_photo = self.handle_tab_background(
+                raw=tab.get("background_photo", ""),
+                user=user  # pass the already-fetched object instead of user_id
+            )
+
+            CardTab.objects.update_or_create(
+                id_card=user_card,
+                id_section=id_section,
+                defaults={
+                    "header":           tab.get("header", "").strip(),
+                    "sub_header":       tab.get("sub_header", "").strip(),
+                    "tab_biography":    tab.get("tab_biography", "").strip(),
+                    "background_photo": background_photo,
+                },
+            )
+
+        #  6. Delete removed tabs 
+        removed = existing_sections - incoming_sections
+        if removed:
+            CardTab.objects.filter(id_card=user_card, id_section__in=removed).delete()
+
+        user_card.amount_tabs = CardTab.objects.filter(id_card=user_card).count()
+        user_card.save()
+
+        # 7. Return refreshed profile 
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+        
+    
+
+        
+        
         
     @action(detail=False, methods=["get"])
     def activeUsersCount(self,request):
@@ -238,7 +420,7 @@ class UserViewset(viewsets.ViewSet):
         # serializer = UserSerializer(userList, many=True)
         users = User.objects.select_related('usercard').prefetch_related(
         'usercard__cardtab_set').order_by(F('likes').desc())[:2]
-        return JsonResponse({"join_test" : list(UserProfileSerializer(users, many=True).data)}, safe=False)
+        return JsonResponse(list(UserProfileSerializer(users, many=True).data), safe=False)
 
     @action(detail=False, methods=["get"])
     def getUserProfiles(self, request):
@@ -251,21 +433,28 @@ class UserViewset(viewsets.ViewSet):
         return JsonResponse( list(UserProfileSerializer(users, many=True).data), safe=False)
     @action(detail=False, methods=["get"])
     def getUserProfile(self, request, id=None):
+        user_requesting_profile = get_object_or_404(User, email=request.user)
         #userList = User.objects.all().order_by(F("likes").desc()) # F allows us to select specific columns and run special functions on them like using desc to return the objects in descending order
         # serializer = UserSerializer(userList, many=True)
-        users = User.objects.select_related('usercard').prefetch_related(
+        user = User.objects.select_related('usercard').prefetch_related(
         'usercard__cardtab_set',
         'interest_set'
         ).get(id=id)
-        return JsonResponse(UserProfileSerializer(users).data, safe=False)
+
+        if not user.id == user_requesting_profile.id:
+            return JsonResponse({"error": "you are not authorized to do this action"})
+        return JsonResponse(UserProfileSerializer(user).data, safe=False)
     # to eliminate a user
     def destroy(self, request, id=None):
+        user_requesting_deletion = get_object_or_404(User, email=request.user)
+        if not user_requesting_deletion.admin:
+            return JsonResponse({"error": "user not allowed to enter this endpoint"})
         try:
-            user = get_object_or_404(User, pk=id)
+            user = get_object_or_404(User, pk=id) # user to be deleted
         except Http404:
             return JsonResponse({"error": "User Not found"}, status=status.HTTP_400_BAD_REQUEST)
-        except OSError: # treat error in case it tries to delete a file that does not exist
-            return JsonResponse({"message" : "User deleted", "warning" : "attempted to delete a non-existing file"}, status=status.HTTP_204_NO_CONTENT)
+        if not user_requesting_deletion.admin:
+            return JsonResponse({"error": "Unauthorized action"}, status=status.HTTP_401_UNAUTHORIZED)
         user.delete()
         return Response({"message": "User deleted"}, status=status.HTTP_204_NO_CONTENT)
 

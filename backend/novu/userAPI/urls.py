@@ -23,7 +23,7 @@ retrieve_user=UserController.as_view({"get" : "retrieveUserById"})
 delete_request=RegisterRequestController.as_view({"delete" : "deleteRequest"})
 register_request_count=RegisterRequestController.as_view({"get" : "countRequests"})
 create_register_request=RegisterRequestController.as_view({"post" : "create"})
-list_register_requests=RegisterRequestController.as_view({"get" : "listRequests"})
+list_register_requests=RegisterRequestController.as_view({"post" : "listRequests"})
 register_request_detail=RegisterRequestController.as_view({"get" : "retrieveRequest"})
 save_interests = InterestController.as_view({"post": "saveInterest"})
 list_interests = InterestController.as_view({"get": "list"})
@@ -67,6 +67,7 @@ check_admin_status = UserController.as_view({"post": "isUserAdmin"})
 delete_user_photo = PhotoController.as_view({"delete" : "deletePhoto"})
 update_user_profile_picture = PhotoController.as_view({"patch" : "updateProfilePicture"})
 get_user_profile = UserController.as_view({"get" : "getUserProfile"})
+update_user_profile = UserController.as_view({"put" : "updateUserProfile"})
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
     path("create/", create_user), # creates a user 
@@ -117,4 +118,5 @@ urlpatterns = [
     path("photos/delete/<int:id>/", delete_user_photo), # to delete an user's photo
     path("update/profile_picture/<int:id>/", update_user_profile_picture), # to update a user's profile picture
     path("profile/<int:id>/", get_user_profile), # to get a user's profile
+    path("profile/update/" , update_user_profile),
 ]

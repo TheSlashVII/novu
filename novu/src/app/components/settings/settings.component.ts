@@ -59,14 +59,42 @@ export class SettingsComponent {
                     tabs: result.tabs,
                     age:result.age})
                 let c = this.profile().tabs[0]
+
                 this.tabs.set([{
                     id_card: this.userID, id_section: c.id_section,
                     header: c.header,
                     sub_header: c.sub_header,
                     tab_biography: c.tab_biography,
-                    background_photo: development ? `http://localhost:8000${c.background_photo}` : `${window.location.origin}${c.background_photo}`,
+                    background_photo: development ? `http://localhost:8000/${c.background_photo}` : `${window.location.origin}/${c.background_photo}`,
+                    // background_photo: c.background_photo,
                 }])
-                this.cardTabSectionTracker = c.id_section!
+                this.profile().tabs.forEach(tab => {
+                    /*
+                    this.tabs.set([{
+                        id_card: this.userID, id_section: tab.id_section,
+                        header: tab.header,
+                        sub_header: tab.sub_header,
+                        tab_biography: tab.tab_biography,
+                        background_photo: development ? `http://localhost:8000${tab.background_photo}` : `${window.location.origin}${c.background_photo}`,
+                    }])
+                     */
+                    // checks if the section is the first one
+                    if(tab.id_section != c.id_section) {
+                        this.tabs.update(currentTab => [
+                            ...currentTab, {
+                                id_card: this.userID, id_section: tab.id_section,
+                                header: tab.header,
+                                sub_header: tab.sub_header,
+                                tab_biography: tab.tab_biography,
+                                background_photo: development ? `http://localhost:8000${tab.background_photo}` : `${window.location.origin}${c.background_photo}`,
+                                // background_photo: c.background_photo,
+                            }
+                        ])
+
+                    }
+
+                })
+                this.cardTabSectionTracker = Math.max(...this.tabs().map(t => t.id_section ?? 0));
             }
 
         })
@@ -191,6 +219,7 @@ export class SettingsComponent {
     }
 
  */
+    /*
     onTabBgChange(event: Event, id: number): void {
         const input = event.target as HTMLInputElement;
         const file = input.files?.[0];
@@ -199,9 +228,30 @@ export class SettingsComponent {
             tabs.map(t => t.id_section === id ? { ...t, background_photo: file } : t)
         );
     }
+
+     */
+
+    onTabBgChange(event: Event, id: number): void {
+        const input = event.target as HTMLInputElement;
+        const file = input.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            this.tabs.update(tabs =>
+                tabs.map(t => t.id_section === id
+                    ? { ...t, background_photo: e.target?.result as string }
+                    : t
+                )
+            );
+        };
+        reader.readAsDataURL(file); // converts to base64, helper handles the rest
+    }
     getTabBgPreview(photo: string | File): string {
         if (photo instanceof File) return URL.createObjectURL(photo);
+        // development ? `http://localhost:8000/${tab.background_photo}` : `${window.location.origin}${c.background_photo}
         return photo;
+
+        // return development ? `http://localhost:8000/${photo}` : photo;
     }
 
     onPhotoChange(event: Event, index: number): void {
@@ -261,6 +311,34 @@ export class SettingsComponent {
 
         // Strip base64 background photos back to just the string;
         // the server decides what to do with them
+        const tabsPayload: CardTab[] = t.map(tab => {
+            let background_photo: string;
+
+            if(typeof tab.background_photo === 'string' && tab.background_photo.startsWith('/')){
+                background_photo = tab.background_photo.slice(1)
+            } else if (typeof tab.background_photo === 'string' && tab.background_photo.startsWith('data:')) {
+                // New base64 upload — send as-is
+                background_photo = tab.background_photo;
+            } else if (typeof tab.background_photo === 'string' && tab.background_photo.trim() !== '') {
+                // Existing server path — strip the origin prefix before sending
+                background_photo = tab.background_photo
+                    .replace(`http://localhost:8000`, '')
+                    .replace(window.location.origin, '');
+            } else {
+                // Genuinely empty
+                background_photo = ' ';
+            }
+
+            return {
+                id_card: tab.id_card,
+                id_section: tab.id_section,
+                header: tab.header?.trim(),
+                sub_header: tab.sub_header?.trim(),
+                tab_biography: tab.tab_biography?.trim(),
+                background_photo
+            };
+        });
+        /*
         const tabsPayload: CardTab[] = t.map(tab => ({
             id_card: tab.id_card,
             id_section: tab.id_section,
@@ -268,11 +346,15 @@ export class SettingsComponent {
             sub_header: tab.sub_header?.trim(),
             tab_biography: tab.tab_biography?.trim(),
             // Only send background_photo if it's a new upload
-            background_photo:  tab.background_photo instanceof File ||
-            (typeof tab.background_photo === 'string' && tab.background_photo.startsWith('data:'))
+            background_photo: tab.background_photo instanceof File ||
+        (typeof tab.background_photo === 'string' && tab.background_photo.startsWith('data:'))
             ? tab.background_photo
-            : "",
+            : (typeof tab.background_photo === 'string' && tab.background_photo.trim() !== '')
+                ? tab.background_photo  // existing server path, pass it through
+                : " "                   // genuinely empty
         }));
+
+         */
 
         const payload: { profile: Partial<UserProfile>; tabs: CardTab[]; newPassword?: string } = {
             profile: profilePayload,
@@ -291,27 +373,32 @@ export class SettingsComponent {
         if (!payload) return; // validation failed, toast already shown
 
         // Example call — replace with your actual endpoint and service method:
-        // this.userAPI.updateUserSettings(this.userID, payload).subscribe({
-        //   next: () => {
-        //     this.toastMessage = 'Changes saved';
-        //     this.toastVisible = true;
-        //     setTimeout(() => (this.toastVisible = false), 2500);
-        //     this.newPassword = '';
-        //     this.confirmPassword = '';
-        //   },
-        //   error: () => {
-        //     this.toastMessage = 'Save failed, please try again';
-        //     this.toastVisible = true;
-        //     setTimeout(() => (this.toastVisible = false), 2500);
-        //   }
-        // });
+        this.userAPI.updateUserProfile(payload).subscribe({
+           next: (res) => {
+             this.toastMessage = 'Changes saved';
+             this.toastVisible = true;
+             setTimeout(() => (this.toastVisible = false), 2500);
+             this.newPassword = '';
+             this.confirmPassword = '';
+             console.log(res)
+           },
+           error: () => {
+             this.toastMessage = 'Save failed, please try again';
+             this.toastVisible = true;
+             setTimeout(() => (this.toastVisible = false), 2500);
+           }
+        });
+
 
         // Temporary until your endpoint is ready:
+        /*
         console.log('Payload to send:', payload);
         this.toastMessage = 'Changes saved';
         this.toastVisible = true;
         setTimeout(() => (this.toastVisible = false), 2500);
         this.newPassword = '';
         this.confirmPassword = '';
+
+         */
     }
 }
