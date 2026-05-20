@@ -1,6 +1,6 @@
 # from django.contrib import admin
 from django.urls import path
-from .viewsets import UserViewset, RegisterRequestViewset, InterestViewset, StudiesViewset, SwipeViewset, MatchViewset, UserCardViewset, CardTabViewset, PhotoViewset, EmailViewset
+from .viewsets import UserViewset, RegisterRequestViewset, InterestViewset, StudiesViewset, SwipeViewset, MatchViewset, UserCardViewset, CardTabViewset, PhotoViewset, EmailViewset, RelationShipPreferenceViewset
 
 # the UserViewset is duplicated because the first one is the file name
 # and the second one is tha actual class
@@ -15,6 +15,7 @@ UserCardController = UserCardViewset.UserCardViewset
 CardTabController = CardTabViewset.CardTabViewset
 PhotoController = PhotoViewset.PhotoViewset
 EmailController = EmailViewset.EmailViewset
+RelationshipPreferenceController = RelationShipPreferenceViewset.RelationshipPreferenceViewset
 
 login=UserController.as_view({"post" : "retrieveByEmail"})
 create_user=UserController.as_view({"post" : "createFromUser"})
@@ -61,6 +62,9 @@ upload_user_photos = PhotoController.as_view({"post" : "uploadPhoto"})
 send_acceptance_email = EmailController.as_view({"post": "sendAcceptedMailHandler"})
 send_denial_email = EmailController.as_view({"post" : "sendDeniedMailHandler"})
 list_all_interests = InterestController.as_view({"get":"list_all"})
+save_relationship_preference = RelationshipPreferenceController.as_view({"post": "save_preference"})
+get_relationship_preference = RelationshipPreferenceController.as_view({"get": "list"})
+list_all_studies = StudiesController.as_view({"get": "list_all"})
 
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
@@ -106,4 +110,7 @@ urlpatterns = [
     path("send_acceptance_mail/", send_acceptance_email), #to send an acceptance email
     path("send_denial_mail/", send_denial_email), # to send a denial email
     path("interests/all/", list_all_interests),
+    path("relationship-preference/", get_relationship_preference),       # GET ?user_id=1
+    path("relationship-preference/save/", save_relationship_preference), # POST
+    path("studies/all/", list_all_studies)
 ]

@@ -1,35 +1,27 @@
 <!-- Overlay -->
 <div class="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm transition-opacity duration-300"
-     [class.opacity-100]="filterPanel.isOpen"
-     [class.opacity-0]="!filterPanel.isOpen"
-     [class.pointer-events-auto]="filterPanel.isOpen"
-     [class.pointer-events-none]="!filterPanel.isOpen"
-     (click)="close()">
+  [class.opacity-100]="filterPanel.isOpen" [class.opacity-0]="!filterPanel.isOpen"
+  [class.pointer-events-auto]="filterPanel.isOpen" [class.pointer-events-none]="!filterPanel.isOpen" (click)="close()">
 </div>
 
 <!-- Panel -->
 <aside class="fixed top-0 right-0 z-50 h-full w-80 bg-white shadow-2xl
               flex flex-col transition-transform duration-300 ease-in-out font-poppins"
-       [class.translate-x-0]="filterPanel.isOpen"
-       [class.translate-x-full]="!filterPanel.isOpen">
+  [class.translate-x-0]="filterPanel.isOpen" [class.translate-x-full]="!filterPanel.isOpen">
 
   <!-- Header -->
   <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
     <div class="flex items-center gap-2">
-      <svg class="w-5 h-5 text-violet-600" fill="none" viewBox="0 0 24 24"
-           stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round"
-              d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19
-                 a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
+      <svg class="w-5 h-5 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19
+                 a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
       </svg>
       <h2 class="font-bold text-gray-800 text-base">Filtrar estudiantes</h2>
     </div>
-    <button (click)="close()"
-            class="p-1.5 rounded-lg text-gray-400 hover:text-gray-600
+    <button (click)="close()" class="p-1.5 rounded-lg text-gray-400 hover:text-gray-600
                    hover:bg-gray-100 transition-colors">
-      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-           stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
       </svg>
     </button>
   </div>
@@ -51,38 +43,30 @@
       <!-- Track visual -->
       <div class="relative h-2 bg-gray-100 rounded-full mb-1">
         <div class="absolute h-2 bg-violet-500 rounded-full"
-             [style.left.%]="((filterPanel.filters.ageMin - 16) / (60 - 16)) * 100"
-             [style.right.%]="100 - ((filterPanel.filters.ageMax - 16) / (60 - 16)) * 100">
+          [style.left.%]="((filterPanel.filters.ageMin - 16) / (60 - 16)) * 100"
+          [style.right.%]="100 - ((filterPanel.filters.ageMax - 16) / (60 - 16)) * 100">
         </div>
-        <input type="range" min="16" max="60" step="1"
-               [ngModel]="filterPanel.filters.ageMin"
-               (ngModelChange)="filterPanel.setAgeMin($event)"
-               class="absolute w-full h-2 opacity-0 cursor-pointer"/>
-        <input type="range" min="16" max="60" step="1"
-               [ngModel]="filterPanel.filters.ageMax"
-               (ngModelChange)="filterPanel.setAgeMax($event)"
-               class="absolute w-full h-2 opacity-0 cursor-pointer"/>
+        <input type="range" min="16" max="60" step="1" [ngModel]="filterPanel.filters.ageMin"
+          (ngModelChange)="filterPanel.setAgeMin($event)" class="absolute w-full h-2 opacity-0 cursor-pointer" />
+        <input type="range" min="16" max="60" step="1" [ngModel]="filterPanel.filters.ageMax"
+          (ngModelChange)="filterPanel.setAgeMax($event)" class="absolute w-full h-2 opacity-0 cursor-pointer" />
       </div>
 
       <!-- Inputs numéricos -->
       <div class="flex gap-3 mt-3">
         <div class="flex-1">
           <label class="text-xs text-gray-400 mb-1 block">Desde</label>
-          <input type="number" min="16" max="60"
-                 [ngModel]="filterPanel.filters.ageMin"
-                 (ngModelChange)="filterPanel.setAgeMin($event)"
-                 class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm
+          <input type="number" min="16" max="60" [ngModel]="filterPanel.filters.ageMin"
+            (ngModelChange)="filterPanel.setAgeMin($event)" class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm
                         text-gray-700 focus:outline-none focus:border-violet-400
-                        focus:ring-2 focus:ring-violet-100 transition-all"/>
+                        focus:ring-2 focus:ring-violet-100 transition-all" />
         </div>
         <div class="flex-1">
           <label class="text-xs text-gray-400 mb-1 block">Hasta</label>
-          <input type="number" min="16" max="60"
-                 [ngModel]="filterPanel.filters.ageMax"
-                 (ngModelChange)="filterPanel.setAgeMax($event)"
-                 class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm
+          <input type="number" min="16" max="60" [ngModel]="filterPanel.filters.ageMax"
+            (ngModelChange)="filterPanel.setAgeMax($event)" class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm
                         text-gray-700 focus:outline-none focus:border-violet-400
-                        focus:ring-2 focus:ring-violet-100 transition-all"/>
+                        focus:ring-2 focus:ring-violet-100 transition-all" />
         </div>
       </div>
     </section>
@@ -97,46 +81,88 @@
 
       <!-- Buscador -->
       <div class="relative mb-3">
-        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
-             fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
-        <input type="text" placeholder="Buscar interés..."
-               [(ngModel)]="filterPanel.interestSearch"
-               class="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-xl text-sm
+        <input type="text" placeholder="Buscar interés..." [(ngModel)]="filterPanel.interestSearch" class="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-xl text-sm
                       text-gray-700 focus:outline-none focus:border-violet-400
-                      focus:ring-2 focus:ring-violet-100 transition-all"/>
+                      focus:ring-2 focus:ring-violet-100 transition-all" />
       </div>
 
       <!-- Loading -->
       @if (filterPanel.isLoadingInterests) {
-        <div class="flex items-center gap-2 text-sm text-gray-400 py-2">
-          <div class="w-4 h-4 rounded-full border-2 border-violet-300
+      <div class="flex items-center gap-2 text-sm text-gray-400 py-2">
+        <div class="w-4 h-4 rounded-full border-2 border-violet-300
                       border-t-violet-600 animate-spin"></div>
-          Cargando intereses...
-        </div>
+        Cargando intereses...
+      </div>
       }
 
       <!-- Tags -->
       @if (!filterPanel.isLoadingInterests) {
-        <div class="flex flex-wrap gap-2">
-          @for (interest of filterPanel.getFilteredInterests(); track interest) {
-            <button (click)="filterPanel.toggleInterest(interest)"
-                    [class]="filterPanel.isInterestSelected(interest)
+      <div class="flex flex-wrap gap-2">
+        @for (interest of filterPanel.getFilteredInterests(); track interest) {
+        <button (click)="filterPanel.toggleInterest(interest)"
+          [class]="filterPanel.isInterestSelected(interest)
                       ? 'px-3 py-1.5 rounded-full text-xs font-semibold bg-violet-600 text-white border border-violet-600 transition-all duration-150'
                       : 'px-3 py-1.5 rounded-full text-xs font-semibold bg-white text-gray-600 border border-gray-200 hover:border-violet-300 hover:text-violet-600 transition-all duration-150'">
-              {{ interest }}
-            </button>
-          }
-        </div>
-
-        @if (filterPanel.filters.interests.length > 0) {
-          <p class="text-xs text-violet-500 mt-3">
-            {{ filterPanel.filters.interests.length }}
-            seleccionado{{ filterPanel.filters.interests.length > 1 ? 's' : '' }}
-          </p>
+          {{ interest }}
+        </button>
         }
+      </div>
+
+      @if (filterPanel.filters.interests.length > 0) {
+      <p class="text-xs text-violet-500 mt-3">
+        {{ filterPanel.filters.interests.length }}
+        seleccionado{{ filterPanel.filters.interests.length > 1 ? 's' : '' }}
+      </p>
+      }
+      }
+    </section>
+
+    <!-- ── Estudios ── -->
+    <section>
+      <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">
+        Estudios
+      </h3>
+
+      <div class="relative mb-3">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        <input type="text" placeholder="Buscar estudio..." [(ngModel)]="filterPanel.studySearch" class="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-xl text-sm
+                  text-gray-700 focus:outline-none focus:border-violet-400
+                  focus:ring-2 focus:ring-violet-100 transition-all" />
+      </div>
+
+      @if (filterPanel.isLoadingStudies) {
+      <div class="flex items-center gap-2 text-sm text-gray-400 py-2">
+        <div class="w-4 h-4 rounded-full border-2 border-violet-300
+                  border-t-violet-600 animate-spin"></div>
+        Cargando estudios...
+      </div>
+      }
+
+      @if (!filterPanel.isLoadingStudies) {
+      <div class="flex flex-wrap gap-2">
+        @for (study of filterPanel.getFilteredStudies(); track study) {
+        <button (click)="filterPanel.toggleStudy(study)"
+          [class]="filterPanel.isStudySelected(study)
+                  ? 'px-3 py-1.5 rounded-full text-xs font-semibold bg-violet-600 text-white border border-violet-600 transition-all duration-150'
+                  : 'px-3 py-1.5 rounded-full text-xs font-semibold bg-white text-gray-600 border border-gray-200 hover:border-violet-300 hover:text-violet-600 transition-all duration-150'">
+          {{ study }}
+        </button>
+        }
+      </div>
+
+      @if (filterPanel.filters.studies.length > 0) {
+      <p class="text-xs text-violet-500 mt-3">
+        {{ filterPanel.filters.studies.length }}
+        seleccionado{{ filterPanel.filters.studies.length > 1 ? 's' : '' }}
+      </p>
+      }
       }
     </section>
 
@@ -146,22 +172,20 @@
   <div class="px-5 py-4 border-t border-gray-100 space-y-2">
 
     @if (filterPanel.activeFiltersCount() > 0) {
-      <p class="text-center text-xs text-gray-400">
-        <span class="font-semibold text-violet-600">{{ filterPanel.activeFiltersCount() }}</span>
-        filtro{{ filterPanel.activeFiltersCount() > 1 ? 's' : '' }}
-        activo{{ filterPanel.activeFiltersCount() > 1 ? 's' : '' }}
-      </p>
+    <p class="text-center text-xs text-gray-400">
+      <span class="font-semibold text-violet-600">{{ filterPanel.activeFiltersCount() }}</span>
+      filtro{{ filterPanel.activeFiltersCount() > 1 ? 's' : '' }}
+      activo{{ filterPanel.activeFiltersCount() > 1 ? 's' : '' }}
+    </p>
     }
 
-    <button (click)="applyFilters()"
-            class="w-full py-3 rounded-2xl bg-violet-600 text-white font-semibold
+    <button (click)="applyFilters()" class="w-full py-3 rounded-2xl bg-violet-600 text-white font-semibold
                    text-sm hover:bg-violet-700 active:scale-95 transition-all duration-150
                    shadow-lg shadow-violet-200">
       Aplicar filtros
     </button>
 
-    <button (click)="resetFilters()"
-            class="w-full py-2.5 rounded-2xl border border-gray-200 text-gray-500
+    <button (click)="resetFilters()" class="w-full py-2.5 rounded-2xl border border-gray-200 text-gray-500
                    font-medium text-sm hover:bg-gray-50 transition-all duration-150">
       Limpiar filtros
     </button>

@@ -31,6 +31,6 @@ export class StudiesComponent {
     
     const token = this.userAPIService.decodeToken();
     this.saveUserStudy(token.user_id, this.studiesName);
-    this.router.navigate(['/interests']); 
+    this.router.navigate(['/relationship-preferences']); 
   }
 }

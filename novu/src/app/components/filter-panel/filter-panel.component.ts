@@ -16,6 +16,7 @@ export class FilterPanelComponent {
   constructor(public filterPanel: PanelServiceService){}
 
   applyFilters(): void{
+    if(this.filterPanel.onApply) this.filterPanel.onApply();
     this.filterPanel.close();
   }
 

@@ -5,6 +5,7 @@ export interface StudentFilters{
   ageMin: number;
   ageMax: number;
   interests: string[];
+  studies: string[];
 }
 
 
@@ -20,12 +21,17 @@ export class PanelServiceService {
   filters: StudentFilters = {
     ageMin:18,
     ageMax:30,
-    interests: []
+    interests: [],
+    studies: []
   };
 
   allInterests: string[] = [];
   isLoadingInterests = false;
   interestSearch = '';
+  allStudies: string[]  = [];
+  isLoadingStudies      = false;
+  studySearch           = '';
+
 
   constructor(private http: HttpClient) { }
 
@@ -35,11 +41,12 @@ export class PanelServiceService {
     if(this.allInterests.length === 0){
       this.loadingInterests();
     }
+    if(this.allStudies.length === 0)
+      this.loadStudies();
   }
 
   public close(): void{
     this.isOpen = false;
-    if(this.onApply) this.onApply();
   }
 
   //Intereses
@@ -95,7 +102,38 @@ export class PanelServiceService {
   }
 
   resetFilters(): void{
-    this.filters = {ageMin: 18, ageMax:30, interests: []}
+    this.filters = {ageMin: 18, ageMax:30, interests: [], studies: []};
     this.interestSearch = '';
+    this.studySearch = '';
+  }
+
+  getFilteredStudies(): string[]{
+    const q = this.studySearch.toLowerCase().trim();
+    if (!q) return this.allStudies;
+    return this.allStudies.filter(s => s.toLowerCase().includes(q))
+  }
+
+  loadStudies(): void{
+    this.isLoadingStudies = true;
+    this.http.get<{name: string}[]>('http://localhost:8000/api/users/studies/all/').subscribe({
+      next: (data) => {
+        this.allStudies = data.map(s => s.name).sort();
+        this.isLoadingStudies = false;
+      },
+      error: () => { this.isLoadingStudies = false;}
+    })
+  }
+
+  toggleStudy(study: string): void{
+    const idx = this.filters.studies.indexOf(study);
+    if(idx === -1){
+      this.filters.studies.push(study);
+    }else{
+      this.filters.studies.splice(idx,1);
+    }
+  }
+
+  isStudySelected(study: string): boolean{
+    return this.filters.studies.includes(study);
   }
 }
