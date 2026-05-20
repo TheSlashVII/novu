@@ -9,7 +9,7 @@
     <button (click)="goToProfile()"
             class="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-200
                    hover:border-violet-400 transition-colors">
-      <img src="assets/Images/me.jpg"
+      <img [src]="getProfilePicture()"
            alt="Mi perfil"
            class="w-full h-full object-cover"
            onerror="this.src='https://ui-avatars.com/api/?name=Yo&background=7c3aed&color=fff'"/>

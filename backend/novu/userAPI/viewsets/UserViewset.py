@@ -341,7 +341,16 @@ class UserViewset(viewsets.ViewSet):
                 header, b64 = raw_pic.split(",", 1)
                 ext      = header.split("/")[1].split(";")[0]
                 filename = f"{uuid.uuid4()}.{ext}"
-                user.profile_pic = filename
+
+                file_content = ContentFile(base64.b64decode(b64), name=filename)
+
+                photo = Photo.objects.create(
+                    user_id=user,
+                    url=file_content,
+                    visible=True
+                )
+                photo.refresh_from_db()
+                user.profile_pic = photo.url.name
             except Exception:
                 return Response({"error": "Invalid profile picture"}, status=status.HTTP_400_BAD_REQUEST)
 

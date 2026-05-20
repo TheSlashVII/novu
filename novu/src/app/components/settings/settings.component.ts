@@ -53,7 +53,7 @@ export class SettingsComponent {
                     interests: result.interests,
                     is_new: false,
                     name: result.name,
-                    profile_pic: result.profile_pic,
+                    profile_pic: development ? `http://localhost:8000/${result.profile_pic}` : `${window.location.origin}/${result.profile_pic}`,
                     school_name: result.school_name,
                     surnames: result.surnames,
                     tabs: result.tabs,

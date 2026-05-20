@@ -212,6 +212,7 @@ export class UserAPIService {
         // return this.http.get(ROUTE, this.authHeaders())
         return this.http.get<UserProfile[]>(ROUTE)
     }
+
     uploadPhoto(id:number, data:any){
         const ROUTE:string = `${this.baseServerURL}/photos/upload/${id}`;
     //        return this.http.post(ROUTE, this.authHeaders())

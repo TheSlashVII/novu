@@ -1,4 +1,4 @@
-import {afterNextRender, Component, inject} from '@angular/core';
+import {afterNextRender, Component, inject, signal} from '@angular/core';
 import {Router} from '@angular/router';
 import {HttpClient} from '@angular/common/http';
 import {UserAPIService} from '../../services/user-api.service';
@@ -58,6 +58,22 @@ export class HomeComponent {
   dragX: number = 0;
   dragStartX: number = 0;
   isLoggedIn: boolean;
+  loggedUser= signal<UserProfile>({
+      age: 0,
+      amount_tabs: 0,
+      date_of_birth: "",
+      gender: "",
+      height: 0,
+      id: 0,
+      interests: [],
+      is_new: false,
+      name: "YO",
+      profile_pic: "assets/Images/userIcon.svg",
+      school_name: "",
+      surnames: "",
+      tabs: []
+
+  });
   private likeAnimation: boolean = false;
   private dislikeAnimation: boolean = false;
 
@@ -102,6 +118,13 @@ export class HomeComponent {
                 this.loading = false;
             }
         })
+        this.userAPIService.getUserProfile(Number(userID)).subscribe({
+            next: (data) => {
+                this.loggedUser.set(data)
+            }, error: (error) => {
+                console.log(error)
+            }
+        })
         /*
       this.http.get<Profile[]>('http://localhost:8000/api/users/list/').subscribe({
         next: (data) => {
@@ -117,13 +140,15 @@ export class HomeComponent {
          */
     });
   }
-
+    getProfilePicture(){
+      return development ? `http://localhost:8000/${this.loggedUser().profile_pic}` : `${window.location.origin}/${this.loggedUser().profile_pic}`;
+    }
     // for you page algorithm
     retrieveUsers(){
       const token = this.userAPIService.decodeToken()
       const userID = Number(token.user_id);
       const userMatches:{id:number, active:boolean, user1_id:number, user2_id:number}[] = []
-    this.userAPIService.checkMatch(Number(userID)).subscribe(res => {
+      this.userAPIService.checkMatch(Number(userID)).subscribe(res => {
         // adds user ids that are not from the logged user
         res.forEach(match => {
             if (!userMatches.some(existingMatch => existingMatch.id === match.id )){
@@ -163,7 +188,7 @@ export class HomeComponent {
     }
 
 
-  //Filtros
+  // filters
   applyFilters(): void{
     const f = this.filterPanel.filters;
     this.currentIndex = 0;
@@ -345,4 +370,6 @@ export class HomeComponent {
     this.filterPanel.isOpen = !this.filterPanel.isOpen
   }
 
+    protected readonly development = development;
+    protected readonly window = window;
 }
