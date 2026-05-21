@@ -297,7 +297,7 @@ class UserViewset(viewsets.ViewSet):
         if isinstance(raw, str) and raw.startswith("data:"):
             try:
                 header, b64 = raw.split(",", 1)
-                ext      = header.split("/")[1].split(";")[0]
+                ext = header.split("/")[1].split(";")[0]
                 filename = f"{uuid.uuid4()}.{ext}"
                 file_content = ContentFile(base64.b64decode(b64), name=filename)
 
@@ -311,7 +311,7 @@ class UserViewset(viewsets.ViewSet):
                 photo.refresh_from_db()
                 print(f"[tab_bg] After refresh, url field: {photo.url}, url.url: {photo.url.url}")
 
-                return photo.url
+                return photo.url.name
 
             except Exception as e:
                 print(f"[tab_bg] Upload failed at: {e}")
@@ -350,7 +350,7 @@ class UserViewset(viewsets.ViewSet):
                     visible=True
                 )
                 photo.refresh_from_db()
-                user.profile_pic = photo.url.name
+                user.profile_pic = str(photo.url)
             except Exception:
                 return Response({"error": "Invalid profile picture"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -388,9 +388,9 @@ class UserViewset(viewsets.ViewSet):
                 id_card=user_card,
                 id_section=id_section,
                 defaults={
-                    "header":           tab.get("header", "").strip(),
-                    "sub_header":       tab.get("sub_header", "").strip(),
-                    "tab_biography":    tab.get("tab_biography", "").strip(),
+                    "header": tab.get("header", "").strip(),
+                    "sub_header":tab.get("sub_header", "").strip(),
+                    "tab_biography":tab.get("tab_biography", "").strip(),
                     "background_photo": background_photo,
                 },
             )
