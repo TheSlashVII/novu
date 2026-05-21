@@ -8,14 +8,25 @@
         <div class="user-name">{{ userName() }}</div>
         <div class="user-status">
           @if (isConnected()) {
-              <span class="online">● En línea</span> 
+            <span class="online">● En línea</span>
           } @else {
             <span class="connecting">○ Conectando...</span>
           }
         </div>
       </div>
     </div>
-    <button class="menu-btn">⋮</button>
+
+    <!-- Botón tres puntos + menú -->
+    <div class="menu-wrapper">
+      <button class="menu-btn" (click)="toggleMenu()">⋮</button>
+      @if (menuOpen) {
+        <div class="dropdown-menu">
+          <button class="dropdown-item block-item" (click)="blockUser()">
+            🚫 Bloquear usuario
+          </button>
+        </div>
+      }
+    </div>
   </div>
 
   <!-- Messages -->
@@ -32,9 +43,9 @@
 
   <!-- Input -->
   <div class="chat-input">
-    <input 
-      type="text" 
-      [(ngModel)]="newMessage" 
+    <input
+      type="text"
+      [(ngModel)]="newMessage"
       (keyup.enter)="sendMessage()"
       [placeholder]="isConnected() ? 'Escribe un mensaje...' : 'Conectando...'"
       [disabled]="!isConnected()">

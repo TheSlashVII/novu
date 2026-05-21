@@ -28,7 +28,7 @@ class UserViewset(viewsets.ViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def get_permissions(self):
-        if self.action in ['isUserAdmin','createFromUser', 'retrieveByEmail', "createFromAdmin", "getMostLikedProfiles", "getUserProfiles"]:   # public routes
+        if self.action in ['isUserAdmin','createFromUser', 'retrieveByEmail', "createFromAdmin", "getMostLikedProfiles", "getUserProfiles", "getBlockedIds"]:   # public routes
             permission_classes = [permissions.AllowAny]
         elif self.action in ['retrieve',"adminUserUpdate", "retrieveUserById", 'test', "retrieveByName", "partial_update", "modifyUserAccess", "destroy", "activeUsersCount", ]:  # Routes that require authentication
             permission_classes = [permissions.IsAuthenticated]
@@ -239,16 +239,76 @@ class UserViewset(viewsets.ViewSet):
         users = User.objects.select_related('usercard').prefetch_related(
         'usercard__cardtab_set').order_by(F('likes').desc())[:2]
         return JsonResponse({"join_test" : list(UserProfileSerializer(users, many=True).data)}, safe=False)
+    
+    #function to block users
+    @action(detail=False, methods=["post"])
+    def blockUser(self, request):
+        """
+        POST /api/users/block/
+        Blocks a user from the chat detail view
+        """
+        id_logged_user = request.data.get('id_logged_user')
+        id_blocked_user = request.data.get('id_blocked_user')
+        reason = request.data.get('reason', 'Bloqueado desde el chat')
+        
+        if not id_logged_user or not id_blocked_user:
+            return JsonResponse({'error': 'Missing fields.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            Block.objects.get_or_create(
+                id_logged_user_id=id_logged_user,
+                id_blocked_user_id=id_blocked_user,
+                defaults={'reason': reason}
+            )
+            return JsonResponse({'message': 'User blocked succesfully.'}, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    @action(detail=False, methods=["get"])
+    def getBlockedIds(self, request):
+        user_id = request.query_params.get("user_id")
+        if not user_id:
+            return JsonResponse({'error': 'Missing user_id'}, status=400)
+        
+        blocked = Block.objects.filter(
+            Q(id_logged_user=user_id) | Q(id_blocked_user=user_id)
+        ).values_list("id_logged_user", "id_blocked_user")
+        
+        flat = set()
+        for a, b in blocked:
+            flat.add(a)
+            flat.add(b)
+        flat.discard(int(user_id))
+        
+        return JsonResponse({'blocked': list(flat)})
+        
 
     @action(detail=False, methods=["get"])
     def getUserProfiles(self, request):
         #userList = User.objects.all().order_by(F("likes").desc()) # F allows us to select specific columns and run special functions on them like using desc to return the objects in descending order
         # serializer = UserSerializer(userList, many=True)
+        current_user_id = request.query_params.get("current_user_id")
+        
         users = User.objects.select_related('usercard').prefetch_related(
         'usercard__cardtab_set',
         'interest_set'
         )
+        
+        if current_user_id:
+            blocked_ids = Block.objects.filter(
+                Q(id_logged_user=current_user_id) | Q(id_blocked_user=current_user_id)
+            ).values_list("id_logged_user", "id_blocked_user")
+            
+            blocked_flat = set()
+            for a, b in blocked_ids:
+                blocked_flat.add(a)
+                blocked_flat.add(b)
+            blocked_flat.discard(int(current_user_id))
+            
+            users = users.exclude(id__in=blocked_flat).exclude(id=current_user_id)
+            
         return JsonResponse( list(UserProfileSerializer(users, many=True).data), safe=False)
+    
     @action(detail=False, methods=["get"])
     def getUserProfile(self, request, id=None):
         #userList = User.objects.all().order_by(F("likes").desc()) # F allows us to select specific columns and run special functions on them like using desc to return the objects in descending order

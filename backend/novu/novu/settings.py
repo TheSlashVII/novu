@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'userAPI',
     'channels',
     'chat',
+    'contact',
 ]
 
 MIDDLEWARE = [

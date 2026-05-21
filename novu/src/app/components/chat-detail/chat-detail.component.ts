@@ -29,6 +29,8 @@ export class ChatDetailComponent {
   newMessage = '';
   currentUserId!: number;
   otherUserId!: number;
+  menuOpen = false;
+  blockSuccess = false;
 
   userName = signal('');
   userAvatar = signal('');
@@ -146,6 +148,29 @@ export class ChatDetailComponent {
 
   goToProfile(): void {
     this.router.navigate(['/profile', this.otherUserId]);
+  }
+
+  toggleMenu(): void {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  blockUser(): void {
+    const baseUrl = development ? 'http://localhost:8000' : window.location.origin;
+    this.http.post(`${baseUrl}/api/users/block/`, {
+      id_logged_user: this.currentUserId,
+      id_blocked_user: this.otherUserId,
+      reason: 'Bloqueado desde el chat'
+    }, {
+      headers: { Authorization: 'Bearer ' + this.userAPI.getToken() }
+    }).subscribe({
+      next: () => {
+        this.menuOpen = false;
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        console.error('Error al bloquear:', err);
+      }
+    });
   }
 
   private scrollToBottom(): void {

@@ -32,6 +32,7 @@ import {GenderComponent} from './components/gender/gender.component';
 import {SettingsComponent} from './components/settings/settings.component';
 import { AdminUpdateUsersComponent } from './components/admin-update-users/admin-update-users.component';
 import {AdminUpdateUserListComponent} from './components/admin-update-user-list/admin-update-user-list.component';
+import { ContactComponent } from './components/contact/contact.component';
 
 export const routes: Routes = [
     {   path: '',
@@ -87,6 +88,9 @@ export const routes: Routes = [
     },
     {
         path: 'privacy', component: PrivacyComponent, title: 'Novu - Política de privacidad'
+    },
+    {
+        path: 'contact', component: ContactComponent, title: 'Novu - Contacto'
     },
 
     //Route admin
