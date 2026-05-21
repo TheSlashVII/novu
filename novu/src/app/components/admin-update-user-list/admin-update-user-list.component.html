@@ -1,0 +1,84 @@
+<main class="flex flex-col gap-3 sm:gap-5 bg-[#F0E9E9] min-h-screen">
+    <nav class="flex flex-row justify-between px-5 py-3 bg-[#2f3a63]">
+        <!--Logo section-->
+        <div class="inline-flex justify-around items-center gap-3">
+            <img src="assets/Images/Novu_logo.svg" alt="Novu logo" class="max-h-10">
+            <div class="flex flex-row gap-1 items-center">
+                <p class="font-[Poppins] font-bold text-white text-lg">Novu</p>
+                <p class="text-white font-light text-lg">Admin</p>
+                <p class="text-white font-bold text-lg font-[Poppins] "> - Delete User</p>
+            </div>
+        </div>
+        <button (click)="logout()" class="hover:cursor-pointer hidden sm:block bg-[#4a90e2] font-[Inter] py-3 px-10 rounded-3xl text-white">Logout</button>
+        <img (click)="logout()" class="hover:cursor-pointer block sm:hidden" src="assets/Images/Logout_admin.svg" alt="Logout">
+    </nav>
+
+
+    <div class="w-full flex justify-center">
+        <div class="flex flex-col gap-8 sm:mx-20 md:mx-30 mt-30 lg:max-w-[80rem] min-w-[20rem] sm:min-w-[30rem] md:min-w-[40rem] lg:min-w-[60rem]">
+            <div class="flex flex-row gap-4 bg-white py-5 px-5 sm:px-10 rounded-2xl">
+                <form [formGroup]="searchBar" (ngSubmit)="submit()" class="flex flex-row flex-grow-2">
+                    <input (search)="submit()" formControlName="name" class="flex-grow-2 focus:outline-0" placeholder="Search users by name" />
+                    <button type="submit" class="hover:cursor-pointer border-2 rounded border-[#ff6b6b] bg-[#ff6b6b] transition hover:text-white p-1 ">Search</button>
+                </form>
+            </div>
+            @if (results.length < 1 || !results) {
+                <div class="flex flex-row gap-4 bg-white py-5 px-5 sm:px-10 rounded-2xlflex flex-row gap-4 bg-white py-5 px-5 sm:px-10 rounded-2xl">
+                    <h4>No users available at this moment or match the criteria</h4>
+                </div>
+            } @else {
+                <div class=" font-bold grid grid-cols-[10rem_10rem_minmax(500px,1fr)_10rem_5rem] gap-5 bg-white py-5 px-5 sm:px-10 rounded-2xl bg-white py-5 px-5 sm:px-10 rounded-2xl">
+
+                    <p>Name</p>
+                    <p>Surnames</p>
+                    <p>Reason</p>
+                    <div class="inline-flex items-center justify-center"><p>Restricted</p></div>
+                    <p>Actions</p>
+
+
+                </div>
+                <div class="overflow-y-auto h-100">
+                    @for (user of results; track user.id;) {
+                        <div class="bg-white py-5 px-5 sm:px-10 rounded-2xl my-5 scrollbar-thin">
+                            <div class="grid grid-cols-[10rem_10rem_minmax(500px,1fr)_10rem_5rem] gap-5">
+                                <!--Name-->
+                                <div class="inline-flex items-center">
+                                    <p>{{user.name}}</p>
+                                </div>
+                                <!--Surnames-->
+                                <div class="inline-flex items-center">
+                                    <p>{{ user.surnames }}</p>
+                                </div>
+                                <!--Restricted reason-->
+                                <div class="inline-flex items-center italic">
+                                    @if (user.restricted_reason == null || user.restricted_reason.length < 1) {
+                                        <p><i>Unrestricted</i></p>
+                                    } @else {
+                                        <p>{{user.restricted_reason}}</p>
+                                    }
+
+                                </div>
+
+                                <div class="inline-flex items-center justify-center">
+                                    <p>{{user.restricted ? "Yes" : "No"}}</p>
+                                </div>
+                                <div class="inline-flex items-center">
+                                    <button (click)="goToUpdateUserDetail(user.id)" type="button" class="bg-blue-400 p-1 transition rounded hover:cursor-pointer hover:text-white">
+                                        Update
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            <div class="flex justify-end">
+                <button (click)="goToPanel()" class="hover:cursor-pointer rounded-3xl bg-white px-10 py-2 text-[1.1rem] font-bold font-[Poppins]">Back to Panel</button>
+            </div>
+
+        </div>
+
+
+    </div>
+</main>

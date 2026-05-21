@@ -1,6 +1,7 @@
 # from django.contrib import admin
-from django.urls import path, include
-from .viewsets import UserViewset, RegisterRequestViewset, InterestViewset, StudiesViewset, SwipeViewset, MatchViewset, UserCardViewset, CardTabViewset
+from django.urls import path
+from .viewsets import UserViewset, RegisterRequestViewset, InterestViewset, StudiesViewset, SwipeViewset, MatchViewset, UserCardViewset, CardTabViewset, PhotoViewset, EmailViewset, RelationShipPreferenceViewset
+
 # the UserViewset is duplicated because the first one is the file name
 # and the second one is tha actual class
 # controller Lists
@@ -12,7 +13,9 @@ SwipeController = SwipeViewset.SwipeViewset
 MatchController = MatchViewset.MatchViewset
 UserCardController = UserCardViewset.UserCardViewset
 CardTabController = CardTabViewset.CardTabViewset
-
+PhotoController = PhotoViewset.PhotoViewset
+EmailController = EmailViewset.EmailViewset
+RelationshipPreferenceController = RelationShipPreferenceViewset.RelationshipPreferenceViewset
 
 login=UserController.as_view({"post" : "retrieveByEmail"})
 create_user=UserController.as_view({"post" : "createFromUser"})
@@ -30,7 +33,7 @@ save_study = StudiesController.as_view({"post":"saveStudy"})
 list_studies = StudiesController.as_view({"get":"list"})
 retrieve_study = StudiesController.as_view({"get":"retrieveStudyById"})
 update_study = StudiesController.as_view({"put":"update"})
-list_users = UserController.as_view({"get": "list"})
+list_users = UserController.as_view({"post": "list"})
 test_api = UserController.as_view({"post" : "test"})
 admin_search_user = UserController.as_view({"post" : "retrieveByName"}) # functionality to search users by name
 admin_modify_access = UserController.as_view({"put" : "modifyUserAccess"})
@@ -52,11 +55,29 @@ retrieve_card_tab = CardTabController.as_view({"get": "retrieve"})
 update_card_tab = CardTabController.as_view({"put": "update"})
 patch_card_tab = CardTabController.as_view({"patch": "partial_update"})
 delete_card_tab = CardTabController.as_view({"delete": "destroy"})
+update_user_age = UserController.as_view({"patch" : "updateUserAge"})
+update_user_gender = UserController.as_view({"patch": "updateUserGender"})
+get_user_profiles = UserController.as_view({"get" : "getUserProfiles"})
+upload_user_photos = PhotoController.as_view({"post" : "uploadPhoto"})
+send_acceptance_email = EmailController.as_view({"post": "sendAcceptedMailHandler"})
+send_denial_email = EmailController.as_view({"post" : "sendDeniedMailHandler"})
+list_all_interests = InterestController.as_view({"get":"list_all"})
+save_relationship_preference = RelationshipPreferenceController.as_view({"post": "save_preference"})
+get_relationship_preference = RelationshipPreferenceController.as_view({"get": "list"})
+list_all_studies = StudiesController.as_view({"get": "list_all"})
+admin_user_update = UserController.as_view({"patch" : "adminUserUpdate"})
+accept_request = RegisterRequestController.as_view({"post": "acceptRequest"})
+check_admin_status = UserController.as_view({"post": "isUserAdmin"})
+delete_user_photo = PhotoController.as_view({"delete" : "deletePhoto"})
+update_user_profile_picture = PhotoController.as_view({"patch" : "updateProfilePicture"})
+get_user_profile = UserController.as_view({"get" : "getUserProfile"})
+update_user_profile = UserController.as_view({"put" : "updateUserProfile"})
+block_user = UserController.as_view({"post": "blockUser"})
 
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
     path("create/", create_user), # creates a user 
-    path("create/request", create_register_request), # creates a register request
+    path("create/request/", create_register_request), # creates a register request
     path("login/", login), # login API
     path("detail/request/<int:id>/", register_request_detail), # retrieves a specific register request
     path("count/request/", register_request_count), # counts the amount of active register requests
@@ -74,7 +95,6 @@ urlpatterns = [
     path("studies/retrieve/<int:pk>/", retrieve_study), #Retrieve study by user_id
     path("studies/update/", update_study), #Update user's study
     path("update/status/<int:id>", change_user_is_new), # update is new status
-    path("update/status/<int:id>", change_user_is_new), # update is new status
     path("admin/delete/<int:id>", admin_delete_user), # deletes users
     path("admin/count/", admin_count_active_users), # counts users in the database
     path("count/most_liked", count_most_liked_users), 
@@ -85,10 +105,28 @@ urlpatterns = [
     path("cards/", list_user_card), #used to list cards
     path("cards/create/", create_user_card), # used to create usercards
     path("cards/retrieve/<int:pk>/", retrieve_user_card), # used to get the usercards
-    path("tabs/", list_card_tabs), # used to list card tabs
+    path("tabs/<int:pk>", list_card_tabs), # used to list card tabs
     path("tabs/create/", create_card_tab), # used to create card tabs
     path("tabs/retrieve/<int:pk>/", retrieve_card_tab), # used to get card tabs
     path("tabs/update/<int:pk>/<int:id_section>/", update_card_tab), # used to update card tabs
     path("tabs/patch/<int:pk>/<int:id_section>/", patch_card_tab), # used to update cardtabs partially
     path("tabs/delete/<int:pk>/<int:id_section>/", delete_card_tab), # used to delete card tabs
+    path("age/update/<int:pk>", update_user_age), # updates the user age
+    path("gender/update/<int:pk>", update_user_gender), # updates user gender
+    path("profiles/", get_user_profiles), # to get all the users + their cards
+    path("photos/upload/<int:id>", upload_user_photos), #to upload user photos
+    path("send_acceptance_mail/", send_acceptance_email), #to send an acceptance email
+    path("send_denial_mail/", send_denial_email), # to send a denial email
+    path("interests/all/", list_all_interests),
+    path("admin/update/<int:id>/", admin_user_update), # for the admin to update user
+    path("accept/request/<int:id>/", accept_request),
+    path("status/admin/", check_admin_status), 
+    path("photos/delete/<int:id>/", delete_user_photo), # to delete an user's photo
+    path("update/profile_picture/<int:id>/", update_user_profile_picture), # to update a user's profile picture
+    path("profile/<int:id>/", get_user_profile), # to get a user's profile
+    path("profile/update/" , update_user_profile),
+    path("relationship-preference/", get_relationship_preference),       # GET ?user_id=1
+    path("relationship-preference/save/", save_relationship_preference), # POST
+    path("studies/all/", list_all_studies),
+    path("block/", block_user), #to block a user
 ]

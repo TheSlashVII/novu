@@ -13,6 +13,11 @@ import {CardTab, CardTabService} from '../../services/card-tab.service';
   styleUrl: './admin-create-users.component.css'
 })
 export class AdminCreateUsersComponent {
+    passwordShowText:string = "Show" // change the toggle button
+    isPasswordHidden:boolean = true // to toggle between showing the password or not
+    showRestrictedSection:boolean = false // this is to show the section in case you want to create a restricted user at first
+    isMessageHidden:boolean = true;
+    message:string = "";
     userForm = new FormGroup({
         name: new FormControl('', [Validators.required, Validators.maxLength(200)]),
         surnames: new FormControl('', [Validators.required, Validators.maxLength(200)]),
@@ -20,14 +25,14 @@ export class AdminCreateUsersComponent {
         password: new FormControl('', [Validators.required, Validators.minLength(6)]),
         school_name: new FormControl('', [Validators.maxLength(150)]),
         gender: new FormControl(''),
-        biography: new FormControl('', [Validators.maxLength(150)]),
+        // biography: new FormControl('', [Validators.maxLength(150)]),
         height: new FormControl('', [Validators.pattern(/^[0-9]{1,3}$/)]),
         date_of_birth: new FormControl('', [Validators.required]),
         min_age: new FormControl(0, [Validators.min(0)]),
         max_age: new FormControl(null, [Validators.min(0)]),
         profile_pic: new FormControl(''),
         max_distance_km: new FormControl(null, [Validators.min(1)]),
-        show_me: new FormControl(true),
+        // show_me: new FormControl(true),
         is_new: new FormControl(true),
         restricted: new FormControl(false),
         restricted_reason: new FormControl('', [Validators.maxLength(100)]),
@@ -37,9 +42,33 @@ export class AdminCreateUsersComponent {
     constructor(private userAPIService: UserAPIService, private router:Router, private userCardService:UserCardService, private cardTabService:CardTabService) {
 
     }
+    togglePassword(){
+        this.isPasswordHidden = !this.isPasswordHidden; // turn on or off the option to show the password in plain text
+        switch (this.isPasswordHidden) {
+            case true:
+                this.passwordShowText = "Show"
+                break;
+            case false:
+                this.passwordShowText = "Hide"
+                break;
+            default:
+                this.passwordShowText = "Hide"
+                break;
+        }
+
+    }
 
     Submit(){
+        this.isMessageHidden = true;
         const f = this.userForm.value;
+        /*
+
+        const payload = {
+            ...f,
+            date_of_birth: new Date(f.date_of_birth!).toISOString().split('T')[0],
+        };
+
+         */
         const formData = new FormData();
 
         formData.append('name', f.name!);
@@ -49,7 +78,7 @@ export class AdminCreateUsersComponent {
 
         formData.append('school_name', f.school_name || '');
         formData.append('gender', f.gender || '');
-        formData.append('biography', f.biography || '');
+        // formData.append('biography', f.biography || '');
         formData.append('height', f.height || '');
 
         formData.append(
@@ -64,7 +93,7 @@ export class AdminCreateUsersComponent {
             formData.append('max_distance_km', String(f.max_distance_km));
         }
 
-        formData.append('show_me', String(f.show_me));
+        // formData.append('show_me', String(f.show_me));
         formData.append('is_new', String(f.is_new));
         formData.append('restricted', String(f.restricted));
         formData.append('admin', String(f.admin));
@@ -79,27 +108,31 @@ export class AdminCreateUsersComponent {
                 new Date(f.restricted_at).toISOString().split('T')[0]
             );
         }
+
+
         this.userAPIService.adminCreateUser(formData).subscribe({
             next: (res) => {
                 const newUser:any = res
                 this.userCardService.createUserCard(newUser.id).subscribe((userCard) => {
-                    console.log(res)
                     let tab: CardTab = {
                         id_section: 1,
                         id_card: userCard.user,
                         body: 'This is the default card tab. Edit it to add more information about you!',
                         header: 'Default Card Tab',
-                        sub_header: 'A ',
+                        sub_header: ' Default header',
                         tab_biography:
                             'This is the default biography. Edit it to add more information about you!',
-                        background_photo: 'A '
+                        background_photo: 'Not uploaded yet'
                     };
                     this.cardTabService.createCardTab(newUser.id, tab).subscribe(res => {console.log(res)})
-
+                    this.message = "The user was created successfully"
+                    this.isMessageHidden = false;
                 })
 
             },
             error: err => {
+                this.message = "Something went wrong";
+                this.isMessageHidden = false;
                 console.log(err.error.message);
             }
         })

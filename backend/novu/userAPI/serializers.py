@@ -98,15 +98,17 @@ class UserSearchSerializer(serializers.Serializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     amount_tabs = serializers.IntegerField(source='usercard.amount_tabs')
     tabs = CardTabSerializer(source='usercard.cardtab_set', many=True)
+    interests = InterestSerializer(many=True, read_only=True, source='interest_set')
+    studies = StudySerializer(many=True, read_only=True, source='study_set')
 
     class Meta:
         model = User
         # these are the fields for the SQL join query
         fields = [
-            'id', 'name', 'surnames', 'email',
-            'gender', 'biography', 'height', 'date_of_birth',
+            'id', 'name', 'surnames',
+            'gender', 'age','height', 'date_of_birth',
             'profile_pic', 'likes', 'school_name',
-            'amount_tabs', 'tabs',   
+            'amount_tabs', 'tabs','interests', "studies", "is_new"   
         ]
 
 

@@ -17,6 +17,7 @@ class User(AbstractBaseUser):
     school_name=models.CharField(max_length=150, default='')
     gender=models.CharField(max_length=10, default='') # on django '' is equal to NULL
     height=models.CharField(max_length=5,default='')
+    age=models.IntegerField(null=True)
     date_of_birth=models.DateField()
     min_age=models.IntegerField(default=0)
     max_age=models.IntegerField()
@@ -64,11 +65,11 @@ class UserCard(models.Model):
 class CardTab(models.Model):
     id_section=models.IntegerField(null=False, default=1) # this is to identify the section number of the tab, for example 1, 2, 3, etc. It is not the primary key because it can be repeated for different users
     id_card=models.ForeignKey(UserCard, on_delete=models.CASCADE, db_column="id_card" , null=False, default=1) # db_column is for changing the name of the column at the database.
-    body=models.CharField(max_length=200)
     header=models.CharField(max_length=50)
     sub_header=models.CharField(max_length=50)
     tab_biography=models.CharField(max_length=100)
     background_photo=models.TextField()
+    background_photo.null = True
     pk=models.CompositePrimaryKey("id_section", "id_card") # Fix to define multiple columns as primary keys
     class Meta:
         db_table='Card_tab'
@@ -111,16 +112,17 @@ class Match(models.Model):
 # this table is for having a record on messages being sent 
 class Message(models.Model):
     # Columns
-    id_message=models.BigAutoField(primary_key=True)
-    match_id=models.ForeignKey(Match, on_delete=models.CASCADE, db_column="match_id")
-    sender_id=models.ForeignKey(User, on_delete=models.CASCADE, db_column="sender_id")
+    id_message = models.BigAutoField(primary_key=True)
+    match_id = models.ForeignKey(Match, on_delete=models.CASCADE, db_column="match_id")
+    sender_id = models.ForeignKey(User, on_delete=models.CASCADE, db_column="sender_id")
+    recipient_id = models.ForeignKey(User, related_name="received_messages", on_delete=models.CASCADE, db_column="recipient_id", null=True, blank=True)
     content=models.TextField()
     # read recipients
     sent_at=models.DateTimeField(auto_now_add=True)
-    read_at=models.DateTimeField()
+    read_at=models.DateTimeField(null=True, blank=True)
     # to reply to messages as Instagram or Whatsapp
-    id_previous_message=models.ForeignKey('self', related_name="+",on_delete=models.CASCADE, db_column="id_previous_message")
-    id_next_message=models.ForeignKey('self', related_name="+",on_delete=models.CASCADE, db_column="id_next_message")
+    id_previous_message = models.ForeignKey('self', related_name="+", on_delete=models.CASCADE, db_column="id_previous_message", null=True, blank=True)
+    id_next_message = models.ForeignKey('self', related_name="+", on_delete=models.CASCADE, db_column="id_next_message", null=True, blank=True)
     # column name
     class Meta:
         db_table="Message"

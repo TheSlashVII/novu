@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {CardTab, CardTabService} from '../../services/card-tab.service';
+import {UserAPIService} from '../../services/user-api.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-card-creation',
@@ -11,11 +14,12 @@ import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
   styleUrl: './card-creation.component.css'
 })
 export class CardCreationComponent {
-
+    choosePhoto:string = "Elige una foto para subir";
     cardTitle: string = 'Tu titulo irá aquí';
     cardSubtitle: string = 'Tu subtitulo irá aquí';
     cardBiography: string = 'Tu biografía irá aquí';
     cardAge: string | number = '';
+    name: string = '';
     form = new FormGroup({
         cardTitle:     new FormControl('', [Validators.required, Validators.maxLength(50)]),
         cardSubtitle:  new FormControl('', [Validators.required, Validators.maxLength(50)]),
@@ -24,6 +28,15 @@ export class CardCreationComponent {
         photo:         new FormControl<File | null>(null),
     });
 
+    constructor(private userAPI:UserAPIService, private router: Router, private cardAPI:CardTabService) {
+        const token = userAPI.decodeToken();
+
+        this.userAPI.getUserById(token.user_id).subscribe({
+            next: (res:any) => {
+                this.name = res.name;
+            }
+        })
+    }
     get cardTitleValue()     { return this.form.get('cardTitle')!; }
     get cardSubtitleValue()  { return this.form.get('cardSubtitle')!; }
     get cardAgeValue()       { return this.form.get('cardAge')!; }
@@ -34,11 +47,70 @@ export class CardCreationComponent {
     onPhotoChange(event: Event) {
         const file = (event.target as HTMLInputElement).files?.[0] ?? null;
         this.form.patchValue({ photo: file });
+        this.choosePhoto = `Se ha elegido: "${file!.name}". (Los otros usuarios podran ver la foto de fondo)`
     }
 
+    updateUserAge(){
+        const token = this.userAPI.decodeToken();
+        this.userAPI.updateUserAge(token.user_id, this.form.value.cardAge!).subscribe({
+            next: (res:any) => {
+                console.log(res)
+            }, error: (err:any) => {
+                console.log(err)
+            }
+        })
+
+    }
     onSubmit() {
         if (this.form.invalid) return;
-        console.log(this.form.value);
+        const formData = new FormData();
+        const token = this.userAPI.decodeToken()
+        this.updateUserAge();
+        // update cardTab #1
+        const tab:CardTab ={
+            background_photo: this.form.value.photo!,
+            header: this.form.value.cardTitle!,
+            id_card: Number(token.user_id),
+            id_section: 1, // will always point the first card tab made
+            sub_header: this.form.value.cardSubtitle!,
+            tab_biography: this.form.value.cardBiography!
+        }
+        console.log(this.form.value.photo?.name);
+        const photoToUpload = new FormData();
+        photoToUpload.append("background_photo", this.form.value.photo!)
+        this.userAPI.uploadPhoto(Number(token.user_id), photoToUpload).subscribe(
+            {
+                next: (res) => {
+                    let newBackgroundPhotoUrl = res.photo.url.slice(1)
+                    formData.append("background_photo",newBackgroundPhotoUrl);
+                    formData.append("header", this.form.value.cardTitle!);
+                    formData.append("sub_header",this.form.value.cardSubtitle!);
+                    formData.append("tab_biography", this.form.value.cardBiography!)
+                    formData.append("id_card", String(token.user_id));
+                    formData.append("id_section", "1");
+
+                    let dataToSend:Record<string, FormDataEntryValue> = {}
+                    formData.forEach((value, key) => {
+                        dataToSend[key] = value;
+                    })
+                    console.log(formData)
+                    console.log(dataToSend)
+                    this.cardAPI.patchCardTab(Number(token.user_id), 1, dataToSend).subscribe({
+                        next: value =>{
+                            this.router.navigateByUrl("/home")
+                        },
+                        error: err => {
+                            console.log(err);
+                        }
+
+                    })
+                }
+            }
+        )
+
+
+
+
     }
 
     updateValue($event:any, fieldName:string):void{
@@ -70,10 +142,5 @@ export class CardCreationComponent {
 
         }
 
-    }
-    newBackgroundPhoto(event:any, fileName:string){
-        const inputField:any = event.target as HTMLInputElement;
-        const file = inputField.files![0];
-        console.log(file.name);
     }
 }

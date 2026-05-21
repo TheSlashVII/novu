@@ -9,24 +9,42 @@
         <div class="w-9 h-9 rounded-xl flex items-center justify-center">
             <img src="assets/Images/Novu_logo.svg" alt="Novu logo">
         </div>
-        <span class="font-poppins font-bold text-lg text-gray-900">novu</span>
+        <span class="font-poppins font-bold text-lg text-gray-900">Novu</span>
       </div>
 
-      <!-- Links -->
+      <!-- Links desktop -->
       <div class="hidden md:flex items-center gap-8">
         <a (click)="goToLogin()" class="text-sm text-gray-500 hover:text-gray-900 transition-colors hover:cursor-pointer">Iniciar Sesión</a>
         <a (click)="goToRegister()" class="text-sm text-gray-500 hover:text-gray-900 transition-colors hover:cursor-pointer">Registrarse</a>
-        <a href="#" class="text-sm text-gray-500 hover:text-gray-900 transition-colors">Política de privacidad</a>
-        <a href="#" class="text-sm text-gray-500 hover:text-gray-900 transition-colors">Aviso Legal</a>
+        <a (click)="goToPrivacy()" class="text-sm text-gray-500 hover:text-gray-900 transition-colors hover:cursor-pointer">Política de privacidad</a>
+        <a (click)="goToLegal()" class="text-sm text-gray-500 hover:text-gray-900 transition-colors hover:cursor-pointer">Aviso Legal</a>
       </div>
 
       <!-- Mobile button -->
-      <button class="md:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100 transition-colors">
-        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
-        </svg>
+      <button
+        (click)="toggleMenu()"
+        class="md:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100 transition-colors">
+        @if (!menuOpen) {
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        } @else {
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        }
       </button>
     </div>
+
+    <!-- Mobile menu desplegable -->
+    @if (menuOpen) {
+      <div class="md:hidden bg-white border-t border-gray-100 shadow-lg px-6 py-4 flex flex-col gap-2">
+        <a (click)="goToLogin(); toggleMenu()" class="text-sm text-gray-500 hover:text-gray-900 transition-colors cursor-pointer py-2 border-b border-gray-50">Iniciar Sesión</a>
+        <a (click)="goToRegister(); toggleMenu()" class="text-sm text-gray-500 hover:text-gray-900 transition-colors cursor-pointer py-2 border-b border-gray-50">Registrarse</a>
+        <a (click)="goToPrivacy(); toggleMenu()" class="text-sm text-gray-500 hover:text-gray-900 transition-colors py-2 border-b border-gray-50">Política de privacidad</a>
+        <a (click)="goToLegal(); toggleMenu()" class="text-sm text-gray-500 hover:text-gray-900 transition-colors py-2">Aviso Legal</a>
+      </div>
+    }
   </nav>
 
   <!-- ===== HERO ===== -->
@@ -96,7 +114,6 @@
         </h2>
       </div>
 
-      <!-- Grid 2x2 + 1 centrada -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         @for (feature of features; track feature.title) {
           <div class="flex items-start gap-4 rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-all duration-300">
@@ -231,9 +248,7 @@
       <p class="text-xs text-gray-400">© {{ currentYear }} Novu. Todos los derechos reservados.</p>
 
       <div class="flex items-center gap-6">
-        <a href="#" class="text-xs text-gray-400 hover:text-gray-600 transition-colors">Términos de uso</a>
-        <a href="#" class="text-xs text-gray-400 hover:text-gray-600 transition-colors">Cookies</a>
-        <a href="#" class="text-xs text-gray-400 hover:text-gray-600 transition-colors">Contacto</a>
+        <a (click)="goToContact()" class="text-xs text-gray-400 hover:text-gray-600 transition-colors hover:cursor-pointer">Contacto</a>
       </div>
 
     </div>

@@ -4,6 +4,9 @@ import { UserAPIService } from '../../services/user-api.service';
 import { UserCardService } from '../../services/user-card.service';
 import { CardTabService } from '../../services/card-tab.service';
 import { CardTab } from '../../services/card-tab.service';
+import {EmailServiceService} from '../../services/email-service.service';
+import {development} from '../../baseURLconfig';
+
 export interface registerRequestInterface {
     id_request: number;
     name: string;
@@ -47,7 +50,8 @@ export class AdminRegisterRequestDetailComponent {
         activatedRoute: ActivatedRoute,
         private userAPI: UserAPIService,
         private userCard: UserCardService,
-        private cardTab: CardTabService
+        private cardTab: CardTabService,
+        private emailService:EmailServiceService
     ) {
         // to get the id inserted by the route on the get request
         this.registerRequest = this.requestInitializer();
@@ -73,66 +77,66 @@ export class AdminRegisterRequestDetailComponent {
         return this.registerRequest.id_student;
     }
     getStudentIdImage(){
-        const server = "http://localhost:8000/";
+        // const server = "http://localhost:8000/";
+        const server = development ? "http://localhost:8000" : window.location.origin;
         const path = `${server}${this.registerRequest.photo_student_id}`;
         return path;
     }
     getStudentSelfieImage(){
-        const server = "http://localhost:8000/";
+        // const server = "http://localhost:8000/";
+        const server = development ? "http://localhost:8000" : window.location.origin;
         const path = `${server}${this.registerRequest.photo_id_selfie}`;
         return path;
     }
     checkStudentIdImage(){
-        const path = this.getStudentSelfieImage()
+        const path = this.getStudentIdImage()
         window.open(path, "_blank");
     }
     checkStudentIdSelfieImage() {
-        window.open(this.registerRequest.photo_id_selfie, '_blank');
+        window.open(this.getStudentSelfieImage(), '_blank');
     }
-    deleteRequest(id:number){
-        this.userAPI.deleteRegisterRequest(id).subscribe()
-        this.goToDeniedRequest()
+
+    /**
+     * Deletes a register request after denial or approval
+     * @param id user id
+     * @param redirect should the function redirect to the postDenial page
+     */
+    deleteRequest(id:number, redirect:boolean = false){
+        this.userAPI.deleteRegisterRequest(id).subscribe({
+            next: ()=>{
+                if(redirect){
+                    this.emailService.sendDenialEmail(this.registerRequest.email, this.registerRequest.name).subscribe();
+                    this.goToDeniedRequest();
+                }
+            }, error: err => {
+                console.log(err);
+            }
+        })
+
     }
 
     createUser() {
-        let data = {
-            name: this.registerRequest.name,
-            surnames: this.registerRequest.surnames,
-            email: this.registerRequest.email,
-            password: this.registerRequest.password,
-            date_of_birth: this.registerRequest.date_of_birth,
-        };
-        this.userAPI
-            .createUser(
-                data.name,
-                data.surnames,
-                data.email,
-                data.password,
-                data.date_of_birth
-            )
-            .subscribe((res: any) => {
-                console.log(res);
-                let userId = res.id;
-                this.deleteRequest(this.registerRequest.id_request);
-                this.userCard.createUserCard(res.id).subscribe((res) => {
-                    console.log(res);
-                    let tab: CardTab = {
-                        id_section: 1,
-                        id_card: res.user,
-                        body: 'This is the default card tab. Edit it to add more information about you!',
-                        header: 'Default Card Tab',
-                        sub_header: 'A ',
-                        tab_biography:
-                            'This is the default biography. Edit it to add more information about you!',
-                        background_photo: 'A '
-                    };
-                    this.cardTab.createCardTab(userId, tab).subscribe((res) => {
-                        console.log(res);
-                        this.goToAcceptedRequest()
-                    });
-                });
-            });
+    if (this.registerRequest.id_request === -1) {
+        alert('Request not loaded yet, please wait.');
+        return;
     }
+    console.log("ID de la request:", this.registerRequest.id_request);
+    this.userAPI.acceptRegisterRequest(this.registerRequest.id_request)
+        .subscribe({
+            next: (res: any) => {
+                console.log('User created:', res);
+                this.goToAcceptedRequest();
+            },
+            error: (err) => {
+                console.error('Error:', err);
+                if (err.status === 400) {
+                    alert(err.error.error);
+                } else {
+                    alert('Error processing the request.');
+                }
+            }
+        });
+}
 
     requestInitializer() {
         return {
@@ -156,7 +160,9 @@ export class AdminRegisterRequestDetailComponent {
         this.router.navigateByUrl('/admin/post_accept');
     }
     goToDeniedRequest(){
+
         this.router.navigateByUrl('/admin/post_deny');
     }
 
 }
+
