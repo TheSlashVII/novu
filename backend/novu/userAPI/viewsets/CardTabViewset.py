@@ -12,7 +12,7 @@ class CardTabViewset(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication] # type of authentication
     
     def get_permissions(self):
-        if self.action in ["partial_update", "list"]:  
+        if self.action in []:  
             permission_classes = [permissions.AllowAny]
         elif self.action in ["retrieve" , "update", "destroy", "createCardTab"]:  # Routes that require authentication
             permission_classes = [permissions.IsAuthenticated]
@@ -101,6 +101,7 @@ class CardTabViewset(viewsets.ModelViewSet):
     # PATCH /api/tabs/<pk>/
     def partial_update(self, request, pk=None, id_section=None):
         # user validation
+        print(request.user)
         user_requesting_patching = get_object_or_404(User, email=request.user)
         if not user_requesting_patching.id == pk:
             return JsonResponse({"error": "you are not allowed to perform this action"}, status=status.HTTP_401_UNAUTHORIZED)

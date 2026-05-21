@@ -114,7 +114,6 @@ export class AdminCreateUsersComponent {
             next: (res) => {
                 const newUser:any = res
                 this.userCardService.createUserCard(newUser.id).subscribe((userCard) => {
-                    console.log(res)
                     let tab: CardTab = {
                         id_section: 1,
                         id_card: userCard.user,

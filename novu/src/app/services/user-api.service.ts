@@ -77,10 +77,7 @@ export class UserAPIService {
     listRegisterRequests(){
         const ROUTE:string = `${this.baseServerURL}/list/request/`;
         // console.log(this.isTokenExpired(localStorage.getItem("access_token")!));
-        return this.http.post(ROUTE, {
-            headers: this.authHeaders().headers,
-            body: {user_id: this.getUserId()!}
-        })
+        return this.http.get(ROUTE, this.authHeaders())
     }
     getRegisterRequestCount(){
       const ROUTE:string = `${this.baseServerURL}/count/request/`;

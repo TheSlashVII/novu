@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { ReplaySubject, Subject } from 'rxjs';
 import { UserAPIService } from './user-api.service';
+import {development} from '../baseURLconfig';
 
 export interface Notification {
     type: string;
@@ -47,7 +48,7 @@ export class NotificationService {
 
         // const wsUrl = `ws://localhost:8000/ws/notifications/${userId}/?token=${token}`;
         const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-        const wsUrl = `ws://localhost:8000/ws/notifications/${userId}/?token=${token}`;
+        const wsUrl = development ?  `ws://localhost:8000/ws/notifications/${userId}/?token=${token}` : `${protocol}://${window.location.origin}/ws/notifications/${userId}/?token=${token}`;
         this.socket$ = webSocket({
             url: wsUrl,
             openObserver: {

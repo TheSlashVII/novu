@@ -32,7 +32,7 @@ class RequestViewset(viewsets.ModelViewSet):
             permission_classes = [permissions.IsAuthenticated]
         return [permission() for permission in permission_classes]
 
-    @action(methods=["post"], detail=False)
+    @action(methods=["get"], detail=False)
     def listRequests(self, request):
         """Lists all register requests."""
         user_requesting_search = get_object_or_404(User, email=request.user)

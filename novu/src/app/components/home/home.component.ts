@@ -29,6 +29,7 @@ export interface UserProfile {
     interests: Interest[];
     school_name:string;
     profile_pic:string | null;
+    studies:Study[];
 }
 
 interface Interest{
@@ -75,7 +76,8 @@ export class HomeComponent {
       profile_pic: "assets/Images/userIcon.svg",
       school_name: "",
       surnames: "",
-      tabs: []
+      tabs: [],
+      studies:[]
 
   });
   private likeAnimation: boolean = false;

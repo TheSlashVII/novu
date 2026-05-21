@@ -52,7 +52,7 @@ export class PanelServiceService {
   //Intereses
   public loadingInterests(): void{
     this.isLoadingInterests = true;
-    this.http.get<{name:string}[]>(`${baseServerURL}/api/users/interests/all/`).subscribe({
+    this.http.get<{name:string}[]>(`${baseServerURL}/interests/all/`).subscribe({
       next: (data) => {
           //@ts-ignore
         const unique = [...new Set(data.map(i => i.name))].sort();
@@ -116,7 +116,7 @@ export class PanelServiceService {
 
   loadStudies(): void{
     this.isLoadingStudies = true;
-    this.http.get<{name: string}[]>('http://localhost:8000/api/users/studies/all/').subscribe({
+    this.http.get<{name: string}[]>(`${baseServerURL}/studies/all/`).subscribe({
       next: (data) => {
         this.allStudies = data.map(s => s.name).sort();
         this.isLoadingStudies = false;

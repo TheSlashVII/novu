@@ -1,13 +1,14 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import {baseServerURL} from '../baseURLconfig';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RelationShipPreferencesService {
-  PORT: number = 8000;
-  baseServerURL: string = `http://localhost:${this.PORT}/api/users`;
+  // PORT: number = 8000;
+  //baseServerURL: string = `http://localhost:${this.PORT}/api/users`;
 
   constructor(private http:HttpClient) { }
 
@@ -24,7 +25,7 @@ export class RelationShipPreferencesService {
   //POST /API/USERS/RELATION-PREFERENCES/SAVE/
   saveRelationshipPreferences(userId: number, preference: string): Observable<any>{
     return this.http.post(
-      `${this.baseServerURL}/relationship-preference/save/`,
+      `${baseServerURL}/relationship-preference/save/`,
       {user_id: userId, preference},
       this.authHeaders()
     )
@@ -33,7 +34,7 @@ export class RelationShipPreferencesService {
   //GET /api/users/relationship-preference/?user_id=1
   getRelationshipPreference(userId: number): Observable<{preference: string}>{
     return this.http.get<{ preference: string}>(
-      `${this.baseServerURL}/relationship-preference/?user_id=${userId}`,
+      `${baseServerURL}/relationship-preference/?user_id=${userId}`,
       this.authHeaders()
     )
   }

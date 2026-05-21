@@ -22,7 +22,7 @@
                     <button type="submit" class="hover:cursor-pointer border-2 rounded border-[#ff6b6b] bg-[#ff6b6b] transition hover:text-white p-1 ">Search</button>
                 </form>
             </div>
-            @if (results.length < 1) {
+            @if (results.length < 1 || !results) {
                 <div class="flex flex-row gap-4 bg-white py-5 px-5 sm:px-10 rounded-2xlflex flex-row gap-4 bg-white py-5 px-5 sm:px-10 rounded-2xl">
                     <h4>No users available at this moment or match the criteria</h4>
                 </div>
