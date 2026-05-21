@@ -235,7 +235,7 @@ export class HomeComponent {
       let user = this.getCurrentProfile();
       let bg:string | File = user?.tabs[tab].background_photo!;
       if(bg != null){
-          return development ? `http://localhost:8000${user?.tabs[tab].background_photo!} ` : `${window.location.origin}/${user?.tabs[tab].background_photo!}`
+          return development ? `http://localhost:8000/${user?.tabs[tab].background_photo!} ` : `${window.location.origin}/${user?.tabs[tab].background_photo!}`
       }
       return "assets/Images/backgroundless_cardtab.svg";
   }

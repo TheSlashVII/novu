@@ -16,4 +16,7 @@ export class PrivacyComponent {
   goToWelcome(): void {
     this.router.navigate(['/']);
   }
+  goToLegalNotice(): void {
+      this.router.navigate(['/legal']);
+  }
 }

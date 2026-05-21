@@ -94,8 +94,19 @@ export class SettingsComponent {
                         ])
 
                     }
-
                 })
+                let newTabs = this.tabs().map(tab => {
+                    let background_photo:string;
+                    if(typeof tab.background_photo === 'string' && tab.background_photo.startsWith('/')){
+                        do {
+                            background_photo = tab.background_photo.slice(1)
+                        }
+                        while (typeof tab.background_photo === 'string' && tab.background_photo.startsWith('/'))
+                        tab.background_photo = background_photo
+                    }
+                    return tab
+                })
+                this.tabs.set(newTabs)
                 this.cardTabSectionTracker = Math.max(...this.tabs().map(t => t.id_section ?? 0));
             }
 
@@ -320,6 +331,7 @@ export class SettingsComponent {
             if(typeof tab.background_photo === 'string' && tab.background_photo.startsWith('/')){
                 do {
                     background_photo = tab.background_photo.slice(1)
+                    console.log(background_photo)
                 }
                 while (typeof tab.background_photo === 'string' && tab.background_photo.startsWith('/'))
 
@@ -328,9 +340,18 @@ export class SettingsComponent {
                 background_photo = tab.background_photo;
             } else if (typeof tab.background_photo === 'string' && tab.background_photo.trim() !== '') {
                 // Existing server path - strip the origin prefix before sending
-                background_photo = tab.background_photo
-                    .replace(`http://localhost:8000`, '')
-                    .replace(window.location.origin, '');
+                if(development){
+                    background_photo = tab.background_photo
+                        .replace(`http://localhost:8000`, '')
+                        .replace(window.location.origin, '')
+                        .replace(/^\/+/, '');
+                } else {
+                    background_photo = tab.background_photo
+                        .replace(`${window.location.origin}`, '')
+                        .replace(window.location.origin, '')
+                        .replace(/^\/+/, '');  
+                }
+
             } else {
                 // Genuinely empty
                 background_photo = ' ';
