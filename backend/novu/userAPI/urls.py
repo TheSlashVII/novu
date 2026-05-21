@@ -72,6 +72,8 @@ delete_user_photo = PhotoController.as_view({"delete" : "deletePhoto"})
 update_user_profile_picture = PhotoController.as_view({"patch" : "updateProfilePicture"})
 get_user_profile = UserController.as_view({"get" : "getUserProfile"})
 update_user_profile = UserController.as_view({"put" : "updateUserProfile"})
+block_user = UserController.as_view({"post": "blockUser"})
+
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
     path("create/", create_user), # creates a user 
@@ -125,5 +127,6 @@ urlpatterns = [
     path("profile/update/" , update_user_profile),
     path("relationship-preference/", get_relationship_preference),       # GET ?user_id=1
     path("relationship-preference/save/", save_relationship_preference), # POST
-    path("studies/all/", list_all_studies)
+    path("studies/all/", list_all_studies),
+    path("block/", block_user), #to block a user
 ]

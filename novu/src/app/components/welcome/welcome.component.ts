@@ -81,11 +81,20 @@ export class WelcomeComponent {
     this.router.navigate(['/register']);
   }
 
+
+  toggleMenu(): void {
+    this.menuOpen = !this.menuOpen;
+  }
+
   goToLegal(): void {
     this.router.navigate(['/legal']);
   }
 
-  toggleMenu(): void{
-    this.menuOpen = !this.menuOpen;
+  goToPrivacy(): void {
+    this.router.navigate(['/privacy']);
+  }
+
+  goToContact(): void {
+    this.router.navigate(['/contact']);
   }
 }
