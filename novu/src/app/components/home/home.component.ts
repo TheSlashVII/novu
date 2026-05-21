@@ -43,10 +43,6 @@ interface Interest {
   name: string;
 }
 
-interface Interest{
-  name: string;
-  currently_studying: boolean;
-}
 
 
 @Component({

@@ -103,7 +103,7 @@ class CardTabViewset(viewsets.ModelViewSet):
         try:
             tab = get_object_or_404(CardTab, id_card__user_id=pk, id_section=id_section)
         except :
-            return JsonResponse({"user not found"}, status=status.HTTP_404_NOT_FOUND)
+            return JsonResponse({"error" : "user not found"}, status=status.HTTP_404_NOT_FOUND)
         # to save the foto
         reqData = request.data.copy()
         serializer = CardTabSerializer(tab, data=request.data, partial=True) # transform the data into json 

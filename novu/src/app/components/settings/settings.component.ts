@@ -57,7 +57,8 @@ export class SettingsComponent {
                     school_name: result.school_name,
                     surnames: result.surnames,
                     tabs: result.tabs,
-                    age:result.age})
+                    age:result.age,studies: result.studies},
+                )
                 let c = this.profile().tabs[0]
                 this.tabs.set([{
                     id_card: this.userID, id_section: c.id_section,
@@ -81,7 +82,8 @@ export class SettingsComponent {
         gender: '',
         height: 0,
         school_name: '',
-        profile_pic: null
+        profile_pic: null,
+        studies: [],
     });
 
     tabs = signal<CardTab[]>([
