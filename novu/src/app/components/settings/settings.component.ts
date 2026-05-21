@@ -195,6 +195,7 @@ export class SettingsComponent {
     }
 
     addTab(): void {
+        if (this.tabs().length >= 5) return;
         this.tabs.update((tabs) => [
             ...tabs,
             {id_card: this.userID, id_section: ++this.cardTabSectionTracker,header: 'Default header', sub_header: 'Default subheader', tab_biography: 'your tab biography goes here', background_photo: "" },
