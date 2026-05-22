@@ -59,7 +59,7 @@ export class HomeComponent {
   loading: boolean = true;
   error: string = '';
     hasWentBack:boolean = false;  studies: Study[] = [];
-
+    hasSeenAll:boolean = false;
   isDragging: boolean = false;
   dragX: number = 0;
   dragStartX: number = 0;
@@ -395,7 +395,10 @@ export class HomeComponent {
   private resetAndNext(): void {
     this.dragX = 0;
     if (this.currentIndex < this.userProfiles.length - 1) this.currentIndex++;
-    else console.log('No hay más perfiles para mostrar');
+    else {
+        this.hasSeenAll = true;
+        console.log('No hay más perfiles para mostrar')
+    }
   }
 
   //Metodo para pasar al siguiente perfil

@@ -64,6 +64,23 @@ export class ChatListComponent {
               unreadCount: this.notificationService.unreadCounts[chat.id] || 0
             }));
             this.chats.set(chatsWithUnread);
+            let updatedChats:ChatPreview[] = [];
+            this.chats().forEach((chat) => {
+                this.userAPI.getUserProfilePicture(chat.id).subscribe({
+                    next: (res) => {
+                        chat.avatar = development ? `http://localhost:8000/${res.profile_picture}` : `${window.location.origin}/${res.profile_picture}`;
+                        updatedChats.push(chat);
+
+                    },complete: ()=>{
+                        console.log(updatedChats);
+                        this.chats.set(updatedChats);
+                    }
+                })
+
+
+            })
+
+            console.log(updatedChats)
             this.loading.set(false);
           },
           error: (err) => {
@@ -77,7 +94,7 @@ export class ChatListComponent {
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe((notification) => {
 
-          
+
           if (this.blockedUserIds().includes(notification.sender_id)) return;
 
           this.chats.update(chats => {
