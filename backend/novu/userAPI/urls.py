@@ -73,7 +73,7 @@ update_user_profile_picture = PhotoController.as_view({"patch" : "updateProfileP
 get_user_profile = UserController.as_view({"get" : "getUserProfile"})
 update_user_profile = UserController.as_view({"put" : "updateUserProfile"})
 block_user = UserController.as_view({"post": "blockUser"})
-
+get_user_profile_picture =  UserController.as_view({"get": "getUserProfilePic"})
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
     path("create/", create_user), # creates a user 
@@ -111,7 +111,7 @@ urlpatterns = [
     path("tabs/update/<int:pk>/<int:id_section>/", update_card_tab), # used to update card tabs
     path("tabs/patch/<int:pk>/<int:id_section>/", patch_card_tab), # used to update cardtabs partially
     path("tabs/delete/<int:pk>/<int:id_section>/", delete_card_tab), # used to delete card tabs
-    path("age/update/<int:pk>", update_user_age), # updates the user age
+    path("age/update/<int:pk>/", update_user_age), # updates the user age
     path("gender/update/<int:pk>", update_user_gender), # updates user gender
     path("profiles/", get_user_profiles), # to get all the users + their cards
     path("photos/upload/<int:id>", upload_user_photos), #to upload user photos
@@ -129,4 +129,5 @@ urlpatterns = [
     path("relationship-preference/save/", save_relationship_preference), # POST
     path("studies/all/", list_all_studies),
     path("block/", block_user), #to block a user
+    path("get_profile_picture/<int:id>/", get_user_profile_picture),
 ]

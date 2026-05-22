@@ -4,7 +4,7 @@ from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.http import JsonResponse, Http404
-from ..models import User, UserCard, Block, Swipe, CardTab, Photo
+from ..models import User, UserCard, Block, Swipe, CardTab, Photo, Match
 from django.contrib.auth.hashers import check_password, make_password
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -13,6 +13,8 @@ from django.db.models import F, Q # used to select fields and to execute additio
 from ..emailTemplates.emailUtilities import *
 from django.core.files.base import ContentFile
 import uuid, base64
+from pathlib import Path
+import os
 # this is the equivalent to a controller
 """
 Documentation for viewsets: https://www.django-rest-framework.org/api-guide/viewsets/#example
@@ -201,8 +203,11 @@ class UserViewset(viewsets.ViewSet):
     def updateUserAge(self, request, pk=None):
         try:
             user = get_object_or_404(User, pk=pk)
+            user_requesting = get_object_or_404(User, email=request.user)
         except Http404:
             JsonResponse({"user not found"}, status=status.HTTP_404_NOT_FOUND)
+        if not user_requesting.id == user.id:
+            return JsonResponse({"error" : "access denied"}, status=status.HTTP_401_UNAUTHORIZED)
         user.age = int(request.data.get("age"))
         user.save()
         return JsonResponse({"message" : "age updated"},status=status.HTTP_200_OK, safe=False)
@@ -321,6 +326,7 @@ class UserViewset(viewsets.ViewSet):
         return raw
 
     def updateUserProfile(self, request):
+        BASE_DIR = Path(__file__).resolve().parent.parent.parent
         #  1. Fetch the user 
         user = get_object_or_404(User, email=request.user)
 
@@ -338,8 +344,8 @@ class UserViewset(viewsets.ViewSet):
         raw_pic = profile_data.get("profile_pic", "")
         if raw_pic and raw_pic.startswith("data:"):
             try:
-                header, b64 = raw_pic.split(",", 1)
-                ext      = header.split("/")[1].split(";")[0]
+                header, b64 = raw_pic.split(",", 1) # separate the b64 header from the actual content
+                ext      = header.split("/")[1].split(";")[0] # get file extension
                 filename = f"{uuid.uuid4()}.{ext}"
 
                 file_content = ContentFile(base64.b64decode(b64), name=filename)
@@ -350,6 +356,8 @@ class UserViewset(viewsets.ViewSet):
                     visible=True
                 )
                 photo.refresh_from_db()
+                # print(f"{str(BASE_DIR / user.profile_pic)}")
+                os.remove(str(BASE_DIR / user.profile_pic))
                 user.profile_pic = str(photo.url)
             except Exception:
                 return Response({"error": "Invalid profile picture"}, status=status.HTTP_400_BAD_REQUEST)
@@ -498,7 +506,7 @@ class UserViewset(viewsets.ViewSet):
             
         return JsonResponse( list(UserProfileSerializer(users, many=True).data), safe=False)
     
-    @action(detail=False, methods=["get"])
+    @action(detail=True, methods=["get"])
     def getUserProfile(self, request, id=None):
         user_requesting_profile = get_object_or_404(User, email=request.user)
         #userList = User.objects.all().order_by(F("likes").desc()) # F allows us to select specific columns and run special functions on them like using desc to return the objects in descending order
@@ -507,10 +515,34 @@ class UserViewset(viewsets.ViewSet):
         'usercard__cardtab_set',
         'interest_set'
         ).get(id=id)
+        if user_requesting_profile.admin == True:
+            return JsonResponse(UserProfileSerializer(user).data, safe=False)
+        elif user_requesting_profile.id == id:
+            return JsonResponse(UserProfileSerializer(user).data, safe=False)
+        else:
+            return JsonResponse({"error": "you are not authorized to access this endpoint"}, status=status.HTTP_401_UNAUTHORIZED)
+    # method to get another user's profile picture
+    @action(detail=True, methods=["get"])
+    def getUserProfilePic(self, request, id=None):
+        # get users
+        user_requesting_profile = get_object_or_404(User, email=request.user)
+        requested_user_profile = get_object_or_404(User, id=id)
+        try:
+                # query if a match does exist with the requested user
+                match_exists = Match.objects.filter(Q(user1_id_id=user_requesting_profile.id, user2_id_id=requested_user_profile.id) | Q(user1_id=requested_user_profile.id, user2_id=user_requesting_profile.id)).exists()
+        except:
+            return JsonResponse({"error": "you are not authorized to perform this action"}, status=status.HTTP_401_UNAUTHORIZED)
+        if not match_exists:
+            # rejects petition if the user does not have a match
+            return JsonResponse({"error": "you are not authorized to perform this action"}, status=status.HTTP_401_UNAUTHORIZED)
 
-        if not user.id == user_requesting_profile.id:
-            return JsonResponse({"error": "you are not authorized to do this action"})
-        return JsonResponse(UserProfileSerializer(user).data, safe=False)
+        
+        return JsonResponse({"profile_picture": UserSerializer(requested_user_profile).data.get("profile_pic")}, safe=False)
+        # check if the user requesting it has any matches with that user 
+        
+        
+
+    
     # to eliminate a user
     def destroy(self, request, id=None):
         user_requesting_deletion = get_object_or_404(User, email=request.user)

@@ -45,11 +45,17 @@ export class ChatDetailComponent {
 
     // Obtener el ID del usuario logueado
     const userId = this.userAPI.getUserId();
-    if (!userId) {
-      console.error('❌ No hay usuario logueado. Redirigiendo a login...');
-      this.router.navigate(['/login']);
-      return;
-    }
+      if (!userId) {
+          this.router.navigate(['/login']);
+          return;
+      }
+    this.userAPI.getUserProfilePicture(this.otherUserId).subscribe({next: user => {
+        if (user.profile_picture != null) {
+            let userProfile = development ? `http://localhost:8000/${user.profile_picture}` : `${window.location.origin}/${user.profile_picture}`;
+            this.userAvatar.set(userProfile!)
+        }
+    }})
+
     this.currentUserId = userId;
     console.log('✅ Usuario actual ID:', this.currentUserId);
 

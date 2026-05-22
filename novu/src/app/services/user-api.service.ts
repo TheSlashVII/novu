@@ -33,6 +33,10 @@ export class UserAPIService {
         const ROUTE:string = `${this.baseServerURL}/profile/${id}/`;
         return this.http.get<UserProfile>(ROUTE, this.authHeaders())
     }
+    getUserProfilePicture(id:number){
+        const ROUTE:string = `${this.baseServerURL}/get_profile_picture/${id}/`;
+        return this.http.get<{profile_picture:string}>(ROUTE, this.authHeaders())
+    }
     // register request functions
 
     /**
@@ -190,7 +194,7 @@ export class UserAPIService {
      * @param age users updated age value
      */
     updateUserAge(id:number, age:number){
-        const ROUTE:string = `${this.baseServerURL}/age/update/${id}`;
+        const ROUTE:string = `${this.baseServerURL}/age/update/${id}/`;
         return this.http.patch(ROUTE,{age:age} ,this.authHeaders())
     }
 
