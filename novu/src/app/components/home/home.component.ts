@@ -55,6 +55,7 @@ export class HomeComponent {
   allUserProfiles: UserProfile[] = [];
   profiles: Profile[] = [];
   currentIndex: number = 0;
+    currentTabIndex = signal<Record<number, number>>({});
   loading: boolean = true;
   error: string = '';
     hasWentBack:boolean = false;  studies: Study[] = [];
@@ -193,6 +194,46 @@ export class HomeComponent {
 
     }
 
+    // card tab functionality
+    /**
+     * Used to get the current tab for the current user card
+     * @param profileId
+     */
+    getCurrentTabIndex(profileId: number): number {
+        return this.currentTabIndex()[profileId] ?? 0;
+    }
+
+    /**
+     * Used to go to the next card tab
+     * @param profileId
+     * @param totalTabs
+     * @param event
+     */
+    nextTab(profileId: number, totalTabs: number, event: Event): void {
+        event.stopPropagation(); // prevent triggering drag
+        this.currentTabIndex.update(map => ({
+            ...map,
+            [profileId]: ((map[profileId] ?? 0) + 1) % totalTabs
+        }));
+    }
+
+    /**
+     * Used to get the current card tab
+     */
+    getCurrentTab() {
+        const profile = this.getCurrentProfile();
+        if (!profile) return null;
+        const idx = this.getCurrentTabIndex(profile.id);
+        return profile.tabs[idx] ?? profile.tabs[0];
+    }
+    prevTab(profileId: number, totalTabs: number, event: Event): void {
+        event.stopPropagation();
+        this.currentTabIndex.update(map => ({
+            ...map,
+            [profileId]: Math.max((map[profileId] ?? 0) - 1, 0)
+        }));
+    }
+
 
   //Filtros
   applyFilters(): void {
@@ -231,13 +272,23 @@ export class HomeComponent {
     return this.userProfiles[this.currentIndex] ?? null;
   }
 
-  getCurrentBackgroundPicture(tab:number = 0){
+  getCurrentBackgroundPicture(){
+        /*
       let user = this.getCurrentProfile();
       let bg:string | File = user?.tabs[tab].background_photo!;
       if(bg != null){
           return development ? `http://localhost:8000/${user?.tabs[tab].background_photo!} ` : `${window.location.origin}/${user?.tabs[tab].background_photo!}`
       }
       return "assets/Images/backgroundless_cardtab.svg";
+
+         */
+      const profile = this.getCurrentProfile();
+      if (!profile) return 'assets/Images/backgroundless_cardtab.svg';
+      const tab = this.getCurrentTab();
+      if (development){
+          return tab?.background_photo != null ? `http://localhost:8000/${tab?.background_photo}` : 'assets/Images/backgroundless_cardtab.svg';
+      }
+      return `${window.location.origin}/${tab?.background_photo}` || 'assets/Images/backgroundless_cardtab.svg';
   }
 
 
@@ -310,6 +361,12 @@ export class HomeComponent {
       },
       error: () => this.resetAndNext()
     })
+      // wherever you advance to the next profile:
+      this.currentTabIndex.update(map => {
+          const next = { ...map };
+          delete next[profile.id];
+          return next;
+      });
   }
 
   dislike(): void {
@@ -326,6 +383,12 @@ export class HomeComponent {
       next: () => this.resetAndNext(),
       error: () => this.resetAndNext()
     });
+      // wherever you advance to the next profile:
+      this.currentTabIndex.update(map => {
+          const next = { ...map };
+          delete next[profile.id];
+          return next;
+      });
   }
 
   //Metodo para resetear y pasar al siguiente perfil

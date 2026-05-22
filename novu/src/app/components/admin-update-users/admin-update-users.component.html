@@ -144,6 +144,11 @@
                         <input id="admin" type="checkbox" formControlName="admin"> Administrative Privileges
                     </label>
                 </div>
+                <div>
+                    <label for="is_new">
+                        <input id="is_new" type="checkbox" checked formControlName="is_new"/> New User
+                    </label>
+                </div>
                 <div class="flex flex-row gap-3">
                     <label for="restricted">
                         <input [(ngModel)]="showRestrictedSection" id="restricted" type="checkbox" formControlName="restricted"> Restricted

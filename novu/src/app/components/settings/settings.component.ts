@@ -88,13 +88,14 @@ export class SettingsComponent {
                                 header: tab.header,
                                 sub_header: tab.sub_header,
                                 tab_biography: tab.tab_biography,
-                                background_photo: development ? `http://localhost:8000/${tab.background_photo}` : `${window.location.origin}/${c.background_photo}`,
+                                background_photo: development ? `http://localhost:8000/${tab.background_photo}` : `${window.location.origin}/${tab.background_photo}`,
                                 // background_photo: c.background_photo,
                             }
                         ])
 
                     }
                 })
+                // to make sure that the tabs don't have any appended '/' in front of the image url
                 let newTabs = this.tabs().map(tab => {
                     let background_photo:string;
                     if(typeof tab.background_photo === 'string' && tab.background_photo.startsWith('/')){
@@ -194,6 +195,7 @@ export class SettingsComponent {
     }
 
     addTab(): void {
+        if (this.tabs().length >= 5) return;
         this.tabs.update((tabs) => [
             ...tabs,
             {id_card: this.userID, id_section: ++this.cardTabSectionTracker,header: 'Default header', sub_header: 'Default subheader', tab_biography: 'your tab biography goes here', background_photo: "" },
@@ -329,12 +331,15 @@ export class SettingsComponent {
             let background_photo: string;
 
             if(typeof tab.background_photo === 'string' && tab.background_photo.startsWith('/')){
+                /*
                 do {
                     background_photo = tab.background_photo.slice(1)
                     console.log(background_photo)
                 }
                 while (typeof tab.background_photo === 'string' && tab.background_photo.startsWith('/'))
 
+                 */
+                background_photo = tab.background_photo.replace(/^\/+/, '');
             } else if (typeof tab.background_photo === 'string' && tab.background_photo.startsWith('data:')) {
                 // New base64 upload - send as-is
                 background_photo = tab.background_photo;
@@ -349,7 +354,7 @@ export class SettingsComponent {
                     background_photo = tab.background_photo
                         .replace(`${window.location.origin}`, '')
                         .replace(window.location.origin, '')
-                        .replace(/^\/+/, '');  
+                        .replace(/^\/+/, '');
                 }
 
             } else {
