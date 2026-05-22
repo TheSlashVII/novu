@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnDestroy} from '@angular/core';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CardTab, CardTabService} from '../../services/card-tab.service';
 import {UserAPIService} from '../../services/user-api.service';
@@ -13,13 +13,14 @@ import {Router} from '@angular/router';
   templateUrl: './card-creation.component.html',
   styleUrl: './card-creation.component.css'
 })
-export class CardCreationComponent {
+export class CardCreationComponent implements OnDestroy {
     choosePhoto:string = "Elige una foto para subir";
     cardTitle: string = 'Tu titulo irá aquí';
     cardSubtitle: string = 'Tu subtitulo irá aquí';
     cardBiography: string = 'Tu biografía irá aquí';
     cardAge: string | number = '';
     name: string = '';
+    photoPreviewUrl: string | null = null;
     form = new FormGroup({
         cardTitle:     new FormControl('', [Validators.required, Validators.maxLength(50)]),
         cardSubtitle:  new FormControl('', [Validators.required, Validators.maxLength(50)]),
@@ -43,13 +44,24 @@ export class CardCreationComponent {
     get cardBiographyValue() { return this.form.get('cardBiography')!; }
 
 
-
+/*
     onPhotoChange(event: Event) {
         const file = (event.target as HTMLInputElement).files?.[0] ?? null;
         this.form.patchValue({ photo: file });
         this.choosePhoto = `Se ha elegido: "${file!.name}". (Los otros usuarios podran ver la foto de fondo)`
     }
 
+
+ */
+    onPhotoChange(event: Event) {
+        const file = (event.target as HTMLInputElement).files?.[0] ?? null;
+        this.form.patchValue({ photo: file });
+        if (file) {
+            if (this.photoPreviewUrl) URL.revokeObjectURL(this.photoPreviewUrl); // checks if the image was removed
+            this.photoPreviewUrl = URL.createObjectURL(file);
+        }
+        this.choosePhoto = `Se ha elegido: "${file!.name}".`;
+    }
     updateUserAge(){
         const token = this.userAPI.decodeToken();
         this.userAPI.updateUserAge(token.user_id, this.form.value.cardAge!).subscribe({
@@ -60,6 +72,9 @@ export class CardCreationComponent {
             }
         })
 
+    }
+    ngOnDestroy() {
+        if (this.photoPreviewUrl) URL.revokeObjectURL(this.photoPreviewUrl);
     }
     onSubmit() {
         if (this.form.invalid) return;
