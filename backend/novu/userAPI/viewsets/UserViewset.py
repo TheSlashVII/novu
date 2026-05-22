@@ -309,7 +309,9 @@ class UserViewset(viewsets.ViewSet):
                 )
                 photo.refresh_from_db()
                 # print(f"{str(BASE_DIR / user.profile_pic)}")
-                os.remove(str(BASE_DIR / user.profile_pic))
+                if not ((user.profile_pic == '') or (user.profile_pic == None)):
+                    os.remove(str(BASE_DIR / user.profile_pic)) 
+                    Photo.objects.filter(url=user.profile_pic).delete()
                 user.profile_pic = str(photo.url)
             except Exception:
                 return Response({"error": "Invalid profile picture"}, status=status.HTTP_400_BAD_REQUEST)
