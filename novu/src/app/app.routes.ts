@@ -20,9 +20,7 @@ import {UnauthorizedComponent} from './components/unauthorized/unauthorized';
 import {AdminCreateUsersComponent} from './components/admin-create-users/admin-create-users.component';
 import {AdminPostDenyRequestComponent} from './components/admin-post-deny-request/admin-post-deny-request.component';
 import {AdminRestrictUserComponent} from './components/admin-restrict-user/admin-restrict-user.component';
-import {
-    AdminRestrictUserDetailComponent
-} from './components/admin-restrict-user-detail/admin-restrict-user-detail.component';
+import {AdminRestrictUserDetailComponent} from './components/admin-restrict-user-detail/admin-restrict-user-detail.component';
 import {AdminDeleteUserComponent} from './components/admin-delete-user/admin-delete-user.component';
 import {CardCreationComponent} from './components/card-creation/card-creation.component';
 import { ChatListComponent } from './components/chat-list/chat-list.component';
@@ -37,6 +35,8 @@ import { LegalComponent } from './components/legal/legal.component';
 
 
 import { ContactComponent } from './components/contact/contact.component';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 
 export const routes: Routes = [
     {   path: '',
@@ -106,6 +106,14 @@ export const routes: Routes = [
     },
     {
         path: 'contact', component: ContactComponent, title: 'Novu - Contacto'
+    },
+    {
+        path: 'forgot-password',
+        component: ForgotPasswordComponent
+    },
+    {
+        path: 'reset-password',
+        component: ResetPasswordComponent
     },
 
     //Route admin
