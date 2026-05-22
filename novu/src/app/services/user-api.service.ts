@@ -305,4 +305,32 @@ export class UserAPIService {
         const ROUTE = `${this.baseServerURL}/matches/user/${userId}`;
         return this.http.get<{id:number, active:boolean, user1_id:number, user2_id:number}[]>(ROUTE, this.authHeaders());
     }
+
+   /**
+   * Solicita el envío del email de recuperación de contraseña.
+   * @param email Email del usuario
+   */
+   requestPasswordReset(email: string): Observable<any> {
+     const ROUTE = `${this.baseServerURL}/password-reset/request/`;
+     return this.http.post(ROUTE, {email})
+   }
+
+   /**
+   * Valida si un token de reset sigue siendo válido (no expirado, no usado).
+   * @param token Token UUID que llegó por email
+   */
+   validateResetToken(uid: string,token: string): Observable<any> {
+    const ROUTE = `${this.baseServerURL}/password-reset/validate/`;
+    return this.http.post(ROUTE, {uid,token})
+   }
+
+   /**
+   * Confirma el reset de contraseña con el token y la nueva contraseña.
+   * @param token Token UUID que llegó por email
+   * @param newPassword Nueva contraseña elegida por el usuario
+   */
+   confirmPasswordReset(uid:string, token: string, newPassword: string): Observable<any> {
+    const ROUTE = `${this.baseServerURL}/password-reset/confirm/`;
+    return this.http.post(ROUTE, {uid,token, new_password: newPassword})
+   }
 }

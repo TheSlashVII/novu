@@ -74,6 +74,10 @@ get_user_profile = UserController.as_view({"get" : "getUserProfile"})
 update_user_profile = UserController.as_view({"put" : "updateUserProfile"})
 block_user = UserController.as_view({"post": "blockUser"})
 get_user_profile_picture =  UserController.as_view({"get": "getUserProfilePic"})
+password_reset_request  = EmailController.as_view({"post": "requestPasswordReset"})
+password_reset_validate = EmailController.as_view({"post": "validatePasswordResetToken"})
+password_reset_confirm  = EmailController.as_view({"post": "confirmPasswordReset"})
+
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
     path("create/", create_user), # creates a user 
@@ -130,4 +134,7 @@ urlpatterns = [
     path("studies/all/", list_all_studies),
     path("block/", block_user), #to block a user
     path("get_profile_picture/<int:id>/", get_user_profile_picture),
+    path("password-reset/request/",  password_reset_request),
+    path("password-reset/validate/", password_reset_validate),
+    path("password-reset/confirm/",  password_reset_confirm),
 ]
