@@ -30,7 +30,7 @@ class UserViewset(viewsets.ViewSet):
     def get_permissions(self):
         if self.action in ['isUserAdmin','createFromUser', 'retrieveByEmail', "createFromAdmin", "getMostLikedProfiles", "getUserProfiles", "getBlockedIds"]:   # public routes
             permission_classes = [permissions.AllowAny]
-        elif self.action in ['retrieve',"adminUserUpdate", "retrieveUserById", 'test', "retrieveByName", "partial_update", "modifyUserAccess", "destroy", "activeUsersCount", ]:  # Routes that require authentication
+        elif self.action in ['retrieve',"adminUserUpdate", "retrieveUserById", 'test', "retrieveByName", "partial_update", "modifyUserAccess", "destroy", "activeUsersCount", "blockUser", "reportUser", "getReports", "markReportReviewed"]:  # Routes that require authentication
             permission_classes = [permissions.IsAuthenticated]
         else:                                    # PUT, PATCH, DELETE
             permission_classes = [permissions.IsAuthenticated]
@@ -263,6 +263,87 @@ class UserViewset(viewsets.ViewSet):
             return JsonResponse({'message': 'User blocked succesfully.'}, status=status.HTTP_201_CREATED)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    @action(detail=False, methods=["post"])
+    def reportUser(self, request):
+        """
+        POST /api/users/reportUser/
+        Reports a user and automatically blocks them (is_report=True)
+        Body: { id_reporter, id_reported, reason }
+        """
+        id_reporter = request.data.get('id_reporter')
+        id_reported = request.data.get('id_reported')
+        reason = request.data.get('reason', 'Reportado desde el chat')
+        
+        if not id_reporter or not id_reported:
+            return JsonResponse({'error': 'Missing fields.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            block, created = Block.objects.get_or_create(
+                id_logged_user_id=id_reporter,
+                id_blocked_user_id=id_reported,
+                defaults={'reason': reason, 'is_report': True, 'reviewed': False}
+            )
+            # If the block exists before, we update to mark as report
+            if not created and not block.is_report:
+                block.is_report = True
+                block.reason = reason
+                block.reviewed = False
+                block.save()
+                
+            return JsonResponse({'message': 'User reported and blocked successfully.'}, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    @action(detail=False, methods=["get"])
+    def getReports(self, request):
+        """
+        GET /api/users/getReports/
+        Returns all pending reports for the admin panel
+        """
+        reports = Block.objects.filter(
+            is_report=True,
+            reviewed=False
+        ).select_related('id_logged_user', 'id_blocked_user').order_by('-id_logged_user')
+        
+        data = []
+        for r in reports:
+            data.append({
+                'id_reporter': r.id_logged_user.id,
+                'reporter_name': r.id_logged_user.name,
+                'id_reported': r.id_blocked_user.id,
+                'reported_name': r.id_blocked_user.name,
+                'reason': r.reason,
+            })
+            
+        return JsonResponse(data, safe=False)
+    
+    
+    @action(detail=False, methods=["patch"])
+    def markReportReviewed(self, request):
+        """
+        PATCH /api/users/markReportReviewed/
+        Marks a report as reviewed
+        Body: { id_reporter, id_reported }
+        """
+        id_reporter = request.data.get('id_reporter')
+        id_reported = request.data.get('id_reported')
+        
+        if not id_reporter or not id_reported:
+            return JsonResponse({'error': 'Missing fields.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            block = Block.objects.get(
+                id_logged_user_id=id_reporter,
+                id_blocked_user_id=id_reported,
+                is_report=True
+            )
+            block.reviewed = True
+            block.save()
+            return JsonResponse({'message': 'Report marked as reviewed.'})
+        except Block.DoesNotExist:
+            return JsonResponse({'error': 'Report not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
         
     @action(detail=False, methods=["get"])
     def getBlockedIds(self, request):

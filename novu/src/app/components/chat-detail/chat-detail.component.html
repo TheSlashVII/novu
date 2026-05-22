@@ -24,6 +24,9 @@
           <button class="dropdown-item block-item" (click)="blockUser()">
             🚫 Bloquear usuario
           </button>
+          <button class="dropdown-item report-item" (click)="openReportModal()">
+            ⚠️ Reportar usuario
+          </button>
         </div>
       }
     </div>
@@ -54,3 +57,60 @@
     </button>
   </div>
 </div>
+
+<!-- Modal de reporte -->
+@if (showReportModal) {
+  <div class="modal-overlay" (click)="closeReportModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <h3 class="modal-title">⚠️ Reportar a {{ userName() }}</h3>
+      <p class="modal-subtitle">Cuéntanos qué ha pasado. Tu reporte es anónimo.</p>
+
+      <div class="reason-options">
+        <button
+          class="reason-btn"
+          [class.selected]="reportReason === 'Comportamiento inapropiado'"
+          (click)="reportReason = 'Comportamiento inapropiado'">
+          Comportamiento inapropiado
+        </button>
+        <button
+          class="reason-btn"
+          [class.selected]="reportReason === 'Acoso o amenazas'"
+          (click)="reportReason = 'Acoso o amenazas'">
+          Acoso o amenazas
+        </button>
+        <button
+          class="reason-btn"
+          [class.selected]="reportReason === 'Perfil falso'"
+          (click)="reportReason = 'Perfil falso'">
+          Perfil falso
+        </button>
+        <button
+          class="reason-btn"
+          [class.selected]="reportReason === 'Contenido ofensivo'"
+          (click)="reportReason = 'Contenido ofensivo'">
+          Contenido ofensivo
+        </button>
+        <button
+          class="reason-btn"
+          [class.selected]="reportReason === 'Otro'"
+          (click)="reportReason = 'Otro'">
+          Otro
+        </button>
+      </div>
+
+      <div class="modal-actions">
+        <button class="modal-cancel" (click)="closeReportModal()">Cancelar</button>
+        <button
+          class="modal-confirm"
+          (click)="reportUser()"
+          [disabled]="!reportReason.trim() || reportSending()">
+          @if (reportSending()) {
+            Enviando...
+          } @else {
+            Enviar reporte
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

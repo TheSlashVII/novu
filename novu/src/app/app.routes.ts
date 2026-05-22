@@ -33,6 +33,7 @@ import {SettingsComponent} from './components/settings/settings.component';
 import { AdminUpdateUsersComponent } from './components/admin-update-users/admin-update-users.component';
 import {AdminUpdateUserListComponent} from './components/admin-update-user-list/admin-update-user-list.component';
 import { ContactComponent } from './components/contact/contact.component';
+import { AdminReportsComponent } from './components/admin-reports/admin-reports.component';
 
 export const routes: Routes = [
     {   path: '',
@@ -93,6 +94,7 @@ export const routes: Routes = [
         path: 'contact', component: ContactComponent, title: 'Novu - Contacto'
     },
 
+
     //Route admin
     {
     path: 'admin',
@@ -119,6 +121,10 @@ export const routes: Routes = [
                 path:'restrict_user',
                 component: AdminRestrictUserComponent,
                 title: "Novu Admin - Restrict User (List)",
+            },
+              {
+                path: 'reports',
+                component: AdminReportsComponent
             },
             {
                 path:'restrict_user/detail/:id',

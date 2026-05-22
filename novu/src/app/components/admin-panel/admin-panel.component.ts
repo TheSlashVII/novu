@@ -1,60 +1,50 @@
 import { Component } from '@angular/core';
-import {UserAPIService} from '../../services/user-api.service';
-import {Router} from '@angular/router';
+import { UserAPIService } from '../../services/user-api.service';
+import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { development } from '../../baseURLconfig';
 
 type requestCount = {
-    request_count:number
+  request_count: number
 }
+
 @Component({
   selector: 'app-admin-panel',
   templateUrl: './admin-panel.component.html',
   styleUrl: './admin-panel.component.css',
-    standalone: true
+  standalone: true
 })
 export class AdminPanelComponent {
-    /*
-    * Amount of Pending register requests
-    * */
-    registerRequestsCount:number = 0;
-    activeUserCount:number = 0;
-    constructor(private userAPI:UserAPIService, private router:Router) {
-        this.userAPI.getRegisterRequestCount().subscribe(res => {
-            this.setRegisterRequestCount(res)
-        })
-        this.getActiveUserCount()
-    }
+  registerRequestsCount: number = 0;
+  activeUserCount: number = 0;
+  reportsCount: number = 0;  
 
-    goToRegisterRequestList(){this.router.navigateByUrl("/admin/request")}
-    setRegisterRequestCount(data:any){
-        this.registerRequestsCount = data.request_count;
-    }
-    goToCreateUser(){
-        this.router.navigateByUrl("/admin/create_user");
-    }
-    /**
-     * Function used to close out sessions
-     */
-    logout(){
-        this.userAPI.logoutJWT();
-        this.router.navigateByUrl("");
-    }
-    goToRestrictUsers(){
-        //this.router.navigateByUrl("/admin/restrict_users");
-        this.router.navigateByUrl("/admin/restrict_user");
-    }
-    goToDeleteUsers(){
-        this.router.navigateByUrl("/admin/delete_user");
-    }
-    getActiveUserCount(){
-        this.userAPI.adminGetActiveUserCount().subscribe(res => {
-            this.activeUserCount = res.count;
-        })
-    }
-    goToUpdateUser(){
-        this.router.navigateByUrl("/admin/update_user");
-    }
+  constructor(private userAPI: UserAPIService, private router: Router, private http: HttpClient) {
+    this.userAPI.getRegisterRequestCount().subscribe(res => {
+      this.setRegisterRequestCount(res);
+    });
+    this.getActiveUserCount();
+    this.getReportsCount();  
+  }
 
 
+  getReportsCount(): void {
+    const baseUrl = development ? 'http://localhost:8000' : window.location.origin;
+    this.http.get<any[]>(`${baseUrl}/api/users/getReports/`, {
+      headers: { Authorization: 'Bearer ' + this.userAPI.getToken() }
+    }).subscribe({
+      next: (reports) => { this.reportsCount = reports.length; },
+      error: (err) => console.error('Error cargando reportes:', err)
+    });
+  }
 
-
+  goToRegisterRequestList() { this.router.navigateByUrl("/admin/request"); }
+  goToReports() { this.router.navigateByUrl("/admin/reports"); }  
+  setRegisterRequestCount(data: any) { this.registerRequestsCount = data.request_count; }
+  goToCreateUser() { this.router.navigateByUrl("/admin/create_user"); }
+  logout() { this.userAPI.logoutJWT(); this.router.navigateByUrl(""); }
+  goToRestrictUsers() { this.router.navigateByUrl("/admin/restrict_user"); }
+  goToDeleteUsers() { this.router.navigateByUrl("/admin/delete_user"); }
+  getActiveUserCount() { this.userAPI.adminGetActiveUserCount().subscribe(res => { this.activeUserCount = res.count; }); }
+  goToUpdateUser() { this.router.navigateByUrl("/admin/update_user"); }
 }

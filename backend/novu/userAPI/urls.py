@@ -68,6 +68,10 @@ delete_user_photo = PhotoController.as_view({"delete" : "deletePhoto"})
 update_user_profile_picture = PhotoController.as_view({"patch" : "updateProfilePicture"})
 get_user_profile = UserController.as_view({"get" : "getUserProfile"})
 block_user = UserController.as_view({"post": "blockUser"})
+report_user = UserController.as_view({"post": "reportUser"})
+get_reports = UserController.as_view({"get": "getReports"})
+mark_report_reviewed = UserController.as_view({"patch": "markReportReviewed"})
+getBlockedIds = UserController.as_view({"get": "getBlockedIds"})
 
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
@@ -120,4 +124,8 @@ urlpatterns = [
     path("update/profile_picture/<int:id>/", update_user_profile_picture), # to update a user's profile picture
     path("profile/<int:id>/", get_user_profile), # to get a user's profile
     path("block/", block_user), #to block a user
+    path("reportUser/", report_user), #to report a user
+    path("reports/", get_reports),
+    path("reports/reviewed/", mark_report_reviewed),
+    path("getBlockedIds/", getBlockedIds),
 ]
