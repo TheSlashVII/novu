@@ -8,14 +8,14 @@
 
     <button (click)="goToProfile()"
             class="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-200
-                   hover:border-violet-400 transition-colors">
+                   hover:border-violet-400 transition-colors hover:cursor-pointer">
       <img [src]="getProfilePicture()"
            alt="Mi perfil"
            class="w-full h-full object-cover"
            onerror="this.src='https://ui-avatars.com/api/?name=Yo&background=7c3aed&color=fff'"/>
     </button>
 
-    <img src="assets/Images/Novu_logo.svg" alt="Novu Logo" class="w-10 h-10 object-contain"/>
+    <img (click)="goToWelcome()" src="assets/Images/Novu_logo.svg" alt="Novu Logo" class="rounded-xl text-gray-400 hover:text-violet-600 transition-colors hover:bg-violet-100 w-10 h-10 object-contain hover:cursor-pointer"/>
 
   </nav>
 
@@ -173,28 +173,28 @@
   <nav class="border-t border-gray-100 px-6 py-4 flex justify-around items-center">
 
     <button (click)="goToProfile()"
-            class="p-2 rounded-xl text-gray-400 hover:text-violet-600 transition-colors">
+            class="p-2 rounded-xl text-gray-400 hover:text-violet-600 hover:bg-violet-100 transition-colors hover:cursor-pointer">
       <img src="assets/Images/Bookmark_all_likes_given.svg"
            alt="Likes" class="w-7 h-7"/>
     </button>
 
     <button (click)="goToChat()"
-            class="p-2 rounded-xl text-gray-400 hover:text-violet-600 transition-colors">
+            class="p-2 rounded-xl text-gray-400 hover:text-violet-600 hover:bg-violet-100 transition-colors hover:cursor-pointer">
       <img src="assets/Images/Messages.svg"
            alt="Mensajes" class="w-7 h-7"/>
     </button>
 
     <button (click)="preivousProfile()"
-            class="p-2 rounded-xl text-gray-400 hover:text-violet-600 transition-colors">
+            class="p-2 rounded-xl text-gray-400 hover:text-violet-600 hover:bg-violet-100 transition-colors hover:cursor-pointer">
       <img src="assets/Images/Return_back_once.svg"
-           alt="Volver" class="w-7 h-7"/>
+           alt="Volver" class="w-7 h-7 "/>
     </button>
 
     <!-- Separador vertical -->
     <img src="assets/Images/Vector.svg" alt="" class="h-8 opacity-20"/>
 
     <button (click)="toggleFilters()"
-            class="p-2 rounded-xl text-gray-400 hover:text-violet-600 transition-colors">
+            class="p-2 rounded-xl text-gray-400 hover:text-violet-600 transition-colors hover:bg-violet-100 hover:cursor-pointer">
       <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24"
            stroke="currentColor" stroke-width="1.5">
         <path stroke-linecap="round" stroke-linejoin="round"

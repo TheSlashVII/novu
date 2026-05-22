@@ -243,56 +243,8 @@ class UserViewset(viewsets.ViewSet):
         except:
             return JsonResponse({"error" : "something went wrong"})
         return JsonResponse({"message":"Updated status"}, status=status.HTTP_200_OK)
-    """
-    @action(detail=False, methods=["put"])
-    def updateUserProfile(self, request):
-        user_email = request.user # gets the user email
-        user = get_object_or_404(User, email=user_email)
-        user_card = get_object_or_404(UserCard, pk=user.id)
-        cardTabList = CardTabSerializer(data=request.data.get("tabs"), many=True)
-        
-        if cardTabList.is_valid():
-            # Delete old tabs and replace with new ones
-            CardTab.objects.filter(id_card=user_card).delete()
-            for tab in cardTabList.validated_data:
-                photoInfo = {"user_id": data['id_card'], "url": data['background_photo'], "visible":True}
-                imageSerializer = PhotoSerializer(data=photoInfo)
-                if imageSerializer.is_valid():
-                    imageSerializer.save()
-                CardTab.objects.create(**tab, id_card=user_card)
-            user_card.amount_tabs = user_card.cardtab_set.count() # update amount of tabs inside the user card
-            user_card.save()
-            return Response({"cardTabList": cardTabList.data}, status=status.HTTP_200_OK)
-        return Response({"errors": cardTabList.errors}, status=status.HTTP_400_BAD_REQUEST)    
-    """
-    """
-    
-    
-    @staticmethod
-    def handle_tab_background(raw: str, user: User) -> str:
-        if not raw or (isinstance(raw, str) and raw.strip() in ("", " ")):
-            return ""
 
-        if isinstance(raw, str) and raw.startswith("data:"):
-            try:
-                header, b64 = raw.split(",", 1)
-                ext      = header.split("/")[1].split(";")[0]
-                filename = f"{uuid.uuid4()}.{ext}"
-                file_content = ContentFile(base64.b64decode(b64), name=filename)
 
-                photo = Photo.objects.create(
-                    user_id=user,
-                    url=file_content,
-                    visible=True
-                )
-                photo.refresh_from_db()
-                return photo.url.url
-
-            except Exception as e:
-                print(f"Tab background upload failed: {e}")
-                return ""
-        return raw
-    """
     @staticmethod
     def handle_tab_background(raw: str, user: User) -> str:
         if not raw or (isinstance(raw, str) and raw.strip() in ("", " ")):

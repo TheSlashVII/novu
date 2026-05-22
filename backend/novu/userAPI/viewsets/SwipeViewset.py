@@ -3,7 +3,7 @@ from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from ..models import Swipe, Match
+from ..models import Swipe, Match, User
 from ..serializers import SwipeSerializer, MatchSerializer
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse, Http404
@@ -155,16 +155,16 @@ class SwipeViewset(viewsets.ModelViewSet):
         })
 
     # GET /api/swipes/user/<int:user_id>/
+    @action(methods=["get"], detail=True)
     def get_user_swipes(self, request, user_id=None):
-        """
-        Obtener todos los swipes de un usuario
-        """
-        try:
-            swipes = Swipe.objects.filter(origin_user_id=user_id)
-            serializer = SwipeSerializer(swipes, many=True)
-            return JsonResponse(serializer.data, safe=False)
-        except Exception as e:
-            return Response(
-                {'error': str(e)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        # to get user swipes
+        user_requesting = get_object_or_404(User, email=request.user)
+        if (user_requesting.admin == True) or (user_requesting.id == user_id):
+            try:
+                swipes = Swipe.objects.filter(origin_user_id=user_id)
+                serializer = SwipeSerializer(swipes, many=True)
+                return JsonResponse(serializer.data, safe=False)
+            except Exception as e:
+                return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return JsonResponse({"error": "access denied"}, status=status.HTTP_401_UNAUTHORIZED)

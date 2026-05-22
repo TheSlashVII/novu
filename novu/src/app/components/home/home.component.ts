@@ -449,7 +449,8 @@ export class HomeComponent {
 
   goToChat(): void { this.router.navigate(['/chats']); }
   goToProfile(): void { this.router.navigateByUrl('/settings'); }
-  goToDiscover(): void { this.router.navigate(['/discover']); }
+
+    goToWelcome(): void { this.router.navigate(['']); }
   toggleFilters() {
     this.filterPanel.isOpen = !this.filterPanel.isOpen
   }
