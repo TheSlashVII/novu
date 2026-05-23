@@ -37,6 +37,7 @@ import { LegalComponent } from './components/legal/legal.component';
 import { ContactComponent } from './components/contact/contact.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { AdminReportsComponent } from './components/admin-reports/admin-reports.component';
 
 export const routes: Routes = [
     {   path: '',
@@ -142,6 +143,10 @@ export const routes: Routes = [
                 path:'restrict_user',
                 component: AdminRestrictUserComponent,
                 title: "Novu Admin - Restrict User (List)",
+            },
+              {
+                path: 'reports',
+                component: AdminReportsComponent
             },
             {
                 path:'restrict_user/detail/:id',

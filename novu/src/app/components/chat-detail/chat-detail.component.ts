@@ -31,11 +31,14 @@ export class ChatDetailComponent {
   otherUserId!: number;
   menuOpen = false;
   blockSuccess = false;
+  showReportModal = false;
+  reportReason = '';
 
   userName = signal('');
   userAvatar = signal('');
   isOnline = signal(false);
   isConnected = signal(false);
+  reportSending = signal(false);
 
   private messagesContainer = viewChild<ElementRef>('messagesContainer');
   private shouldScroll = false;
@@ -175,6 +178,40 @@ export class ChatDetailComponent {
       },
       error: (err) => {
         console.error('Error al bloquear:', err);
+      }
+    });
+  }
+
+  openReportModal(): void {
+    this.menuOpen = false;
+    this.showReportModal = true;
+  }
+
+  closeReportModal(): void {
+    this.showReportModal = false;
+    this.reportReason = '';
+  }
+
+  reportUser(): void {
+    if (!this.reportReason.trim()) return;
+    const baseUrl = development ? 'http://localhost:8000' : window.location.origin;
+    this.reportSending.set(true);
+    this.http.post(`${baseUrl}/api/users/reportUser/`, {
+      id_reporter: this.currentUserId,
+      id_reported: this.otherUserId,
+      reason: this.reportReason
+    }, {
+      headers: { Authorization: 'Bearer ' + this.userAPI.getToken() }
+    }).subscribe({
+      next: () => {
+        this.reportSending.set(false);
+        this.showReportModal = false;
+        this.reportReason = '';
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        console.error('Error al reportar:', err);
+        this.reportSending.set(false);
       }
     });
   }

@@ -77,6 +77,10 @@ get_user_profile_picture =  UserController.as_view({"get": "getUserProfilePic"})
 password_reset_request  = EmailController.as_view({"post": "requestPasswordReset"})
 password_reset_validate = EmailController.as_view({"post": "validatePasswordResetToken"})
 password_reset_confirm  = EmailController.as_view({"post": "confirmPasswordReset"})
+report_user = UserController.as_view({"post": "reportUser"})
+get_reports = UserController.as_view({"get": "getReports"})
+mark_report_reviewed = UserController.as_view({"patch": "markReportReviewed"})
+getBlockedIds = UserController.as_view({"get": "getBlockedIds"})
 
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
@@ -137,4 +141,8 @@ urlpatterns = [
     path("password-reset/request/",  password_reset_request),
     path("password-reset/validate/", password_reset_validate),
     path("password-reset/confirm/",  password_reset_confirm),
+    path("reportUser/", report_user), #to report a user
+    path("reports/", get_reports),
+    path("reports/reviewed/", mark_report_reviewed),
+    path("getBlockedIds/", getBlockedIds),
 ]
