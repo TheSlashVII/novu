@@ -6,6 +6,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 from userAPI.models import Message, User, Match
 from django.db import models
 from django.utils import timezone
+from django.db.models import Q
 
 class ChatConsumer(AsyncWebsocketConsumer):
     
@@ -54,6 +55,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
         print(f"👤 user1_id: {self.user1_id}, user2_id: {self.user2_id}")
         
         recipient_id = self.user2_id if self.user.id == self.user1_id else self.user1_id
+        
+        #Verify block before process
+        is_blocked = await self.check_block(self.user.id, recipient_id)
+        if is_blocked:
+            await self.send(text_data=json.dumps({
+                'error': 'blocked',
+                'message': 'No puedes enviar mensajes a este usuario.'
+            }))
+            return
+        
         await self.save_message(self.user.id, recipient_id, message)
         
         await self.channel_layer.group_send(
@@ -125,6 +136,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
             import traceback
             traceback.print_exc()
             return None
+        
+    @database_sync_to_async
+    def check_block(self, user_id, other_id):
+        from userAPI.models import Block
+        return Block.objects.filter(
+            Q(id_logged_user=user_id, id_blocked_user=other_id) |
+            Q(id_logged_user=other_id, id_blocked_user=user_id)
+        ).exists()
 
 
 class NotificationConsumer(AsyncWebsocketConsumer):

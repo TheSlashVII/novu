@@ -1,5 +1,5 @@
 <app-filter-panel />
-<div class="min-h-screen bg-white flex flex-col font-poppins select-none"
+<div class="min-h-screen bg-white flex flex-col font-poppins select-none overflow-hidden"
      (mousemove)="onMouseMove($event)"
      (mouseup)="onMouseUp()">
 
@@ -8,14 +8,14 @@
 
     <button (click)="goToProfile()"
             class="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-200
-                   hover:border-violet-400 transition-colors">
-      <img src="assets/Images/me.jpg"
+                   hover:border-violet-400 transition-colors hover:cursor-pointer">
+      <img [src]="getProfilePicture()"
            alt="Mi perfil"
            class="w-full h-full object-cover"
            onerror="this.src='https://ui-avatars.com/api/?name=Yo&background=7c3aed&color=fff'"/>
     </button>
 
-    <img src="assets/Images/Novu_logo.svg" alt="Novu Logo" class="w-10 h-10 object-contain"/>
+    <img (click)="goToWelcome()" src="assets/Images/Novu_logo.svg" alt="Novu Logo" class="rounded-xl text-gray-400 hover:text-violet-600 transition-colors hover:bg-violet-100 w-10 h-10 object-contain hover:cursor-pointer"/>
 
   </nav>
 
@@ -39,6 +39,11 @@
         </button>
       </div>
 
+    } @else if (this.hasSeenAll){
+        <div class="text-center space-y-4">
+            <h3 class="font-poppins font-bold text-xl text-gray-700">No hay más perfiles</h3>
+            <p class="text-gray-400 text-sm">Vuelve más tarde para ver nuevas personas</p>
+        </div>
     } @else if (getCurrentProfile()) {
 
       <div class="relative w-full max-w-sm">
@@ -82,16 +87,48 @@
               <div class="relative h-[480px] flex flex-col justify-between p-5 z-10">
 
                   <!-- Name and bio -->
+                  <!-- Name and bio -->
                   <div>
                       <h2 class="text-white font-poppins font-bold text-2xl">
                           {{ getCurrentProfile()!.name }}, {{ getCurrentProfile()!.age }}
                       </h2>
-                      <h4 class="text-white font-bold">{{ getCurrentProfile()!.tabs[0].header }}</h4>
-                      <h5 class="text-white">{{ getCurrentProfile()!.tabs[0].sub_header }}</h5>
+                      <h4 class="text-white font-bold">{{ getCurrentTab()!.header }}</h4>
+                      <h5 class="text-white">{{ getCurrentTab()!.sub_header }}</h5>
                       <p class="text-white/80 text-xs mt-5">
-                          {{ getCurrentProfile()!.tabs[0].tab_biography }}
+                          {{ getCurrentTab()!.tab_biography }}
                       </p>
                   </div>
+                  <!-- Tab dots + nav -->
+                  @if (getCurrentProfile()!.tabs.length > 1) {
+                      <div class="flex items-center justify-center gap-6"
+                           (click)="$event.stopPropagation()">
+
+                          <button (click)="prevTab(getCurrentProfile()!.id, getCurrentProfile()!.tabs.length, $event)"
+                                  class="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center
+                       hover:bg-white/40 transition-all duration-200 disabled:opacity-30"
+                                  [disabled]="getCurrentTabIndex(getCurrentProfile()!.id) === 0">
+                              <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24"
+                                   stroke="currentColor" stroke-width="3">
+                                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                              </svg>
+                          </button>
+
+                          <span class="text-white/70 text-xs font-medium">
+                                {{ getCurrentTabIndex(getCurrentProfile()!.id) + 1 }} / {{ getCurrentProfile()!.tabs.length }}
+                            </span>
+
+                          <button (click)="nextTab(getCurrentProfile()!.id, getCurrentProfile()!.tabs.length, $event)"
+                                  class="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center
+                       hover:bg-white/40 transition-all duration-200 disabled:opacity-30"
+                                  [disabled]="getCurrentTabIndex(getCurrentProfile()!.id) === getCurrentProfile()!.tabs.length - 1">
+                              <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24"
+                                   stroke="currentColor" stroke-width="3">
+                                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                              </svg>
+                          </button>
+
+                      </div>
+                  }
 
                   <!-- Like / Dislike buttons -->
                   <div class="flex justify-center gap-10 pb-2">
@@ -99,7 +136,7 @@
                               class="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm
                      flex items-center justify-center
                      hover:bg-rose-500/80 hover:scale-110
-                     transition-all duration-200">
+                     transition-all duration-200 hover:cursor-pointer">
                           <svg class="w-7 h-7 text-rose-400" fill="none" viewBox="0 0 24 24"
                                stroke="currentColor" stroke-width="3">
                               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
@@ -110,7 +147,7 @@
                               class="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm
                      flex items-center justify-center
                      hover:bg-blue-500/80 hover:scale-110
-                     transition-all duration-200">
+                     transition-all duration-200 hover:cursor-pointer">
                           <svg class="w-7 h-7 text-blue-400" fill="none" viewBox="0 0 24 24"
                                stroke="currentColor" stroke-width="3">
                               <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
@@ -122,7 +159,8 @@
           </div>
       </div>
 
-    } @else {
+    }
+    @else {
       <div class="text-center space-y-4">
         <h3 class="font-poppins font-bold text-xl text-gray-700">No hay más perfiles</h3>
         <p class="text-gray-400 text-sm">Vuelve más tarde para ver nuevas personas</p>
@@ -135,28 +173,28 @@
   <nav class="border-t border-gray-100 px-6 py-4 flex justify-around items-center">
 
     <button (click)="goToProfile()"
-            class="p-2 rounded-xl text-gray-400 hover:text-violet-600 transition-colors">
+            class="p-2 rounded-xl text-gray-400 hover:text-violet-600 hover:bg-violet-100 transition-colors hover:cursor-pointer">
       <img src="assets/Images/Bookmark_all_likes_given.svg"
            alt="Likes" class="w-7 h-7"/>
     </button>
 
     <button (click)="goToChat()"
-            class="p-2 rounded-xl text-gray-400 hover:text-violet-600 transition-colors">
+            class="p-2 rounded-xl text-gray-400 hover:text-violet-600 hover:bg-violet-100 transition-colors hover:cursor-pointer">
       <img src="assets/Images/Messages.svg"
            alt="Mensajes" class="w-7 h-7"/>
     </button>
 
     <button (click)="preivousProfile()"
-            class="p-2 rounded-xl text-gray-400 hover:text-violet-600 transition-colors">
+            class="p-2 rounded-xl text-gray-400 hover:text-violet-600 hover:bg-violet-100 transition-colors hover:cursor-pointer">
       <img src="assets/Images/Return_back_once.svg"
-           alt="Volver" class="w-7 h-7"/>
+           alt="Volver" class="w-7 h-7 "/>
     </button>
 
     <!-- Separador vertical -->
     <img src="assets/Images/Vector.svg" alt="" class="h-8 opacity-20"/>
 
     <button (click)="toggleFilters()"
-            class="p-2 rounded-xl text-gray-400 hover:text-violet-600 transition-colors">
+            class="p-2 rounded-xl text-gray-400 hover:text-violet-600 transition-colors hover:bg-violet-100 hover:cursor-pointer">
       <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24"
            stroke="currentColor" stroke-width="1.5">
         <path stroke-linecap="round" stroke-linejoin="round"

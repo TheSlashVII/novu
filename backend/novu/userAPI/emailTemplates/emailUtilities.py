@@ -53,3 +53,16 @@ def sendDeniedEmail(email:str, name:str):
     msg.attach_alternative(htmlMessage, "text/html") # tells the email processor that the preferred format is html
     msg.send(fail_silently=False)
 
+
+def sendPasswordResetEmail(email:str, name:str, reset_link:str):
+    htmlMessage = render_to_string("passwordResetEmail.html", {"name":name, "reset_link": reset_link})
+    plainMessage = f"Hola {name}, recibimos una solicitud para restablecer tu contraseña. Accede al siguiente enlace para crear una nueva (válido 15 minutos): {reset_link}. Si no lo solicitaste, ignora este mensaje."
+
+    msg = EmailMultiAlternatives(
+        subject="Restablecer contraseña — Novu",
+        body=plainMessage,
+        from_email="novu-daemon@novu.cat",
+        to=[email],
+    )
+    msg.attach_alternative(htmlMessage, "text/html")
+    msg.send(fail_silently=False)

@@ -14,10 +14,11 @@
 
       <!-- Links desktop -->
       <div class="hidden md:flex items-center gap-8">
-        <a (click)="goToLogin()" class="text-sm text-gray-500 hover:text-gray-900 transition-colors hover:cursor-pointer">Iniciar Sesión</a>
-        <a (click)="goToRegister()" class="text-sm text-gray-500 hover:text-gray-900 transition-colors hover:cursor-pointer">Registrarse</a>
-        <a (click)="goToPrivacy()" class="text-sm text-gray-500 hover:text-gray-900 transition-colors">Política de privacidad</a>
-        <a href="#" class="text-sm text-gray-500 hover:text-gray-900 transition-colors">Aviso Legal</a>
+        <a (click)="goToLogin()" [class]="isLoggedIn ? 'hidden' : 'block'" class="text-sm text-gray-500 hover:text-gray-900 transition-colors hover:cursor-pointer">Iniciar Sesión</a>
+        <a (click)="goToRegister()" [class]="isLoggedIn ? 'hidden' : 'block'" class="text-sm text-gray-500 hover:text-gray-900 transition-colors hover:cursor-pointer">Registrarse</a>
+          <a (click)="goToHome()" [class]="isLoggedIn ? 'block' : 'hidden'" class="text-sm text-gray-500 hover:text-gray-900 transition-colors hover:cursor-pointer">Home</a>
+        <a (click)="goToPrivacy()" class="text-sm text-gray-500 hover:text-gray-900 transition-colors hover:cursor-pointer">Política de privacidad</a>
+        <a (click)="goToLegal()" class="text-sm text-gray-500 hover:text-gray-900 transition-colors hover:cursor-pointer">Aviso Legal</a>
       </div>
 
       <!-- Mobile button -->
@@ -41,8 +42,8 @@
       <div class="md:hidden bg-white border-t border-gray-100 shadow-lg px-6 py-4 flex flex-col gap-2">
         <a (click)="goToLogin(); toggleMenu()" class="text-sm text-gray-500 hover:text-gray-900 transition-colors cursor-pointer py-2 border-b border-gray-50">Iniciar Sesión</a>
         <a (click)="goToRegister(); toggleMenu()" class="text-sm text-gray-500 hover:text-gray-900 transition-colors cursor-pointer py-2 border-b border-gray-50">Registrarse</a>
-        <a href="#" class="text-sm text-gray-500 hover:text-gray-900 transition-colors py-2 border-b border-gray-50">Política de privacidad</a>
-        <a (click)="goToLegal(); toggleMenu()" class="text-sm text-gray-500 hover:text-gray-900 transition-colors cursor-pointer py-2">Aviso Legal</a>
+        <a (click)="goToPrivacy(); toggleMenu()" class="text-sm text-gray-500 hover:text-gray-900 transition-colors py-2 border-b border-gray-50">Política de privacidad</a>
+        <a (click)="goToLegal(); toggleMenu()" class="text-sm text-gray-500 hover:text-gray-900 transition-colors py-2">Aviso Legal</a>
       </div>
     }
   </nav>
@@ -248,9 +249,7 @@
       <p class="text-xs text-gray-400">© {{ currentYear }} Novu. Todos los derechos reservados.</p>
 
       <div class="flex items-center gap-6">
-        <a href="#" class="text-xs text-gray-400 hover:text-gray-600 transition-colors">Términos de uso</a>
-        <a href="#" class="text-xs text-gray-400 hover:text-gray-600 transition-colors">Contacto</a>
-        <a (click)="goToLegal()" class="text-xs text-gray-400 hover:text-gray-600 transition-colors hover:cursor-pointer">Aviso Legal</a>
+        <a (click)="goToContact()" class="text-xs text-gray-400 hover:text-gray-600 transition-colors hover:cursor-pointer">Contacto</a>
       </div>
 
     </div>

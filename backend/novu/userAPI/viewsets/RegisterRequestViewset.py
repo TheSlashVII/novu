@@ -35,12 +35,30 @@ class RequestViewset(viewsets.ModelViewSet):
     @action(methods=["get"], detail=False)
     def listRequests(self, request):
         """Lists all register requests."""
+        user_requesting_search = get_object_or_404(User, email=request.user)
+        if not user_requesting_search.admin:
+            return JsonResponse({"error": "user not allowed to enter this endpoint"})
         queryset = Request.objects.all()
         serializer = RequestSerializer(queryset, many=True)
         return JsonResponse(serializer.data, status=status.HTTP_200_OK, safe=False)
 
+    @action(methods=["post"], detail=True)
+    def retrieveRequest(self, request, id=None):
+        user_requesting_search = get_object_or_404(User, email=request.user)
+        if not user_requesting_search.admin:
+            return JsonResponse({"error": "user not allowed to enter this endpoint"})
+        try:
+            register_request = get_object_or_404(Request, pk=id)
+        except Http404:
+            return JsonResponse({"error": "request not found"}, status=status.HTTP_404_NOT_FOUND)
+        return JsonResponse({RequestSerializer(register_request).data}, status=status.HTTP_200_OK)
+        
+
     @action(methods=["get"], detail=False)
     def countRequests(self, request):
+        user_requesting_search = get_object_or_404(User, email=request.user)
+        if not user_requesting_search.admin:
+            return JsonResponse({"error": "user not allowed to enter this endpoint"})
         """Returns the total count of pending register requests."""
         numRegisterRequest = self.queryset.count()
         return JsonResponse({"request_count": numRegisterRequest})
@@ -67,6 +85,9 @@ class RequestViewset(viewsets.ModelViewSet):
     @action(methods=["get"], detail=False)
     def retrieveRequest(self, request, id=None):
         """Retrieves a specific register request by its ID."""
+        user_requesting_search = get_object_or_404(User, email=request.user)
+        if not user_requesting_search.admin:
+            return JsonResponse({"error": "user not allowed to enter this endpoint"}, status=status.HTTP_401_UNAUTHORIZED)
         queryset = Request.objects.all()
         register_request = get_object_or_404(queryset, pk=id)
         serializer = RequestSerializer(register_request)
@@ -75,12 +96,9 @@ class RequestViewset(viewsets.ModelViewSet):
     @action(methods=["delete"], detail=False)
     def deleteRequest(self, request, id=None):
         """Deletes a register request and its associated photos."""
-        try:
-            user = get_object_or_404(User, pk=id)
-        except Http404:
-            return JsonResponse({"error": "user not found"}, status=status.HTTP_404_NOT_FOUND)
-        if(not user.admin):
-            return JsonResponse({"error": "not authorized to access this endpoint"}, status=status.HTTP_401_UNAUTHORIZED)
+        user_requesting = get_object_or_404(User, email=request.user)
+        if not user_requesting.admin:
+            return JsonResponse({"error": "user not allowed to enter this endpoint"}, status=status.HTTP_401_UNAUTHORIZED)
         BASE_DIR = Path(__file__).resolve().parent.parent.parent
         try:
             register_request = get_object_or_404(Request, pk=id)
@@ -184,17 +202,24 @@ class RequestViewset(viewsets.ModelViewSet):
 
     @action(methods=["post"], detail=False)
     def acceptRequest(self, request, id=None):
+        user_requesting = get_object_or_404(User, email=request.user)
+        if not user_requesting.admin:
+            return JsonResponse({"error": "user not allowed to enter this endpoint"})
         """
         POST /api/users/accept/request/<id>/
         Accepts a pending register request and creates the user account.
         """
         request_id = self.kwargs.get('id') or id
+        user_requesting_id = int(request.data.get("user_id"))
         try:
             register_request = get_object_or_404(Request, pk=request_id)
+            user_requesting_acceptance = get_object_or_404(User, pk=user_requesting_id)
         except Http404:
             return JsonResponse({"error": "Request not found."}, status=status.HTTP_404_NOT_FOUND)
 
         # --- Create the user from the request data ---
+        if not user_requesting_acceptance.admin:
+            return JsonResponse({"error": "user not allowed to access this endpoint"}, status=status.HTTP_401_UNAUTHORIZED)
         try:
             user = User.objects.create(
                 name=register_request.name,

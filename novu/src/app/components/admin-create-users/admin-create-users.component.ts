@@ -61,6 +61,14 @@ export class AdminCreateUsersComponent {
     Submit(){
         this.isMessageHidden = true;
         const f = this.userForm.value;
+        /*
+
+        const payload = {
+            ...f,
+            date_of_birth: new Date(f.date_of_birth!).toISOString().split('T')[0],
+        };
+
+         */
         const formData = new FormData();
 
         formData.append('name', f.name!);
@@ -100,11 +108,12 @@ export class AdminCreateUsersComponent {
                 new Date(f.restricted_at).toISOString().split('T')[0]
             );
         }
+
+
         this.userAPIService.adminCreateUser(formData).subscribe({
             next: (res) => {
                 const newUser:any = res
                 this.userCardService.createUserCard(newUser.id).subscribe((userCard) => {
-                    console.log(res)
                     let tab: CardTab = {
                         id_section: 1,
                         id_card: userCard.user,

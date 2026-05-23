@@ -62,16 +62,26 @@ upload_user_photos = PhotoController.as_view({"post" : "uploadPhoto"})
 send_acceptance_email = EmailController.as_view({"post": "sendAcceptedMailHandler"})
 send_denial_email = EmailController.as_view({"post" : "sendDeniedMailHandler"})
 list_all_interests = InterestController.as_view({"get":"list_all"})
+save_relationship_preference = RelationshipPreferenceController.as_view({"post": "save_preference"})
+get_relationship_preference = RelationshipPreferenceController.as_view({"get": "list"})
+list_all_studies = StudiesController.as_view({"get": "list_all"})
 admin_user_update = UserController.as_view({"patch" : "adminUserUpdate"})
 accept_request = RegisterRequestController.as_view({"post": "acceptRequest"})
 check_admin_status = UserController.as_view({"post": "isUserAdmin"})
 delete_user_photo = PhotoController.as_view({"delete" : "deletePhoto"})
 update_user_profile_picture = PhotoController.as_view({"patch" : "updateProfilePicture"})
 get_user_profile = UserController.as_view({"get" : "getUserProfile"})
-save_relationship_preference = RelationshipPreferenceController.as_view({"post": "save_preference"})
-get_relationship_preference = RelationshipPreferenceController.as_view({"get": "list"})
-list_all_studies = StudiesController.as_view({"get": "list_all"})
-
+update_user_profile = UserController.as_view({"put" : "updateUserProfile"})
+block_user = UserController.as_view({"post": "blockUser"})
+get_user_profile_picture =  UserController.as_view({"get": "getUserProfilePic"})
+password_reset_request  = EmailController.as_view({"post": "requestPasswordReset"})
+password_reset_validate = EmailController.as_view({"post": "validatePasswordResetToken"})
+password_reset_confirm  = EmailController.as_view({"post": "confirmPasswordReset"})
+report_user = UserController.as_view({"post": "reportUser"})
+get_reports = UserController.as_view({"get": "getReports"})
+mark_report_reviewed = UserController.as_view({"patch": "markReportReviewed"})
+getBlockedIds = UserController.as_view({"get": "getBlockedIds"})
+get_restricted_user_count = UserController.as_view({"get" : "getRestrictedUserCount"})
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
     path("create/", create_user), # creates a user 
@@ -109,7 +119,7 @@ urlpatterns = [
     path("tabs/update/<int:pk>/<int:id_section>/", update_card_tab), # used to update card tabs
     path("tabs/patch/<int:pk>/<int:id_section>/", patch_card_tab), # used to update cardtabs partially
     path("tabs/delete/<int:pk>/<int:id_section>/", delete_card_tab), # used to delete card tabs
-    path("age/update/<int:pk>", update_user_age), # updates the user age
+    path("age/update/<int:pk>/", update_user_age), # updates the user age
     path("gender/update/<int:pk>", update_user_gender), # updates user gender
     path("profiles/", get_user_profiles), # to get all the users + their cards
     path("photos/upload/<int:id>", upload_user_photos), #to upload user photos
@@ -125,4 +135,15 @@ urlpatterns = [
     path("relationship-preference/", get_relationship_preference),       # GET ?user_id=1
     path("relationship-preference/save/", save_relationship_preference), # POST
     path("studies/all/", list_all_studies),
+    path("profile/update/" , update_user_profile),
+    path("block/", block_user), #to block a user
+    path("get_profile_picture/<int:id>/", get_user_profile_picture),
+    path("password-reset/request/",  password_reset_request),
+    path("password-reset/validate/", password_reset_validate),
+    path("password-reset/confirm/",  password_reset_confirm),
+    path("reportUser/", report_user), #to report a user
+    path("reports/", get_reports),
+    path("reports/reviewed/", mark_report_reviewed),
+    path("getBlockedIds/", getBlockedIds),
+    path("get_restricted_users_count/", get_restricted_user_count),
 ]

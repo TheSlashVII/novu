@@ -20,9 +20,7 @@ import {UnauthorizedComponent} from './components/unauthorized/unauthorized';
 import {AdminCreateUsersComponent} from './components/admin-create-users/admin-create-users.component';
 import {AdminPostDenyRequestComponent} from './components/admin-post-deny-request/admin-post-deny-request.component';
 import {AdminRestrictUserComponent} from './components/admin-restrict-user/admin-restrict-user.component';
-import {
-    AdminRestrictUserDetailComponent
-} from './components/admin-restrict-user-detail/admin-restrict-user-detail.component';
+import {AdminRestrictUserDetailComponent} from './components/admin-restrict-user-detail/admin-restrict-user-detail.component';
 import {AdminDeleteUserComponent} from './components/admin-delete-user/admin-delete-user.component';
 import {CardCreationComponent} from './components/card-creation/card-creation.component';
 import { ChatListComponent } from './components/chat-list/chat-list.component';
@@ -34,8 +32,10 @@ import { AdminUpdateUsersComponent } from './components/admin-update-users/admin
 import {AdminUpdateUserListComponent} from './components/admin-update-user-list/admin-update-user-list.component';
 import { RelationPreferencesComponent } from './components/relation-preferences/relation-preferences.component';
 import { LegalComponent } from './components/legal/legal.component';
-
-
+import { ContactComponent } from './components/contact/contact.component';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { AdminReportsComponent } from './components/admin-reports/admin-reports.component';
 
 export const routes: Routes = [
     {   path: '',
@@ -53,22 +53,27 @@ export const routes: Routes = [
     },
     {
         path: 'postRegister',
-        component: PostRegisterComponent
+        component: PostRegisterComponent,
+        title: "Novu - Notice"
     },
     {
         path: 'studies',
-        component: StudiesComponent
+        component: StudiesComponent,
+        title: "Novu - Estudios"
     },
     {
         path: 'relationship-preferences',
-        component: RelationPreferencesComponent
+        component: RelationPreferencesComponent,
+        title: "Novu - Preferencias de relación"
     },
     {
         path: 'interests',
-        component: InterestsComponent
+        component: InterestsComponent,
+        title: "Novu - Intereses"
     },{
         path:'gender',
         component: GenderComponent,
+        title: "Novu - Genero"
     },{
         path: 'home',
         component: HomeComponent,
@@ -76,14 +81,16 @@ export const routes: Routes = [
     },{
         path:'settings',
         component:SettingsComponent,
-        title:"Novu - Settings",
+        title:"Novu - Ajustes",
     },
     {
         path: 'home',
-        component: HomeComponent
+        component: HomeComponent,
+        title: "Novu - Home"
     },{
         path:'unauthorized',
-        component: UnauthorizedComponent
+        component: UnauthorizedComponent,
+        title: "Acceso denegado"
     },
     {
         path: 'chats', component: ChatListComponent,
@@ -95,6 +102,19 @@ export const routes: Routes = [
     },
     {
         path: 'privacy', component: PrivacyComponent, title: 'Novu - Política de privacidad'
+    },
+    {
+        path: 'contact', component: ContactComponent, title: 'Novu - Contacto'
+    },
+    {
+        path: 'forgot-password',
+        component: ForgotPasswordComponent,
+        title: "Novu - Forgot Password"
+    },
+    {
+        path: 'reset-password',
+        component: ResetPasswordComponent,
+        title: "Novu - Cambiar contraseña"
     },
 
     //Route admin
@@ -124,6 +144,11 @@ export const routes: Routes = [
                 component: AdminRestrictUserComponent,
                 title: "Novu Admin - Restrict User (List)",
             },
+              {
+                path: 'reports',
+                component: AdminReportsComponent,
+                title: "Novu Admin - Reports"
+            },
             {
                 path:'restrict_user/detail/:id',
                 component: AdminRestrictUserDetailComponent,
@@ -149,6 +174,7 @@ export const routes: Routes = [
     },{
         path: 'card_creation',
         component: CardCreationComponent,
+        title: "Novu - Crea tu primera card"
     },
     {
         path: 'legal',
@@ -156,11 +182,8 @@ export const routes: Routes = [
         title: 'Novu - Aviso Legal'
     },
     {
-        path:'unauthorized',
-        component: UnauthorizedComponent
-    },
-    {
     path: '**',
-        component: NotFoundComponent
+        component: NotFoundComponent,
+        title: "Novu - 404 Not found"
     },
 ];

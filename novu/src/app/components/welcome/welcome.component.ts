@@ -1,5 +1,6 @@
 import { Component, signal, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import {UserAPIService} from '../../services/user-api.service';
 
 interface Feature {
   icon: string;
@@ -21,7 +22,17 @@ interface Step {
   styleUrl: './welcome.component.css',
 })
 export class WelcomeComponent {
-  private router = inject(Router);
+    isLoggedIn: boolean = false;
+    constructor(private router:Router, private userAPI:UserAPIService) {
+        const token = this.userAPI.getToken();
+        if(this.userAPI.isTokenExpired(token!)){
+            this.isLoggedIn = false;
+            localStorage.removeItem('access_token');
+        } else {
+            this.isLoggedIn = true;
+        }
+
+    }
   menuOpen = false;
 
   currentYear = new Date().getFullYear();
@@ -80,15 +91,23 @@ export class WelcomeComponent {
   goToRegister(): void {
     this.router.navigate(['/register']);
   }
+    goToHome(): void {
+      this.router.navigate(['/home']);
+    }
+
+  toggleMenu(): void {
+    this.menuOpen = !this.menuOpen;
+  }
 
   goToLegal(): void {
     this.router.navigate(['/legal']);
   }
 
-  toggleMenu(): void{
-    this.menuOpen = !this.menuOpen;}
   goToPrivacy(): void {
     this.router.navigate(['/privacy']);
   }
-  
+
+  goToContact(): void {
+    this.router.navigate(['/contact']);
+  }
 }

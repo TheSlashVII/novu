@@ -1,7 +1,6 @@
 <main class="flex flex-col gap-3 sm:gap-5 bg-[#F0E9E9] min-h-screen">
     <!--Top bar-->
     <nav class="flex flex-row justify-between px-5 py-3 bg-[#2f3a63]">
-        <!--Logo section-->
         <div class="inline-flex justify-around items-center gap-3">
             <img src="assets/Images/Novu_logo.svg" alt="Novu logo" class="max-h-10">
             <div class="flex flex-row gap-1 items-center">
@@ -17,66 +16,57 @@
     <div class="flex flex-col px-5 py-4 sm:px-10 sm:py-8 gap-5">
 
         <div class="flex flex-row justify-center gap-5">
-            <div class="gap-3 min-w-[5rem] min-h-[3rem] md:min-h-[10rem] md:min-w-[20rem] bg-white flex flex-col justify-start p-3 md:p-5">
-                <!--active user count-->
+            <!-- Active Users -->
+            <div class="flex-1 max-w-[20rem] min-h-[8rem] md:min-h-[15rem] bg-white flex flex-col justify-between p-3 md:p-5">
                 <div class="inline-flex justify-start gap-3 items-center">
                     <img src="assets/Images/BlueuserIcon.svg" alt="User Icon" class="w-[2rem] md:w-[5rem]">
-                    <div class="inline-flex flex-col justify-start">
-                        <p class="font-[Inter] text-sm md:text-lg lg:text-xl font-medium">Active Users</p>
-                    </div>
-
+                    <p class="font-[Inter] text-sm md:text-lg lg:text-xl font-medium">Active Users</p>
                 </div>
-                <div class="flex w-full justify-center">
+                <div class="flex w-full justify-center mb-5 md:mb-15">
                     <p class="font-[Inter] font-light text-[13px] sm:text-lg md:text-xl">{{this.activeUserCount}}</p>
                 </div>
             </div>
-            <div class="min-w-[5rem] min-h-[3rem] md:min-h-[10rem] md:min-w-[20rem] bg-white flex flex-col justify-start p-3 md:p-5">
-                <!--Restrict user account-->
-                <div class="inline-flex justify-start gap-3 items-center">
-                    <img src="assets/Images/RestrictUser.svg" alt="Restrict user" class="w-[1.5rem] sm:w-[2rem]">
-                    <div class="inline-flex flex-col justify-start">
-                        <p class="font-[Inter] text-sm md:text-lg font-medium">Restrict User Account</p>
-                    </div>
 
+            <!-- Restrict User Account -->
+            <div class="flex-1 max-w-[20rem] min-h-[8rem] md:min-h-[15rem] bg-white flex flex-col justify-between p-3 md:p-5">
+                <div class="inline-flex justify-start gap-3 items-center">
+                    <img src="assets/Images/RestrictUser.svg" alt="Restrict user" class="w-[2rem] md:w-[5rem]">
+                    <p class="font-[Inter] text-xs md:text-lg font-medium">Restrict User Account</p>
                 </div>
-                <div class="flex flex-row w-full justify-center">
-                    <p class="font-[Inter] font-light sm:text-xl  text-red-700">4</p>
+                <div class="flex w-full justify-center">
+                    <p class="font-[Inter] font-light sm:text-xl text-red-700">{{this.restrictedUserCount}}</p>
                 </div>
-                <div class="flex flex-row justify-center w-full py-5">
-                    <button (click)="goToRestrictUsers()" class="hover:cursor-pointer rounded-3xl bg-[#ff6b6b] text-white text-sm px-[1rem] sm:px-[3rem] py-1">Restrict Users</button>
+                <div class="flex flex-row justify-center w-full">
+                    <button (click)="goToRestrictUsers()" class="hover:cursor-pointer rounded-3xl bg-[#ff6b6b] text-white text-xs sm:text-sm px-[1rem] sm:px-[3rem] py-1">Restrict Users</button>
                 </div>
             </div>
         </div>
-        <div class="flex flex-row justify-center gap-5 ">
-            <div class="gap-3 min-w-[5rem] min-h-[3rem] md:min-h-[10rem] md:min-w-[20rem] bg-white flex flex-col justify-start p-3 md:p-5">
-                <!--active user count-->
+
+        <div class="flex flex-row justify-center gap-5">
+            <!-- Flagged Users -->
+            <div class="flex-1 max-w-[20rem] min-h-[8rem] md:min-h-[15rem] bg-white flex flex-col justify-between p-3 md:p-5">
                 <div class="inline-flex justify-start gap-3 items-center">
                     <img src="assets/Images/FlaggedUsers.svg" alt="User Icon" class="w-[2rem] md:w-[5rem]">
-                    <div class="inline-flex flex-col justify-start">
-                        <p class="font-[Inter] text-sm md:text-lg font-medium">Flagged users</p>
-                    </div>
-
+                    <p class="font-[Inter] text-sm md:text-lg font-medium">Flagged users</p>
                 </div>
                 <div class="flex w-full justify-center">
-                    <p class="font-[Inter] font-light text-xl">6</p>
+                    <p class="font-[Inter] font-light text-xl">{{ reportsCount }}</p>
                 </div>
-                <div class="flex flex-row justify-center w-full py-5">
-                    <button class=" hover:cursor-pointer rounded-3xl bg-[#ff6b6b] text-white text-sm px-[1rem] sm:px-[3rem] py-1">Review</button>
+                <div class="flex flex-row justify-center w-full">
+                    <button (click)="goToReports()" class="hover:cursor-pointer rounded-3xl bg-[#ff6b6b] text-white text-sm px-[1rem] sm:px-[3rem] py-1">Review</button>
                 </div>
             </div>
-            <div class="gap-3 min-w-[5rem] min-h-[3rem] md:min-h-[10rem] md:min-w-[20rem] bg-white flex flex-col justify-start p-3 md:p-5">
-                <!--active user count-->
+
+            <!-- Pending Verifications -->
+            <div class="flex-1 max-w-[20rem] min-h-[8rem] md:min-h-[15rem] bg-white flex flex-col justify-between p-3 md:p-5">
                 <div class="inline-flex justify-start gap-3 items-center">
                     <img src="assets/Images/PendingVerifications.svg" alt="User Icon" class="w-[2rem] md:w-[5rem]">
-                    <div class="inline-flex flex-col justify-start">
-                        <p class="font-[Inter] text-[0.7rem] md:text-lg font-medium">Pending verifications</p>
-                    </div>
-
+                    <p class="font-[Inter] text-[0.7rem] md:text-lg font-medium">Pending verifications</p>
                 </div>
                 <div class="flex flex-row w-full justify-center">
                     <p class="font-[Inter] font-light text-xl text-black">{{registerRequestsCount}}</p>
                 </div>
-                <div class="flex flex-row justify-center w-full py-5">
+                <div class="flex flex-row justify-center w-full">
                     <button (click)="goToRegisterRequestList()" class="hover:cursor-pointer rounded-3xl bg-[#4A90E2] text-white text-sm px-[1rem] sm:px-[3rem] py-1">Review</button>
                 </div>
             </div>
@@ -84,27 +74,27 @@
     </div>
 
     <!--User management-->
-    <div class="flex flex-col sm:flex-row gap-3 justify-center px-10">
+    <div class="flex flex-col sm:flex-row gap-3 justify-center px-5 sm:px-10">
         <div class="sm:max-w-[20rem] flex sm:inline-flex flex-row flex-grow sm:flex-col justify-start items-center gap-4 sm:gap-1 bg-white px-3 sm:p-4 rounded-4xl sm:rounded-[0]">
-            <div class="sm:min-h-[4rem] py-2 flex flex-row  justify-center items-center gap-3">
+            <div class="sm:min-h-[4rem] py-2 flex flex-row justify-center items-center gap-3">
                 <img src="assets/Images/update_users.svg" alt="Restrict user" class="w-[1.5rem] sm:w-[2rem] text-white">
-                <p>Update User</p>
+                <p class="font-[Inter] text-[10px]" (click)="goToUpdateUser()">Update User</p>
             </div>
-            <button (click)="goToUpdateUser()" class="hover:cursor-pointer hidden sm:block rounded-3xl bg-[#FF6B6B] text-white font-[Inter] px-3 sm:px-10">Update</button>
+            <button (click)="goToUpdateUser()" class="hover:cursor-pointer hidden sm:block rounded-3xl bg-[#FF6B6B] text-white font-[Inter] px-3 sm:px-10 text-xs sm:text-sm ">Update</button>
         </div>
         <div class="sm:max-w-[20rem] flex sm:inline-flex rounded-4xl sm:rounded-[0] flex-grow flex-row sm:flex-col justify-start items-center gap-4 sm:gap-1 bg-white px-3 sm:p-4">
-            <div class="sm:min-h-[4rem]  gap-3 flex flex-row justify-center items-center">
+            <div class="sm:min-h-[4rem] gap-0 flex flex-row justify-center items-center">
                 <img src="assets/Images/CreateUser.svg" alt="Create user" class="mb-3">
-                <p class="font-[Inter] text-sm">Create user</p>
+                <p class="font-[Inter] text-[10px]" (click)="goToCreateUser()">Create user</p>
             </div>
-            <button (click)="goToCreateUser()" class="hover:cursor-pointer hidden sm:block rounded-3xl bg-[#4A90E2] text-white font-[Inter] px-3 sm:px-10">Create user</button>
+            <button (click)="goToCreateUser()" class="hover:cursor-pointer hidden sm:block rounded-3xl bg-[#4A90E2] text-white font-[Inter] px-3 sm:px-10 text-xs sm:text-sm">Create user</button>
         </div>
-        <div class="sm:max-w-[20rem] flex sm:inline-flex flex-row flex-grow sm:flex-col justify-start items-center gap-4 sm:gap-1 rounded-4xl sm:rounded-[0] px-3  sm:p-4 bg-white ">
+        <div class="sm:max-w-[20rem] flex sm:inline-flex flex-row flex-grow sm:flex-col justify-start items-center gap-4 sm:gap-1 rounded-4xl sm:rounded-none px-3 sm:p-4 bg-white">
             <div class="sm:min-h-[4rem] flex flex-row justify-center items-center">
                 <img src="assets/Images/DeleteUser.svg" alt="Delete user" class="w-[2.8rem]">
-                <p class="font-[Inter] text-sm">Delete user</p>
+                <p class="font-[Inter] text-[10px]" (click)="goToDeleteUsers()">Delete user</p>
             </div>
-            <button (click)="goToDeleteUsers()" class="hover:cursor-pointer hidden sm:block rounded-3xl bg-[#ff6b6b] text-white font-[Inter] px-3 sm:px-10">Delete</button>
+            <button (click)="goToDeleteUsers()" class="hover:cursor-pointer hidden sm:block rounded-3xl bg-[#ff6b6b] text-white font-[Inter] px-3 sm:px-10 text-sm">Delete</button>
         </div>
     </div>
 

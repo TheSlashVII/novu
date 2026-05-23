@@ -92,6 +92,8 @@ class Block(models.Model):
     id_logged_user=models.ForeignKey(User, related_name="id_logged_user", on_delete=models.CASCADE, db_column="id_logged_user") 
     id_blocked_user=models.ForeignKey(User, related_name="id_blocked_user", on_delete=models.CASCADE, db_column="id_blocked_user")
     reason=models.CharField(max_length=100)
+    is_report = models.BooleanField(default=False)
+    reviewed = models.BooleanField(default=False)
     # primary key constraint
     pk=models.CompositePrimaryKey("id_logged_user", "id_blocked_user")
     # table name 

@@ -29,11 +29,16 @@ export class ChatDetailComponent {
   newMessage = '';
   currentUserId!: number;
   otherUserId!: number;
+  menuOpen = false;
+  blockSuccess = false;
+  showReportModal = false;
+  reportReason = '';
 
   userName = signal('');
   userAvatar = signal('');
   isOnline = signal(false);
   isConnected = signal(false);
+  reportSending = signal(false);
 
   private messagesContainer = viewChild<ElementRef>('messagesContainer');
   private shouldScroll = false;
@@ -43,11 +48,17 @@ export class ChatDetailComponent {
 
     // Obtener el ID del usuario logueado
     const userId = this.userAPI.getUserId();
-    if (!userId) {
-      console.error('❌ No hay usuario logueado. Redirigiendo a login...');
-      this.router.navigate(['/login']);
-      return;
-    }
+      if (!userId) {
+          this.router.navigate(['/login']);
+          return;
+      }
+    this.userAPI.getUserProfilePicture(this.otherUserId).subscribe({next: user => {
+        if (user.profile_picture != null) {
+            let userProfile = development ? `http://localhost:8000/${user.profile_picture}` : `${window.location.origin}/${user.profile_picture}`;
+            this.userAvatar.set(userProfile!)
+        }
+    }})
+
     this.currentUserId = userId;
     console.log('✅ Usuario actual ID:', this.currentUserId);
 
@@ -146,6 +157,63 @@ export class ChatDetailComponent {
 
   goToProfile(): void {
     this.router.navigate(['/profile', this.otherUserId]);
+  }
+
+  toggleMenu(): void {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  blockUser(): void {
+    const baseUrl = development ? 'http://localhost:8000' : window.location.origin;
+    this.http.post(`${baseUrl}/api/users/block/`, {
+      id_logged_user: this.currentUserId,
+      id_blocked_user: this.otherUserId,
+      reason: 'Bloqueado desde el chat'
+    }, {
+      headers: { Authorization: 'Bearer ' + this.userAPI.getToken() }
+    }).subscribe({
+      next: () => {
+        this.menuOpen = false;
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        console.error('Error al bloquear:', err);
+      }
+    });
+  }
+
+  openReportModal(): void {
+    this.menuOpen = false;
+    this.showReportModal = true;
+  }
+
+  closeReportModal(): void {
+    this.showReportModal = false;
+    this.reportReason = '';
+  }
+
+  reportUser(): void {
+    if (!this.reportReason.trim()) return;
+    const baseUrl = development ? 'http://localhost:8000' : window.location.origin;
+    this.reportSending.set(true);
+    this.http.post(`${baseUrl}/api/users/reportUser/`, {
+      id_reporter: this.currentUserId,
+      id_reported: this.otherUserId,
+      reason: this.reportReason
+    }, {
+      headers: { Authorization: 'Bearer ' + this.userAPI.getToken() }
+    }).subscribe({
+      next: () => {
+        this.reportSending.set(false);
+        this.showReportModal = false;
+        this.reportReason = '';
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        console.error('Error al reportar:', err);
+        this.reportSending.set(false);
+      }
+    });
   }
 
   private scrollToBottom(): void {

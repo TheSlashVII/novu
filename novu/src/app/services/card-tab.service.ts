@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
 import {baseServerURL} from '../baseURLconfig';
@@ -21,7 +21,14 @@ export class CardTabService {
     // baseServerURL: string = `http://localhost:${this.PORT}/api/users`;
     baseServerURL: string = baseServerURL;
     constructor(private http: HttpClient) {}
-
+    private authHeaders(): { headers: HttpHeaders } {
+        return {
+            headers: new HttpHeaders({ "Authorization": "Bearer " + this.getToken() })
+        };
+    }
+    getToken(): string | null {
+        return localStorage.getItem('access_token');
+    }
     //GET /api/users/tabs/?user_id=1
     getTabsByUser(userId: number): Observable<CardTab[]> {
         return this.http.get<CardTab[]>(`${this.baseServerURL}/tabs/`, {
@@ -34,7 +41,7 @@ export class CardTabService {
         return this.http.post<CardTab>(`${this.baseServerURL}/tabs/create/`, {
             user_id: userId,
             ...tab,
-        });
+        }, this.authHeaders());
     }
 
     //GET /api/users/tabs/retrieve/<id>/
@@ -62,10 +69,7 @@ export class CardTabService {
         idSection: number,
         tab:any
     ): Observable<CardTab> {
-        return this.http.patch<CardTab>(
-            `${this.baseServerURL}/tabs/patch/${userId}/${idSection}/`,
-            tab
-        );
+        return this.http.patch<CardTab>(`${this.baseServerURL}/tabs/patch/${userId}/${idSection}/`,tab, this.authHeaders());
     }
 
     //DELETE /api/users/tabs/delete/<id>/

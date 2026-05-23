@@ -1,4 +1,4 @@
-import { afterNextRender, Component, inject } from '@angular/core';
+import { afterNextRender, Component, inject, signal } from '@angular/core';
 import {Router} from '@angular/router';
 import {HttpClient} from '@angular/common/http';
 import {UserAPIService} from '../../services/user-api.service';
@@ -21,25 +21,23 @@ interface Study {
 }
 
 export interface UserProfile {
-  id: number;
-  name: string;
-  surnames: string;
-  gender: string;
-  height:number
-  age: number;
-  date_of_birth: string;
-  amount_tabs: number;
-  is_new: boolean;
-  tabs: CardTab[];
-  interests: Interest[];
-  studies: Study[];
-  school_name:string;
-  profile_pic:string | null;
+    id: number;
+    name: string;
+    surnames: string;
+    gender: string;
+    height:number
+    age: number;
+    date_of_birth: string;
+    amount_tabs:number;
+    is_new: boolean;
+    tabs:CardTab[];
+    interests: Interest[];
+    school_name:string;
+    profile_pic:string | null;
+    studies:Study[];
 }
 
-
-
-interface Interest {
+interface Interest{
   name: string;
 }
 
@@ -58,14 +56,33 @@ export class HomeComponent {
   allUserProfiles: UserProfile[] = [];
   profiles: Profile[] = [];
   currentIndex: number = 0;
+    currentTabIndex = signal<Record<number, number>>({});
   loading: boolean = true;
   error: string = '';
-  studies: Study[] = [];
-    hasWentBack:boolean = false;
+    // hasWentBack:boolean = false;
+    studies: Study[] = [];
+    hasSeenAll:boolean = false;
   isDragging: boolean = false;
   dragX: number = 0;
   dragStartX: number = 0;
   isLoggedIn: boolean;
+  loggedUser= signal<UserProfile>({
+      age: 0,
+      amount_tabs: 0,
+      date_of_birth: "",
+      gender: "",
+      height: 0,
+      id: 0,
+      interests: [],
+      is_new: false,
+      name: "YO",
+      profile_pic: "assets/Images/userIcon.svg",
+      school_name: "",
+      surnames: "",
+      tabs: [],
+      studies:[]
+
+  });
   private likeAnimation: boolean = false;
   private dislikeAnimation: boolean = false;
 
@@ -77,18 +94,18 @@ export class HomeComponent {
       }
       return newArray;
   }
-  constructor(private userAPIService: UserAPIService, private router: Router, public filterPanel: PanelServiceService) {
-    this.isLoggedIn = this.userAPIService.isLoggedIn();
-    this.filterPanel.onApply = () => this.applyFilters();
-    if (this.userAPIService.getToken() == null) {
-      this.router.navigateByUrl('');
-    }
-    const isTokenExpired = this.userAPIService.isTokenExpired(this.userAPIService.getToken()!) != null ? this.userAPIService.isTokenExpired(this.userAPIService.getToken()!) : true;
-    if (!this.isLoggedIn || isTokenExpired) {
-      if (localStorage.getItem('token') != null) {
-        localStorage.removeItem('access_token');
-      }
-      this.router.navigateByUrl('');
+  constructor(private userAPIService: UserAPIService, private router:Router, public filterPanel:PanelServiceService) {
+      this.isLoggedIn = this.userAPIService.isLoggedIn();
+      this.filterPanel.onApply = () => this.applyFilters();
+        if(this.userAPIService.getToken() == null){
+            this.router.navigateByUrl('');
+        }
+      const isTokenExpired = this.userAPIService.isTokenExpired(this.userAPIService.getToken()!) != null ? this.userAPIService.isTokenExpired(this.userAPIService.getToken()!) : true;
+      if (!this.isLoggedIn || isTokenExpired){
+          if (localStorage.getItem('token') != null) {
+              localStorage.removeItem('access_token');
+          }
+          this.router.navigateByUrl('');
 
 
     }
@@ -110,6 +127,13 @@ export class HomeComponent {
                 this.loading = false;
             }
         })
+        this.userAPIService.getUserProfile(Number(userID)).subscribe({
+            next: (data) => {
+                this.loggedUser.set(data)
+            }, error: (error) => {
+                console.log(error)
+            }
+        })
         /*
       this.http.get<Profile[]>('http://localhost:8000/api/users/list/').subscribe({
         next: (data) => {
@@ -125,13 +149,15 @@ export class HomeComponent {
          */
     });
   }
-
+    getProfilePicture(){
+      return development ? `http://localhost:8000/${this.loggedUser().profile_pic}` : `${window.location.origin}/${this.loggedUser().profile_pic}`;
+    }
     // for you page algorithm
     retrieveUsers(){
       const token = this.userAPIService.decodeToken()
       const userID = Number(token.user_id);
       const userMatches:{id:number, active:boolean, user1_id:number, user2_id:number}[] = []
-    this.userAPIService.checkMatch(Number(userID)).subscribe(res => {
+      this.userAPIService.checkMatch(Number(userID)).subscribe(res => {
         // adds user ids that are not from the logged user
         res.forEach(match => {
             if (!userMatches.some(existingMatch => existingMatch.id === match.id )){
@@ -168,6 +194,46 @@ export class HomeComponent {
 
         })
 
+    }
+
+    // card tab functionality
+    /**
+     * Used to get the current tab for the current user card
+     * @param profileId
+     */
+    getCurrentTabIndex(profileId: number): number {
+        return this.currentTabIndex()[profileId] ?? 0;
+    }
+
+    /**
+     * Used to go to the next card tab
+     * @param profileId
+     * @param totalTabs
+     * @param event
+     */
+    nextTab(profileId: number, totalTabs: number, event: Event): void {
+        event.stopPropagation(); // prevent triggering drag
+        this.currentTabIndex.update(map => ({
+            ...map,
+            [profileId]: ((map[profileId] ?? 0) + 1) % totalTabs
+        }));
+    }
+
+    /**
+     * Used to get the current card tab
+     */
+    getCurrentTab() {
+        const profile = this.getCurrentProfile();
+        if (!profile) return null;
+        const idx = this.getCurrentTabIndex(profile.id);
+        return profile.tabs[idx] ?? profile.tabs[0];
+    }
+    prevTab(profileId: number, totalTabs: number, event: Event): void {
+        event.stopPropagation();
+        this.currentTabIndex.update(map => ({
+            ...map,
+            [profileId]: Math.max((map[profileId] ?? 0) - 1, 0)
+        }));
     }
 
 
@@ -208,13 +274,23 @@ export class HomeComponent {
     return this.userProfiles[this.currentIndex] ?? null;
   }
 
-  getCurrentBackgroundPicture(tab:number = 0){
+  getCurrentBackgroundPicture(){
+        /*
       let user = this.getCurrentProfile();
       let bg:string | File = user?.tabs[tab].background_photo!;
       if(bg != null){
-          return development ? `http://localhost:8000${user?.tabs[tab].background_photo!} ` : `${window.location.origin}/${user?.tabs[tab].background_photo!}`
+          return development ? `http://localhost:8000/${user?.tabs[tab].background_photo!} ` : `${window.location.origin}/${user?.tabs[tab].background_photo!}`
       }
       return "assets/Images/backgroundless_cardtab.svg";
+
+         */
+      const profile = this.getCurrentProfile();
+      if (!profile) return 'assets/Images/backgroundless_cardtab.svg';
+      const tab = this.getCurrentTab();
+      if (development){
+          return tab?.background_photo != null ? `http://localhost:8000/${tab?.background_photo}` : 'assets/Images/backgroundless_cardtab.svg';
+      }
+      return `${window.location.origin}/${tab?.background_photo}` || 'assets/Images/backgroundless_cardtab.svg';
   }
 
 
@@ -287,6 +363,12 @@ export class HomeComponent {
       },
       error: () => this.resetAndNext()
     })
+      // wherever you advance to the next profile:
+      this.currentTabIndex.update(map => {
+          const next = { ...map };
+          delete next[profile.id];
+          return next;
+      });
   }
 
   dislike(): void {
@@ -303,18 +385,27 @@ export class HomeComponent {
       next: () => this.resetAndNext(),
       error: () => this.resetAndNext()
     });
+      // wherever you advance to the next profile:
+      this.currentTabIndex.update(map => {
+          const next = { ...map };
+          delete next[profile.id];
+          return next;
+      });
   }
 
   //Metodo para resetear y pasar al siguiente perfil
   private resetAndNext(): void {
     this.dragX = 0;
     if (this.currentIndex < this.userProfiles.length - 1) this.currentIndex++;
-    else console.log('No hay más perfiles para mostrar');
+    else {
+        this.hasSeenAll = true;
+        console.log('No hay más perfiles para mostrar')
+    }
   }
 
   //Metodo para pasar al siguiente perfil
   nextProfile(): void {
-    if(this.currentIndex < this.userProfiles.length - 1){
+    if (this.currentIndex < this.profiles.length - 1) {
       this.currentIndex++;
     } else {
       //No hay mas perfiles
@@ -322,16 +413,10 @@ export class HomeComponent {
     }
   }
   preivousProfile(){
-      if(this.hasWentBack){
-          this.hasWentBack = false;
-          return
-      }
       if (this.currentIndex <= 0 ){
-          this.hasWentBack = true;
           this.currentIndex = 0;
           return;
       }
-      this.hasWentBack = true;
       this.currentIndex--;
   }
 
@@ -360,9 +445,12 @@ export class HomeComponent {
 
   goToChat(): void { this.router.navigate(['/chats']); }
   goToProfile(): void { this.router.navigateByUrl('/settings'); }
-  goToDiscover(): void { this.router.navigate(['/discover']); }
+
+    goToWelcome(): void { this.router.navigate(['']); }
   toggleFilters() {
     this.filterPanel.isOpen = !this.filterPanel.isOpen
   }
 
+    protected readonly development = development;
+    protected readonly window = window;
 }

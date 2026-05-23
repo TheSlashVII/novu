@@ -1,13 +1,27 @@
 from django.http import JsonResponse
 from django.db.models import Q, Max
-from userAPI.models import Message, User, Match
+from userAPI.models import Message, User, Match, Block
 import pytz
 
 def get_conversations(request, user_id):
     print(f"🔍 Buscando conversaciones para usuario: {user_id}")
+    
+    #--- Calculate blocked IDs ---
+    blocked_rows = Block.objects.filter(
+        Q(id_logged_user=user_id) | Q(id_blocked_user=user_id)
+    ).values_list("id_logged_user", "id_blocked_user")
+
+    blocked_ids = set()
+    for a, b in blocked_rows:
+        blocked_ids.add(a)
+        blocked_ids.add(b)
+    blocked_ids.discard(int(user_id))
+
 
     messages = Message.objects.filter(
         Q(sender_id=user_id) | Q(recipient_id=user_id)
+    ).exclude(
+        Q(sender_id__in=blocked_ids) | Q(recipient_id__in=blocked_ids)
     ).order_by('-sent_at')
 
     print(f"🔍 Mensajes encontrados: {messages.count()}")
@@ -37,7 +51,10 @@ def get_conversations(request, user_id):
     matches = Match.objects.filter(
         Q(user1_id_id=user_id) | Q(user2_id_id=user_id),
         active=True
+    ).exclude(
+        Q(user1_id__in=blocked_ids) | Q(user2_id__in=blocked_ids)
     )
+    
     for match in matches:
         other_id = match.user2_id_id if match.user1_id_id == int(user_id) else match.user1_id_id
         if other_id not in seen:

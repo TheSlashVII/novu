@@ -33,6 +33,10 @@ export class UserAPIService {
         const ROUTE:string = `${this.baseServerURL}/profile/${id}/`;
         return this.http.get<UserProfile>(ROUTE, this.authHeaders())
     }
+    getUserProfilePicture(id:number){
+        const ROUTE:string = `${this.baseServerURL}/get_profile_picture/${id}/`;
+        return this.http.get<{profile_picture:string}>(ROUTE, this.authHeaders())
+    }
     // register request functions
 
     /**
@@ -51,7 +55,12 @@ export class UserAPIService {
      */
     acceptRegisterRequest(id: number): Observable<any> {
         const ROUTE = `${this.baseServerURL}/accept/request/${id}/`;
-        return this.http.post(ROUTE, {}, this.authHeaders());
+        return this.http.post(ROUTE, {
+            headers: this.authHeaders().headers,
+            body: {
+                user_id: this.getUserId()!
+            }
+        });
     }
 
     /**
@@ -60,7 +69,10 @@ export class UserAPIService {
      */
     deleteRegisterRequest(id:number){
         const ROUTE:string = `${this.baseServerURL}/delete/request/${id}/`;
-        return this.http.delete(ROUTE,this.authHeaders())
+        return this.http.delete(ROUTE,{
+            headers: this.authHeaders().headers,
+            body: {user_id: this.getUserId()!}
+        })
     }
 
     /**
@@ -84,20 +96,13 @@ export class UserAPIService {
         const ROUTE:string = `${this.baseServerURL}/detail/request/${id}`;
         return this.http.get(ROUTE, this.authHeaders())
     }
+    updateUserProfile(data:any){
+        const ROUTE:string = `${this.baseServerURL}/profile/update/`;
+        return this.http.put(ROUTE, data, this.authHeaders())
+    }
+
     // user management functions
 
-    /**
-     * Function to create users
-     * @param name user's name
-     * @param surnames user's surname
-     * @param email user's email
-     * @param password user's password
-     * @param date_of_birth user's date of birth
-     */
-    createUser(name:string, surnames:string, email:string, password:string, date_of_birth:string){
-        const ROUTE:string = `${this.baseServerURL}/create/`;
-        return this.http.post(ROUTE, {name:name, surnames:surnames, email:email, password:password, date_of_birth:date_of_birth})
-    }
 
     /**
      * Admin user creation
@@ -105,11 +110,19 @@ export class UserAPIService {
      */
     adminCreateUser(data:any){
         const ROUTE:string = `${this.baseServerURL}/admin/create/`;
-        return this.http.post(ROUTE, data)
+        return this.http.post(ROUTE, data, this.authHeaders())
+        // return this.http.post(ROUTE, data)
     }
     adminDeleteUser(id:number){
         const ROUTE:string = `${this.baseServerURL}/admin/delete/${id}`;
-        return this.http.delete(ROUTE, this.authHeaders())
+        return this.http.delete(ROUTE, {
+            headers: this.authHeaders().headers,
+            body: {
+                user_id: this.getUserId()!
+            }
+
+        })
+        //return this.http.delete(ROUTE, this.authHeaders())
     }
 
     /**
@@ -118,7 +131,8 @@ export class UserAPIService {
      */
     adminModifyRestrictedStatus(data:any){
         const ROUTE:string = `${this.baseServerURL}/admin/user/modify/access/`;
-        return this.http.put(ROUTE, data, this.authHeaders())
+        return this.http.put(ROUTE,data, this.authHeaders())
+        // return this.http.put(ROUTE, data, this.authHeaders())
     }
 
     /**
@@ -168,9 +182,18 @@ export class UserAPIService {
         const ROUTE:string = `${this.baseServerURL}/status/admin/`;
         return this.http.post<{is_admin:boolean}>(ROUTE, {"user_id": Number(this.decodeToken().user_id)},this.authHeaders())
     }
+
+    /**
+     * Function used to signalise that the user is not new no more
+     * @param id
+     */
     updateIsUserNewStatus(id:number){
         const ROUTE:string = `${this.baseServerURL}/update/status/${id}`;
         return this.http.put(ROUTE,{is_new:0} ,this.authHeaders())
+    }
+    adminGetRestrictedUserCount():Observable<{count:number}> {
+        const ROUTE:string = `${this.baseServerURL}/get_restricted_users_count/`;
+        return this.http.get<{count:number}>(ROUTE, this.authHeaders())
     }
 
 
@@ -180,7 +203,7 @@ export class UserAPIService {
      * @param age users updated age value
      */
     updateUserAge(id:number, age:number){
-        const ROUTE:string = `${this.baseServerURL}/age/update/${id}`;
+        const ROUTE:string = `${this.baseServerURL}/age/update/${id}/`;
         return this.http.patch(ROUTE,{age:age} ,this.authHeaders())
     }
 
@@ -199,10 +222,11 @@ export class UserAPIService {
         // return this.http.get(ROUTE, this.authHeaders())
         return this.http.get<UserProfile[]>(ROUTE)
     }
+
     uploadPhoto(id:number, data:any){
         const ROUTE:string = `${this.baseServerURL}/photos/upload/${id}`;
     //        return this.http.post(ROUTE, this.authHeaders())
-        return this.http.post(ROUTE, data)
+        return this.http.post<{message:string, photo:{id_photo:number, url:string, visible:boolean, user_id:number}}>(ROUTE, data)
     }
     // JWT
     saveToken(token: string) {
@@ -290,4 +314,33 @@ export class UserAPIService {
         const ROUTE = `${this.baseServerURL}/matches/user/${userId}`;
         return this.http.get<{id:number, active:boolean, user1_id:number, user2_id:number}[]>(ROUTE, this.authHeaders());
     }
+
+   /**
+   * Solicita el envío del email de recuperación de contraseña.
+   * @param email Email del usuario
+   */
+   requestPasswordReset(email: string): Observable<any> {
+     const ROUTE = `${this.baseServerURL}/password-reset/request/`;
+     return this.http.post(ROUTE, {email})
+   }
+
+   /**
+   * Valida si un token de reset sigue siendo válido (no expirado, no usado).
+    * @param uid 
+   * @param token Token UUID que llegó por email
+   */
+   validateResetToken(uid: string,token: string): Observable<any> {
+    const ROUTE = `${this.baseServerURL}/password-reset/validate/`;
+    return this.http.post(ROUTE, {uid,token})
+   }
+
+   /**
+   * Confirma el reset de contraseña con el token y la nueva contraseña.
+   * @param token Token UUID que llegó por email
+   * @param newPassword Nueva contraseña elegida por el usuario
+   */
+   confirmPasswordReset(uid:string, token: string, newPassword: string): Observable<any> {
+    const ROUTE = `${this.baseServerURL}/password-reset/confirm/`;
+    return this.http.post(ROUTE, {uid,token, new_password: newPassword})
+   }
 }

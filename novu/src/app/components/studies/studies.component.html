@@ -44,7 +44,10 @@
       </div>
     </div>
 
-    <div class="flex justify-end">
+    <div class="flex justify-end gap-2 items-center">
+        @if (this.isErrorMessageDisplaying) {
+            <span class="text-xs">{{errorMessage}}</span>
+        }
   <button
     (click)="goNext()"
     [disabled]="!studiesName.trim()"
