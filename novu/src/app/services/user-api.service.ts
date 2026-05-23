@@ -182,9 +182,18 @@ export class UserAPIService {
         const ROUTE:string = `${this.baseServerURL}/status/admin/`;
         return this.http.post<{is_admin:boolean}>(ROUTE, {"user_id": Number(this.decodeToken().user_id)},this.authHeaders())
     }
+
+    /**
+     * Function used to signalise that the user is not new no more
+     * @param id
+     */
     updateIsUserNewStatus(id:number){
         const ROUTE:string = `${this.baseServerURL}/update/status/${id}`;
         return this.http.put(ROUTE,{is_new:0} ,this.authHeaders())
+    }
+    adminGetRestrictedUserCount():Observable<{count:number}> {
+        const ROUTE:string = `${this.baseServerURL}/get_restricted_users_count/`;
+        return this.http.get<{count:number}>(ROUTE, this.authHeaders())
     }
 
 
@@ -317,6 +326,7 @@ export class UserAPIService {
 
    /**
    * Valida si un token de reset sigue siendo válido (no expirado, no usado).
+    * @param uid 
    * @param token Token UUID que llegó por email
    */
    validateResetToken(uid: string,token: string): Observable<any> {

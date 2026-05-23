@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { InterestApiService } from '../../services/interest-api.service';
 import {UserAPIService} from '../../services/user-api.service';
-
+import {UserProfile} from '../home/home.component';
 @Component({
   selector: 'app-interests',
   standalone: true,
@@ -11,8 +11,18 @@ import {UserAPIService} from '../../services/user-api.service';
   styleUrl: './interests.component.css'
 })
 export class InterestsComponent {
-
+    errorMessage:string = ''
+    isErrorMessageDisplaying:boolean = false;
   constructor(private userAPI:UserAPIService,private interestApi:InterestApiService, private router:Router) {
+      this.userAPI.getUserById(this.userAPI.getUserId()!).subscribe({
+          next: value =>{
+              let user:UserProfile = (value as UserProfile); // cast the type into UserProfile
+              if (!user.is_new){
+                  this.router.navigate(["/home"])
+              }
+          },
+
+      })
   }
   interests: { id: number; label: string; selected: boolean }[] = [
     { id: 1, label: 'Ingenieria', selected: false },
@@ -49,7 +59,12 @@ export class InterestsComponent {
         this.router.navigate(['/gender']);
       },
       error: (err) => {
-        console.error('Error guardando intereses:', err);
+          this.errorMessage = "Error guardando tus intereses"
+          this.isErrorMessageDisplaying = true;
+          setTimeout(() => {
+              this.isErrorMessageDisplaying = false;
+          }, 2000)
+
       }
     });
   }

@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import {UserAPIService} from '../../services/user-api.service';
+import {UserProfile} from '../home/home.component';
 
 @Component({
   selector: 'app-interests',
@@ -10,8 +11,18 @@ import {UserAPIService} from '../../services/user-api.service';
   styleUrl: './gender.component.css'
 })
 export class GenderComponent {
-
+    errorMessage:string = ''
+    isErrorMessageDisplaying:boolean = false;
   constructor(private userAPI:UserAPIService, private router:Router) {
+      this.userAPI.getUserById(this.userAPI.getUserId()!).subscribe({
+          next: value =>{
+              let user:UserProfile = (value as UserProfile); // cast the type into UserProfile
+              if (!user.is_new){
+                  this.router.navigate(["/home"])
+              }
+          },
+
+      })
   }
   genders: { id: number; label: string; selected: boolean }[] = [
     { id: 1, label: 'Hombre', selected: false },
@@ -51,6 +62,11 @@ export class GenderComponent {
               this.router.navigateByUrl("/card_creation")
           }, error: (error) => {
               console.log(error);
+              this.errorMessage = "Error guardando tu genero"
+              this.isErrorMessageDisplaying = true;
+              setTimeout(() => {
+                  this.isErrorMessageDisplaying = false;
+              }, 2000)
           }
       })
 

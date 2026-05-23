@@ -190,7 +190,10 @@
                 </div>
 
                 <!-- Submit -->
-                <div class="flex w-full justify-end pt-4 lg:pt-0 lg:mt-10">
+                <div class="flex w-full justify-end pt-4 lg:pt-0 lg:mt-10 items-center">
+                    @if (this.isErrorMessageDisplaying) {
+                        <span class="text-xs">{{errorMessage}}</span>
+                    }
                     <button
                         type="submit"
                         [disabled]="form.invalid"

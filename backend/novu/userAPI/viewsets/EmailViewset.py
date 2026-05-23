@@ -6,13 +6,11 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.auth.hashers import make_password
 from django.conf import settings
 from ..models import User
-from ..serializers import UserCardSerializer, PhotoSerializer
 from rest_framework import viewsets, status, permissions
-from rest_framework.response import Response
 from django.http import JsonResponse
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.decorators import action
-from ..emailTemplates.emailUtilities import sendPasswordResetEmail
+from ..emailTemplates.emailUtilities import *
 
 class EmailViewset(viewsets.ViewSet):
     
@@ -35,7 +33,7 @@ class EmailViewset(viewsets.ViewSet):
         name = data.get("name") 
         
         try:
-            emailUtilities.sendAcceptedEmail(email=email, name=name)
+            sendAcceptedEmail(email=email, name=name)
         except Exception as e:
             return JsonResponse({"Error": "Something went wrong"}, status = status.HTTP_500_INTERNAL_SERVER_ERROR)
         
@@ -48,7 +46,7 @@ class EmailViewset(viewsets.ViewSet):
         name = data.get("name") 
         
         try:
-            emailUtilities.sendDeniedEmail(email=email, name=name)
+            sendDeniedEmail(email=email, name=name)
         except Exception as e:
             return JsonResponse({"Error": "Something went wrong"}, status = status.HTTP_500_INTERNAL_SERVER_ERROR)
         
@@ -81,7 +79,11 @@ class EmailViewset(viewsets.ViewSet):
         # El uid es el pk del usuario codificado en base64 (igual que hace Django internamente)
         uid = base64.urlsafe_b64encode(str(user.pk).encode()).decode()
 
-        frontend_url = getattr(settings, "FRONTEND_URL", "http://localhost:4200")
+        debug = getattr(settings, "DEBUG")
+        if debug:
+            frontend_url = getattr(settings, "FRONTEND_URL", "http://localhost:4200")
+        else:
+            frontend_url = getattr(settings, "FRONTEND_URL", "https://novu.cat")
         reset_link = f"{frontend_url}/reset-password?uid={uid}&token={token}"
 
         try:

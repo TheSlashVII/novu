@@ -131,42 +131,26 @@ export class SettingsComponent {
         { id_card: this.userID ,id_section: 1, header: '', sub_header: '', tab_biography: '', background_photo: "" },
     ]);
 
-    photoSlots = signal<(string | null)[]>(Array(6).fill(null));
-
-    preferences = signal<UserPreferences>({
-        maxDistanceKm: 50,
-        minAge: 18,
-        maxAge: 35,
-        goals: [],
-        showProfile: true,
-        showDistance: true,
-        showAge: false,
-    });
 
     newPassword = '';
     confirmPassword = '';
+    // informative messages
     toastMessage = '';
     toastVisible = false;
 
-    availableGoals = ['Friendship', 'Casual dating', 'Serious relationship', 'Study partner'];
+
 
     navItems: { id: SettingsSection; label: string; icon: string }[] = [
         {
             id: 'profile',
-            label: 'Profile',
+            label: 'Perfil',
             icon: `<svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>`,
         },
         {
             id: 'card',
-            label: 'Card tabs',
+            label: 'Card Tabs',
             icon: `<svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18"/></svg>`,
-        },/*
-        {
-            id: 'photos',
-            label: 'Photos',
-            icon: `<svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>`,
-        },
-        */
+        }
     ];
     logout(){
         this.userAPI.logoutJWT();
@@ -198,7 +182,7 @@ export class SettingsComponent {
         if (this.tabs().length >= 5) return;
         this.tabs.update((tabs) => [
             ...tabs,
-            {id_card: this.userID, id_section: ++this.cardTabSectionTracker,header: 'Default header', sub_header: 'Default subheader', tab_biography: 'your tab biography goes here', background_photo: "" },
+            {id_card: this.userID, id_section: ++this.cardTabSectionTracker,header: 'Dí una curiosidad', sub_header: 'Añade un dato curioso', tab_biography: 'Describe algo interesante', background_photo: "" },
         ]);
     }
 
@@ -218,34 +202,6 @@ export class SettingsComponent {
             tabs.map((t) => (t.id_section === id ? { ...t, [field]: value } : t))
         );
     }
-/*
-    onTabBgChange(event: Event, id: number): void {
-        const input = event.target as HTMLInputElement;
-        const file = input.files?.[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            this.tabs.update((tabs) =>
-                tabs.map((t) =>
-                    t.id_section === id ? { ...t, background_photo: e.target?.result as string } : t
-                )
-            );
-        };
-        reader.readAsDataURL(file);
-    }
-
- */
-    /*
-    onTabBgChange(event: Event, id: number): void {
-        const input = event.target as HTMLInputElement;
-        const file = input.files?.[0];
-        if (!file) return;
-        this.tabs.update(tabs =>
-            tabs.map(t => t.id_section === id ? { ...t, background_photo: file } : t)
-        );
-    }
-
-     */
 
     onTabBgChange(event: Event, id: number): void {
         const input = event.target as HTMLInputElement;
@@ -264,26 +220,12 @@ export class SettingsComponent {
     }
     getTabBgPreview(photo: string | File): string {
         if (photo instanceof File) return URL.createObjectURL(photo);
-        // development ? `http://localhost:8000/${tab.background_photo}` : `${window.location.origin}${c.background_photo}
+
         return photo;
 
         // return development ? `http://localhost:8000/${photo}` : photo;
     }
 
-    onPhotoChange(event: Event, index: number): void {
-        const input = event.target as HTMLInputElement;
-        const file = input.files?.[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            this.photoSlots.update((slots) => {
-                const updated = [...slots];
-                updated[index] = e.target?.result as string;
-                return updated;
-            });
-        };
-        reader.readAsDataURL(file);
-    }
 
 
 
@@ -294,6 +236,10 @@ export class SettingsComponent {
         const s = p.surnames?.charAt(0) ?? '';
         return (n + s).toUpperCase() || 'YO';
     }
+
+    /**
+     * To prepare the data that will be sent to the server
+     */
     preparePayload(): { profile: Partial<UserProfile>; tabs: CardTab[]; newPassword?: string } | null {
         const p = this.profile();
         const t = this.tabs();
@@ -301,13 +247,13 @@ export class SettingsComponent {
         // Validate password if filled in
         if (this.newPassword || this.confirmPassword) {
             if (this.newPassword !== this.confirmPassword) {
-                this.toastMessage = 'Passwords do not match';
+                this.toastMessage = 'Las contraseñas no coinciden';
                 this.toastVisible = true;
                 setTimeout(() => (this.toastVisible = false), 2500);
                 return null;
             }
             if (this.newPassword.length < 8) {
-                this.toastMessage = 'Password must be at least 8 characters';
+                this.toastMessage = 'La contraseña debe tener al menos 8 caracteres';
                 this.toastVisible = true;
                 setTimeout(() => (this.toastVisible = false), 2500);
                 return null;
@@ -331,14 +277,6 @@ export class SettingsComponent {
             let background_photo: string;
 
             if(typeof tab.background_photo === 'string' && tab.background_photo.startsWith('/')){
-                /*
-                do {
-                    background_photo = tab.background_photo.slice(1)
-                    console.log(background_photo)
-                }
-                while (typeof tab.background_photo === 'string' && tab.background_photo.startsWith('/'))
-
-                 */
                 background_photo = tab.background_photo.replace(/^\/+/, '');
             } else if (typeof tab.background_photo === 'string' && tab.background_photo.startsWith('data:')) {
                 // New base64 upload - send as-is
@@ -371,23 +309,6 @@ export class SettingsComponent {
                 background_photo
             };
         });
-        /*
-        const tabsPayload: CardTab[] = t.map(tab => ({
-            id_card: tab.id_card,
-            id_section: tab.id_section,
-            header: tab.header?.trim(),
-            sub_header: tab.sub_header?.trim(),
-            tab_biography: tab.tab_biography?.trim(),
-            // Only send background_photo if it's a new upload
-            background_photo: tab.background_photo instanceof File ||
-        (typeof tab.background_photo === 'string' && tab.background_photo.startsWith('data:'))
-            ? tab.background_photo
-            : (typeof tab.background_photo === 'string' && tab.background_photo.trim() !== '')
-                ? tab.background_photo  // existing server path, pass it through
-                : " "                   // genuinely empty
-        }));
-
-         */
 
         const payload: { profile: Partial<UserProfile>; tabs: CardTab[]; newPassword?: string } = {
             profile: profilePayload,
@@ -421,17 +342,5 @@ export class SettingsComponent {
              setTimeout(() => (this.toastVisible = false), 2500);
            }
         });
-
-
-        // Temporary until your endpoint is ready:
-        /*
-        console.log('Payload to send:', payload);
-        this.toastMessage = 'Changes saved';
-        this.toastVisible = true;
-        setTimeout(() => (this.toastVisible = false), 2500);
-        this.newPassword = '';
-        this.confirmPassword = '';
-
-         */
     }
 }

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserAPIService } from '../../services/user-api.service';
 import { RelationShipPreferencesService } from '../../services/relation-ship-preferences.service';
+import {UserProfile} from '../home/home.component';
 
 @Component({
   selector: 'app-relation-preferences',
@@ -10,8 +11,19 @@ import { RelationShipPreferencesService } from '../../services/relation-ship-pre
   styleUrl: './relation-preferences.component.css'
 })
 export class RelationPreferencesComponent {
+  errorMessage:string = ''
+  isErrorMessageDisplaying:boolean = false;
+  constructor (private userApi:UserAPIService, private relationshipApi:RelationShipPreferencesService, private router:Router){
+      this.userApi.getUserById(this.userApi.getUserId()!).subscribe({
+          next: value =>{
+              let user:UserProfile = (value as UserProfile); // cast the type into UserProfile
+              if (!user.is_new){
+                  this.router.navigate(["/home"])
+              }
+          }
 
-  constructor (private userApi:UserAPIService, private relationshipApi:RelationShipPreferencesService, private router:Router){}
+      })
+  }
 
   preferences: {id:number; label:string; selected:boolean }[] = [
     {id: 1, label: 'Pareja a largo plazo', selected: false},
@@ -44,7 +56,11 @@ goNext(): void{
       this.router.navigate(['/interests']);
     },
     error: (err) => {
-      console.log('Error guardando preferencia de relación', err)
+        this.errorMessage = "Error guardando preferencia de relación"
+      this.isErrorMessageDisplaying = true;
+        setTimeout(() => {
+            this.isErrorMessageDisplaying = false;
+        }, 2000)
     }
   })
 }

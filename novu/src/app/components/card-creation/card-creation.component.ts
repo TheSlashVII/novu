@@ -28,12 +28,17 @@ export class CardCreationComponent implements OnDestroy {
         cardBiography: new FormControl('', [Validators.maxLength(100)]),
         photo:         new FormControl<File | null>(null),
     });
+    errorMessage:string = ''
+    isErrorMessageDisplaying:boolean = false;
 
     constructor(private userAPI:UserAPIService, private router: Router, private cardAPI:CardTabService) {
         const token = userAPI.decodeToken();
 
         this.userAPI.getUserById(token.user_id).subscribe({
             next: (res:any) => {
+                if (!res.is_new) {
+                    this.router.navigate(['/home']);
+                }
                 this.name = res.name;
             }
         })
@@ -115,7 +120,11 @@ export class CardCreationComponent implements OnDestroy {
                             this.router.navigateByUrl("/home")
                         },
                         error: err => {
-                            console.log(err);
+                            this.errorMessage = "Error guardando la carta de presentacion"
+                            this.isErrorMessageDisplaying = true;
+                            setTimeout(() => {
+                                this.isErrorMessageDisplaying = false;
+                            }, 2000)
                         }
 
                     })

@@ -110,11 +110,13 @@ export const routes: Routes = [
     },
     {
         path: 'forgot-password',
-        component: ForgotPasswordComponent
+        component: ForgotPasswordComponent,
+        title: "Novu - Forgot Password"
     },
     {
         path: 'reset-password',
-        component: ResetPasswordComponent
+        component: ResetPasswordComponent,
+        title: "Novu - Cambiar contraseña"
     },
 
     //Route admin
@@ -146,7 +148,8 @@ export const routes: Routes = [
             },
               {
                 path: 'reports',
-                component: AdminReportsComponent
+                component: AdminReportsComponent,
+                title: "Novu Admin - Reports"
             },
             {
                 path:'restrict_user/detail/:id',

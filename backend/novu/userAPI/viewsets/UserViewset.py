@@ -15,6 +15,7 @@ from django.core.files.base import ContentFile
 import uuid, base64
 from pathlib import Path
 import os
+from django.conf import settings
 # this is the equivalent to a controller
 """
 Documentation for viewsets: https://www.django-rest-framework.org/api-guide/viewsets/#example
@@ -88,7 +89,7 @@ class UserViewset(viewsets.ViewSet):
         try:
             user = get_object_or_404(User, pk=id)
         except Http404 :
-            return JsonResponse({"errorMessage": "No user was found"})
+            return JsonResponse({"error": "No user was found"})
         except:
             return JsonResponse({"error": "Something went wrong"})
         serializer = UserSerializer(user)
@@ -162,6 +163,14 @@ class UserViewset(viewsets.ViewSet):
             return JsonResponse({"message": "User was updated successfuly"})   # list function transforms data into a list. (Inserts the data inside an array)
         else:
             return JsonResponse({"error" : "Bad Request","message" : serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        
+    @action(detail=False, methods=["get"])
+    def getRestrictedUserCount(self, request):
+        user_requesting = get_object_or_404(User, email=request.user)
+        if not user_requesting.admin:
+            return JsonResponse({"error": "user not allowed to enter this endpoint"})
+        restrictedUsers = User.objects.filter(restricted=True).count()
+        return JsonResponse({"count": restrictedUsers})
             
     # to update a specific model 
     def update(self, request, pk=None):

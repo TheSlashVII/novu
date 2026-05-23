@@ -81,7 +81,7 @@ report_user = UserController.as_view({"post": "reportUser"})
 get_reports = UserController.as_view({"get": "getReports"})
 mark_report_reviewed = UserController.as_view({"patch": "markReportReviewed"})
 getBlockedIds = UserController.as_view({"get": "getBlockedIds"})
-
+get_restricted_user_count = UserController.as_view({"get" : "getRestrictedUserCount"})
 urlpatterns = [
     path('list/request/', list_register_requests), # list register requests
     path("create/", create_user), # creates a user 
@@ -145,4 +145,5 @@ urlpatterns = [
     path("reports/", get_reports),
     path("reports/reviewed/", mark_report_reviewed),
     path("getBlockedIds/", getBlockedIds),
+    path("get_restricted_users_count/", get_restricted_user_count),
 ]

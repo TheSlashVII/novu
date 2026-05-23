@@ -58,7 +58,8 @@ export class HomeComponent {
     currentTabIndex = signal<Record<number, number>>({});
   loading: boolean = true;
   error: string = '';
-    hasWentBack:boolean = false;  studies: Study[] = [];
+    // hasWentBack:boolean = false;
+    studies: Study[] = [];
     hasSeenAll:boolean = false;
   isDragging: boolean = false;
   dragX: number = 0;
@@ -411,16 +412,10 @@ export class HomeComponent {
     }
   }
   preivousProfile(){
-      if(this.hasWentBack){
-          this.hasWentBack = false;
-          return
-      }
       if (this.currentIndex <= 0 ){
-          this.hasWentBack = true;
           this.currentIndex = 0;
           return;
       }
-      this.hasWentBack = true;
       this.currentIndex--;
   }
 
