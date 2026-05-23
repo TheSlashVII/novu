@@ -2,7 +2,7 @@
   <!-- Header -->
   <div class="chat-header">
     <button class="back-btn" (click)="goBack()">←</button>
-    <div class="user-info" (click)="goToProfile()">
+    <div class="user-info">
       <img [src]="userAvatar()" class="avatar-small" [alt]="userName()">
       <div>
         <div class="user-name">{{ userName() }}</div>

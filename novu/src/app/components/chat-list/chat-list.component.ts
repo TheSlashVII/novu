@@ -5,7 +5,8 @@ import { HttpClient } from '@angular/common/http';
 import { UserAPIService } from '../../services/user-api.service';
 import { NotificationService } from '../../services/notification.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { baseChatURL, development } from '../../baseURLconfig';
+import { development } from '../../baseURLconfig';
+import {forkJoin} from 'rxjs';
 
 interface ChatPreview {
   id: number;
@@ -63,8 +64,31 @@ export class ChatListComponent {
               ...chat,
               unreadCount: this.notificationService.unreadCounts[chat.id] || 0
             }));
+              const profileRequests = chatsWithUnread.map(chat =>
+                  this.userAPI.getUserProfilePicture(chat.id)
+              );
             this.chats.set(chatsWithUnread);
             let updatedChats:ChatPreview[] = [];
+            // to get the profile pictures consistently
+              forkJoin(profileRequests).subscribe({
+                  next: (profiles) => {
+                      const updatedChats = chatsWithUnread.map((chat, i) => ({
+                          ...chat,
+                          avatar: development
+                              ? `http://localhost:8000/${profiles[i].profile_picture}`
+                              : `${window.location.origin}/${profiles[i].profile_picture}`
+                      }));
+                      this.chats.set(updatedChats);
+                  },
+                  error: () => {
+                      // Still show chats even if profile pictures fail
+                      this.chats.set(chatsWithUnread);
+                  },
+                  complete: () => {
+                      this.loading.set(false);
+                  }
+              });
+            /*
             this.chats().forEach((chat) => {
                 this.userAPI.getUserProfilePicture(chat.id).subscribe({
                     next: (res) => {
@@ -76,9 +100,10 @@ export class ChatListComponent {
                         this.chats.set(updatedChats);
                     }
                 })
-
-
             })
+             */
+
+
 
             console.log(updatedChats)
             this.loading.set(false);
