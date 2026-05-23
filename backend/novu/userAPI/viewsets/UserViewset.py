@@ -300,7 +300,7 @@ class UserViewset(viewsets.ViewSet):
                 ext      = header.split("/")[1].split(";")[0] # get file extension
                 filename = f"{uuid.uuid4()}.{ext}"
 
-                file_content = ContentFile(base64.b64decode(b64), name=filename)
+                file_content = ContentFile(base64.b64decode(b64), name=filename)  # transform the data into an actual file inside the backend
 
                 photo = Photo.objects.create(
                     user_id=user,
@@ -312,6 +312,8 @@ class UserViewset(viewsets.ViewSet):
                 if not ((user.profile_pic == '') or (user.profile_pic == None)):
                     os.remove(str(BASE_DIR / user.profile_pic)) 
                     Photo.objects.filter(url=user.profile_pic).delete()
+                user.profile_pic = str(photo.url)
+            except FileNotFoundError:
                 user.profile_pic = str(photo.url)
             except Exception:
                 return Response({"error": "Invalid profile picture"}, status=status.HTTP_400_BAD_REQUEST)
@@ -345,7 +347,16 @@ class UserViewset(viewsets.ViewSet):
                 raw=tab.get("background_photo", ""),
                 user=user  # pass the already-fetched object instead of user_id
             )
-
+            
+            old_current_card_tab = CardTab.objects.filter(id_card=user_card, id_section=id_section).first()
+            # print(f"old background photo for this tab{old_current_card_tab}")
+            try:
+                os.remove(str(BASE_DIR / old_current_card_tab.background_photo))
+                print(f"removed {old_current_card_tab.background_photo}")
+            except Exception as e:
+                print(f"file not found '{old_current_card_tab.background_photo}' ignoring...")
+                # print(f"something happened: {str(e)}")
+            
             CardTab.objects.update_or_create(
                 id_card=user_card,
                 id_section=id_section,
