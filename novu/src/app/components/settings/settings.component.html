@@ -14,10 +14,12 @@
             <h1 class="text-sm sm:text-base font-medium tracking-tight truncate">Ajustes</h1>
         </div>
         <div class="flex flex-row gap-2 sm:gap-3 shrink-0">
-            <button (click)="goToAdminPanel()" class="px-3 sm:px-7 py-2 sm:py-2.5 rounded-xl bg-[#FF6B6B] text-white text-xs sm:text-sm font-medium cursor-pointer transition-opacity duration-150 hover:opacity-85 active:scale-95 border-none whitespace-nowrap">
-                <span class="hidden sm:inline">Panel de administradores</span>
-                <span class="sm:hidden">Panel de admins</span>
-            </button>
+            @if (this.isAdmin) {
+                <button (click)="goToAdminPanel()" class="px-3 sm:px-7 py-2 sm:py-2.5 rounded-xl bg-[#FF6B6B] text-white text-xs sm:text-sm font-medium cursor-pointer transition-opacity duration-150 hover:opacity-85 active:scale-95 border-none whitespace-nowrap">
+                    <span class="hidden sm:inline">Panel de administradores</span>
+                    <span class="sm:hidden">Panel de admins</span>
+                </button>
+            }
             <button (click)="logout()" class="px-3 sm:px-7 py-2 sm:py-2.5 rounded-xl bg-[#FF6B6B] text-white text-xs sm:text-sm font-medium cursor-pointer transition-opacity duration-150 hover:opacity-85 active:scale-95 border-none whitespace-nowrap">
                 <span class="hidden sm:inline">Cerrar Sessión</span>
                 <span class="sm:hidden">Salir</span>

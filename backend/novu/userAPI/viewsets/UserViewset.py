@@ -390,14 +390,7 @@ class UserViewset(viewsets.ViewSet):
         # 7. Return refreshed profile 
         serializer = UserSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
 
-        
-    
-
-        
-        
-        
     @action(detail=False, methods=["get"])
     def activeUsersCount(self,request):
         userCount = User.objects.all().count() # returns the amount of users available at the database currently

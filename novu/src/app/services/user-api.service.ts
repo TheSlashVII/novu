@@ -64,10 +64,7 @@ export class UserAPIService {
      */
     deleteRegisterRequest(id:number){
         const ROUTE:string = `${this.baseServerURL}/delete/request/${id}/`;
-        return this.http.delete(ROUTE,{
-            headers: this.authHeaders().headers,
-            body: {user_id: this.getUserId()!}
-        })
+        return this.http.delete(ROUTE,this.authHeaders())
     }
 
     /**
