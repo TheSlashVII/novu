@@ -38,9 +38,21 @@ export class SettingsComponent {
     loggedUserProfile: UserProfile | null = null;
     userID:number = 0
     cardTabSectionTracker:number = 0;
+    isAdmin: boolean = false;
     constructor(private router:Router, private userAPI:UserAPIService) {
         const userID:number = Number(this.userAPI.decodeToken().user_id)
+        if (this.userAPI.isTokenExpired(this.userAPI.getToken()!)) {
+            this.userAPI.logoutJWT()
+            this.router.navigate(['']);
+        }
         this.userID = userID;
+        this.userAPI.isAdmin().subscribe({
+            next: res => {
+                this.isAdmin = res.is_admin
+            }, error: err => {
+                this.isAdmin = false;
+            }
+        })
         this.userAPI.getUserProfile(userID).subscribe({
             next: result => {
                 this.loggedUserProfile = result;
@@ -158,6 +170,9 @@ export class SettingsComponent {
     }
     goToHome(){
         this.router.navigateByUrl("/home");
+    }
+    goToAdminPanel(){
+        this.router.navigateByUrl("/admin");
     }
     setSection(section: SettingsSection): void {
         this.activeSection.set(section);

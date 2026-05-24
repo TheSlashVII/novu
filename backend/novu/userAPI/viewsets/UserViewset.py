@@ -356,6 +356,7 @@ class UserViewset(viewsets.ViewSet):
                 raw=tab.get("background_photo", ""),
                 user=user  # pass the already-fetched object instead of user_id
             )
+            # checks if it is needed to delete the old background image
             rawPic:str = tab.get("background_photo") 
             if isinstance(rawPic, str) and rawPic.startswith("data:"):
                 old_current_card_tab = CardTab.objects.filter(id_card=user_card, id_section=id_section).first()
@@ -405,11 +406,9 @@ class UserViewset(viewsets.ViewSet):
     #function to get the most liked profiles
     @action(detail=False, methods=["get"])
     def getMostLikedProfiles(self, request):
-        #userList = User.objects.all().order_by(F("likes").desc()) # F allows us to select specific columns and run special functions on them like using desc to return the objects in descending order
-        # serializer = UserSerializer(userList, many=True)
         users = User.objects.select_related('usercard').prefetch_related(
-        'usercard__cardtab_set').order_by(F('likes').desc())[:2]
-        return JsonResponse({"join_test" : list(UserProfileSerializer(users, many=True).data)}, safe=False)
+        'usercard__cardtab_set').order_by(F('likes').desc())[:5]
+        return JsonResponse(list(UserProfileSerializer(users, many=True).data), safe=False)
     
     #function to block users
     @action(detail=False, methods=["post"])
@@ -603,13 +602,11 @@ class UserViewset(viewsets.ViewSet):
     def destroy(self, request, id=None):
         user_requesting_deletion = get_object_or_404(User, email=request.user)
         if not user_requesting_deletion.admin:
-            return JsonResponse({"error": "user not allowed to enter this endpoint"})
+            return JsonResponse({"error": "user not allowed to enter this endpoint"},status=status.HTTP_401_UNAUTHORIZED)
         try:
             user = get_object_or_404(User, pk=id) # user to be deleted
         except Http404:
             return JsonResponse({"error": "User Not found"}, status=status.HTTP_400_BAD_REQUEST)
-        if not user_requesting_deletion.admin:
-            return JsonResponse({"error": "Unauthorized action"}, status=status.HTTP_401_UNAUTHORIZED)
         user.delete()
         return Response({"message": "User deleted"}, status=status.HTTP_204_NO_CONTENT)
 

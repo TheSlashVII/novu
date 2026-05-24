@@ -109,6 +109,12 @@ export class HomeComponent {
 
 
     }
+      this.userAPIService.getUserById(this.userAPIService.getUserId()!).subscribe({
+          next: data => {
+              let user:any = data
+              if(user.is_new){this.router.navigateByUrl('/studies')}
+          }
+      })
     this.retrieveUsers()
 
 
@@ -131,7 +137,7 @@ export class HomeComponent {
             next: (data) => {
                 this.loggedUser.set(data)
             }, error: (error) => {
-                console.log(error)
+
             }
         })
         /*
@@ -180,7 +186,6 @@ export class HomeComponent {
 
 
                     this.allUserProfiles = this.randomizeProfiles(filtered); // randomizes the users
-                    console.log(this.randomizeProfiles(filtered));
                     this.userProfiles = [...filtered];
                     this.loading = false;
                 },

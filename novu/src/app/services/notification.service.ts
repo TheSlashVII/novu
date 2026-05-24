@@ -32,7 +32,7 @@ export class NotificationService {
     connect(): void {
         console.log('connect() llamado, connected:', this.connected);
         if (this.connected) {
-            console.log('🔔 Ya conectado, saliendo');
+            console.log('Ya conectado, saliendo');
             return;
         }
         //If is connected, don't reconnect
@@ -53,13 +53,13 @@ export class NotificationService {
             url: wsUrl,
             openObserver: {
                 next: () => {
-                console.log('🔔 Notificaciones conectadas')
+                console.log('Notificaciones conectadas')
                 this.connected = true;
                 }
             },
             closeObserver: {
                 next: () => {
-                console.log('🔔 Notificaciones desconectadas')
+                console.log('Notificaciones desconectadas')
                 this.connected = false;
                 }
             }

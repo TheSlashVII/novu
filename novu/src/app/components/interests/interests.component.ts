@@ -55,7 +55,6 @@ export class InterestsComponent {
 
     this.interestApi.saveUserInterests(userId, selectedIds).subscribe({
       next: () => {
-        this.userAPI.updateIsUserNewStatus(userId).subscribe(res=>console.log(res))
         this.router.navigate(['/gender']);
       },
       error: (err) => {

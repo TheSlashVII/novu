@@ -14,6 +14,10 @@
             <h1 class="text-sm sm:text-base font-medium tracking-tight truncate">Ajustes</h1>
         </div>
         <div class="flex flex-row gap-2 sm:gap-3 shrink-0">
+            <button (click)="goToAdminPanel()" class="px-3 sm:px-7 py-2 sm:py-2.5 rounded-xl bg-[#FF6B6B] text-white text-xs sm:text-sm font-medium cursor-pointer transition-opacity duration-150 hover:opacity-85 active:scale-95 border-none whitespace-nowrap">
+                <span class="hidden sm:inline">Panel de administradores</span>
+                <span class="sm:hidden">Panel de admins</span>
+            </button>
             <button (click)="logout()" class="px-3 sm:px-7 py-2 sm:py-2.5 rounded-xl bg-[#FF6B6B] text-white text-xs sm:text-sm font-medium cursor-pointer transition-opacity duration-150 hover:opacity-85 active:scale-95 border-none whitespace-nowrap">
                 <span class="hidden sm:inline">Cerrar Sessión</span>
                 <span class="sm:hidden">Salir</span>
@@ -56,8 +60,8 @@
                     <!-- Avatar upload -->
                     <div class="flex items-center gap-4 sm:gap-5 mb-6 sm:mb-8">
                         <div class="w-14 h-14 sm:w-[72px] sm:h-[72px] rounded-full bg-gradient-to-br from-[#7c5cbf] to-[#2d1a5e] flex items-center justify-center shrink-0 overflow-hidden border-2 border-[#7c5cbf]/40">
-                            @if (profile().profile_pic != null || profile().profile_pic != ' ') {
-                                <img [src]="profile().profile_pic" alt="Profile picture" class="w-full h-full object-cover" />
+                            @if (profile().profile_pic != null || profile().profile_pic != '' || profile().profile_pic == "null") {
+                                <img [src]="profile().profile_pic" alt="Profile picture" class="w-full h-full object-cover" onerror="this.src='https://ui-avatars.com/api/?name=Yo&background=7c3aed&color=fff'"/>
                             } @else {
                                 <svg width="36" height="36" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2" class="text-white/30">
                                     <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>

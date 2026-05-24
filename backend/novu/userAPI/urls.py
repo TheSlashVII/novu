@@ -105,7 +105,7 @@ urlpatterns = [
     path("update/status/<int:id>", change_user_is_new), # update is new status
     path("admin/delete/<int:id>", admin_delete_user), # deletes users
     path("admin/count/", admin_count_active_users), # counts users in the database
-    path("count/most_liked", count_most_liked_users), 
+    path("count/most_liked/", count_most_liked_users), 
     path("swipes/register/", register_swipe), #used to register the swipe result
     path("swipes/check-match/", check_match), # used to check the match status
     path("swipes/user/<int:user_id>/", get_user_swipes), # used to get the user swipes

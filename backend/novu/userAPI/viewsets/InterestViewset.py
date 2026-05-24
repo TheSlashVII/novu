@@ -75,11 +75,7 @@ class InterestViewset(viewsets.ModelViewSet):
         for name in interest_names:
             Interest.objects.create(user_id=user, name=name)
         
-        # set is_new to false
-        
-        if(user.is_new):
-            user.is_new = False
-            user.save()
+        user.save()
         
         return Response(
             {'message': 'Intereses guardados correctamente'},

@@ -72,6 +72,13 @@ class SwipeViewset(viewsets.ModelViewSet):
             target_user_id=target_user_id,
             defaults={'matched': True}
         )
+        try:
+            userGettingLiked = User.objects.get(email=target_user_id)
+            userGettingLiked.likes = userGettingLiked.likes+1
+            userGettingLiked.save()
+        except Exception as e:
+            print(f"something occured: {str(e)}")
+
 
         response_data = {
             'success': True,

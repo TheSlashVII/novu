@@ -117,7 +117,18 @@ export class CardCreationComponent implements OnDestroy {
                     console.log(dataToSend)
                     this.cardAPI.patchCardTab(Number(token.user_id), 1, dataToSend).subscribe({
                         next: value =>{
-                            this.router.navigateByUrl("/home")
+                            this.userAPI.updateIsUserNewStatus(token.user_id).subscribe({
+                                next: (res) => {
+                                    this.router.navigateByUrl("/home")
+                                }, error: (err:any) => {
+                                    this.errorMessage = "Error actualizando al usuario"
+                                    this.isErrorMessageDisplaying = true;
+                                    setTimeout(() => {
+                                        this.isErrorMessageDisplaying = false;
+                                    }, 2000)
+                                }
+                            })
+
                         },
                         error: err => {
                             this.errorMessage = "Error guardando la carta de presentacion"
