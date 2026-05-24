@@ -1,0 +1,108 @@
+<!-- Overlay -->
+<div
+    class="fixed inset-0 z-50 flex items-center justify-center p-4
+         bg-black/50 backdrop-blur-sm transition-all duration-300"
+    [class.opacity-0]="!modal.isOpen"
+    [class.pointer-events-none]="!modal.isOpen"
+    [class.opacity-100]="modal.isOpen"
+    (click)="onOverlayClick($event)">
+
+    <!-- Modal -->
+    <div
+        class="relative w-full max-w-sm bg-white rounded-2xl shadow-2xl
+           transition-all duration-300 font-poppins overflow-hidden"
+        [class.scale-95]="!modal.isOpen"
+        [class.scale-100]="modal.isOpen"
+        [class.opacity-0]="!modal.isOpen"
+        [class.opacity-100]="modal.isOpen">
+
+
+
+
+        <div class="px-6 pt-6 pb-7 space-y-5">
+
+            <!-- Icon + title -->
+            <div class="flex flex-col items-center text-center gap-3">
+                <div class="w-14 h-14 rounded-full bg-rose-100 flex items-center justify-center">
+                    <svg class="w-7 h-7 text-rose-500" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374
+                     1.948 3.374h14.71c1.73 0 2.813-1.874
+                     1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898
+                     0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-gray-900 font-bold text-lg leading-tight">
+                        Eliminar cuenta
+                    </h2>
+                    <p class="text-gray-400 text-sm mt-1 leading-relaxed">
+                        Esta acción es <span class="font-semibold text-gray-600">permanente e irreversible</span>.
+                        Se borrarán todos tus datos, matches y conversaciones.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="border-t border-gray-100"></div>
+
+            <!-- Type-to-confirm -->
+            <div class="space-y-2">
+                <label class="text-xs font-semibold text-gray-500 uppercase tracking-widest">
+                    Escribe <span class="text-rose-500">ELIMINAR</span> para confirmar
+                </label>
+                <input
+                    type="text"
+                    [(ngModel)]="confirmText"
+                    placeholder="ELIMINAR"
+                    autocomplete="off"
+                    class="w-full border-2 rounded-xl px-4 py-2.5 text-sm font-medium
+                 text-gray-800 placeholder-gray-300 outline-none transition-all duration-200"
+                    [class.border-gray-200]="!confirmText"
+                    [class.border-rose-300]="confirmText && !isConfirmed()"
+                    [class.border-rose-500]="isConfirmed()"
+                    [class.bg-rose-50]="isConfirmed()"
+                />
+                <p class="text-xs text-gray-400 h-4">
+                    @if (confirmText && !isConfirmed()) {
+                        <span class="text-rose-400">Escribe exactamente "ELIMINAR"</span>
+                    }
+                    @if (isConfirmed()) {
+                        <span class="text-rose-500 font-semibold">✓ Confirmado</span>
+                    }
+                </p>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="flex gap-3 pt-1">
+                <button
+                    (click)="cancel()"
+                    [disabled]="isDeleting"
+                    class="flex-1 py-2.5 rounded-2xl border border-gray-200 text-gray-500
+                 font-semibold text-sm hover:bg-gray-50 transition-all duration-150 hover:cursor-pointer
+                 disabled:opacity-50">
+                    Cancelar
+                </button>
+
+                <button
+                    (click)="confirmDelete()"
+                    [disabled]="!isConfirmed() || isDeleting"
+                    class="flex-1 py-2.5 rounded-2xl bg-rose-500 text-white font-semibold
+                 text-sm transition-all duration-150
+                 hover:bg-rose-600 active:scale-95
+                 disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100
+                 flex items-center justify-center gap-2 hover:cursor-pointer">
+                    @if (isDeleting) {
+                        <div class="w-4 h-4 rounded-full border-2 border-white/40
+                        border-t-white animate-spin"></div>
+                        Eliminando...
+                    } @else {
+                        Eliminar cuenta
+                    }
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -48,7 +48,7 @@ export class AdminDeleteUserComponent {
 
     }
     delete(id:number){
-        this.userAPI.adminDeleteUser(id).subscribe({
+        this.userAPI.deleteUser(id).subscribe({
             next: (res)=> {
                 console.log(res)
                 this.userAPI.listAllUsers().subscribe((res:any) => {

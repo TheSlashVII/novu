@@ -594,12 +594,16 @@ class UserViewset(viewsets.ViewSet):
     # to eliminate a user
     def destroy(self, request, id=None):
         user_requesting_deletion = get_object_or_404(User, email=request.user)
-        if not user_requesting_deletion.admin:
-            return JsonResponse({"error": "user not allowed to enter this endpoint"},status=status.HTTP_401_UNAUTHORIZED)
         try:
             user = get_object_or_404(User, pk=id) # user to be deleted
         except Http404:
             return JsonResponse({"error": "User Not found"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if user_requesting_deletion.id == id:
+            user.delete()
+            return Response({"message": "User deleted"}, status=status.HTTP_204_NO_CONTENT)
+        if not user_requesting_deletion.admin:
+            return JsonResponse({"error": "user not allowed to enter this endpoint"},status=status.HTTP_401_UNAUTHORIZED)
         user.delete()
         return Response({"message": "User deleted"}, status=status.HTTP_204_NO_CONTENT)
 

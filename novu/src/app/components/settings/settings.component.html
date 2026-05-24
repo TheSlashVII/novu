@@ -1,10 +1,11 @@
+<app-delete-acount></app-delete-acount>
 <!-- app-settings root -->
 <div class="flex flex-col h-dvh bg-[#fefefe] text-[#000000] font-sans overflow-hidden">
 
     <!--  Top bar  -->
     <header class="flex items-center justify-between gap-2 px-4 sm:px-6 pt-4 sm:pt-[18px] pb-3 sm:pb-3.5 border-b border-white/[0.07] w-full">
         <div class="flex items-center gap-2 sm:gap-3.5 min-w-0">
-            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center bg-gradient-to-br from-[#7c5cbf] to-[#4a2d8a] justify-center text-[12px] sm:text-[13px] font-semibold text-white tracking-wide overflow-hidden shrink-0">
+            <div (click)="goToHome()" class="hover:cursor-pointer hover:border hover:border-[#7c5cbf]/40 transition-colors w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center bg-gradient-to-br from-[#7c5cbf] to-[#4a2d8a] justify-center text-[12px] sm:text-[13px] font-semibold text-white tracking-wide overflow-hidden shrink-0">
                 @if (profile().profile_pic != null || profile().profile_pic == ' ') {
                     <img [src]="profile().profile_pic" alt="Avatar" class="w-full h-full object-cover" onerror="this.src='https://ui-avatars.com/api/?name=Yo&background=7c3aed&color=fff'"/>
                 } @else {
@@ -20,6 +21,10 @@
                     <span class="sm:hidden">Panel de admins</span>
                 </button>
             }
+            <button (click)="this.deleteModalService.toggle()" class="px-3 sm:px-7 py-2 sm:py-2.5 rounded-xl bg-[#FF6B6B] text-white text-xs sm:text-sm font-medium cursor-pointer transition-opacity duration-150 hover:opacity-85 active:scale-95 border-none whitespace-nowrap">
+                <span class="hidden sm:inline">Borrar Cuenta</span>
+                <span class="sm:hidden">Borrar Cuenta</span>
+            </button>
             <button (click)="logout()" class="px-3 sm:px-7 py-2 sm:py-2.5 rounded-xl bg-[#FF6B6B] text-white text-xs sm:text-sm font-medium cursor-pointer transition-opacity duration-150 hover:opacity-85 active:scale-95 border-none whitespace-nowrap">
                 <span class="hidden sm:inline">Cerrar Sessión</span>
                 <span class="sm:hidden">Salir</span>

@@ -95,13 +95,25 @@ export class HomeComponent {
   toggleLikesPanel(): void {
         this.likesPanel.toggle();
     }
-  public randomizeProfiles(array:UserProfile[]){
+  randomizeProfiles(array:UserProfile[]){
       let newArray:UserProfile[] = array;
       for (let i = 0; i < array.length; i++) {
           let randomIndex = Math.floor(Math.random() * (i+1));
           [newArray[i], newArray[randomIndex]] = [newArray[randomIndex], newArray[i]];
       }
       return newArray;
+  }
+
+    /**
+     * function used to filter users in case the user is underage
+     */
+  ageSecurityFilter(){
+      let tempArr:UserProfile[] = this.userProfiles;
+      if(this.loggedUser().age < 18){
+          tempArr = tempArr.filter((currentUser:UserProfile) => currentUser.age < 18);
+          return tempArr;
+      }
+      return tempArr;
   }
   constructor(private userAPIService: UserAPIService, private router:Router, public filterPanel:PanelServiceService, public likesPanel:LikedPanelServiceService) {
       this.isLoggedIn = this.userAPIService.isLoggedIn();
@@ -194,6 +206,7 @@ export class HomeComponent {
 
                     this.allUserProfiles = this.randomizeProfiles(filtered); // randomizes the users
                     this.userProfiles = [...filtered];
+                    this.userProfiles = this.ageSecurityFilter() // if the user is less than 18 he will get a feed limited to 17 years old
                     this.loading = false;
                 },
                 error: () =>{

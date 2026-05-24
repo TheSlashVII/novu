@@ -109,16 +109,10 @@ export class UserAPIService {
         return this.http.post(ROUTE, data, this.authHeaders())
         // return this.http.post(ROUTE, data)
     }
-    adminDeleteUser(id:number){
-        const ROUTE:string = `${this.baseServerURL}/admin/delete/${id}`;
-        return this.http.delete(ROUTE, {
-            headers: this.authHeaders().headers,
-            body: {
-                user_id: this.getUserId()!
-            }
 
-        })
-        //return this.http.delete(ROUTE, this.authHeaders())
+    deleteUser(id: number){
+        const ROUTE:string = `${this.baseServerURL}/admin/delete/${id}`;
+        return this.http.delete(ROUTE, this.authHeaders())
     }
 
     /**

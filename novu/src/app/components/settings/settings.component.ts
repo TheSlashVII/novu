@@ -6,7 +6,8 @@ import {UserAPIService} from '../../services/user-api.service';
 import {UserProfile} from '../home/home.component';
 import {CardTab} from '../../services/card-tab.service';
 import {development} from '../../baseURLconfig';
-
+import {DeleteAccountModalServiceService} from '../../services/delete-account-modal-service.service';
+import {DeleteAccountComponent} from '../delete-acount/delete-account.component'
 export type SettingsSection = 'profile' | 'card';
 
 
@@ -25,7 +26,7 @@ export interface UserPreferences {
 @Component({
     selector: 'app-settings',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, DeleteAccountComponent],
     templateUrl: './settings.component.html',
     styles: [`
     @keyframes fadeIn {
@@ -39,7 +40,7 @@ export class SettingsComponent {
     userID:number = 0
     cardTabSectionTracker:number = 0;
     isAdmin: boolean = false;
-    constructor(private router:Router, private userAPI:UserAPIService) {
+    constructor(private router:Router, private userAPI:UserAPIService, public deleteModalService:DeleteAccountModalServiceService) {
         const userID:number = Number(this.userAPI.decodeToken().user_id)
         if (this.userAPI.isTokenExpired(this.userAPI.getToken()!)) {
             this.userAPI.logoutJWT()
