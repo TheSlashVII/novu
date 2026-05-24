@@ -64,13 +64,13 @@ class RequestViewset(viewsets.ModelViewSet):
         return JsonResponse({"request_count": numRegisterRequest})
 
     # to create a new request inisde the database
-    def create(self,request):
-        serializer = RequestSerializer(data=request.data)
-        if serializer.is_valid():
-            sendPostRegisterEmail(serializer.validated_data['email'])
-            serializer.save() # save newly created object to the database
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # def create(self,request):
+    #     serializer = RequestSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         sendPostRegisterEmail(serializer.validated_data['email'])
+    #         serializer.save() # save newly created object to the database
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # to get a specific request based on primary key
     """
@@ -194,7 +194,7 @@ class RequestViewset(viewsets.ModelViewSet):
         photo_id_selfie.seek(0)
 
         register_request = serializer.save()
-
+        sendPostRegisterEmail(serializer.validated_data['email'])
         return Response(
             {
                 "message": "Registration request submitted successfully. An administrator will review it shortly.",
