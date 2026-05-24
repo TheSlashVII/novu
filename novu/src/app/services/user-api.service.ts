@@ -55,12 +55,7 @@ export class UserAPIService {
      */
     acceptRegisterRequest(id: number): Observable<any> {
         const ROUTE = `${this.baseServerURL}/accept/request/${id}/`;
-        return this.http.post(ROUTE, {
-            headers: this.authHeaders().headers,
-            body: {
-                user_id: this.getUserId()!
-            }
-        });
+        return this.http.post(ROUTE, {},this.authHeaders());
     }
 
     /**
@@ -99,6 +94,10 @@ export class UserAPIService {
     updateUserProfile(data:any){
         const ROUTE:string = `${this.baseServerURL}/profile/update/`;
         return this.http.put(ROUTE, data, this.authHeaders())
+    }
+    getMostLikedProfiles() {
+        const ROUTE:string = `${this.baseServerURL}/count/most_liked/`;
+        return this.http.get<UserProfile[]>(ROUTE, this.authHeaders())
     }
 
     // user management functions
@@ -326,7 +325,7 @@ export class UserAPIService {
 
    /**
    * Valida si un token de reset sigue siendo válido (no expirado, no usado).
-    * @param uid 
+    * @param uid
    * @param token Token UUID que llegó por email
    */
    validateResetToken(uid: string,token: string): Observable<any> {

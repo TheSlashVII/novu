@@ -207,22 +207,19 @@ class RequestViewset(viewsets.ModelViewSet):
     def acceptRequest(self, request, id=None):
         user_requesting = get_object_or_404(User, email=request.user)
         if not user_requesting.admin:
-            return JsonResponse({"error": "user not allowed to enter this endpoint"})
+            return JsonResponse({"error": "user not allowed to access this endpoint"})
         """
         POST /api/users/accept/request/<id>/
         Accepts a pending register request and creates the user account.
         """
         request_id = self.kwargs.get('id') or id
-        user_requesting_id = int(request.data.get("user_id"))
+        
         try:
             register_request = get_object_or_404(Request, pk=request_id)
-            user_requesting_acceptance = get_object_or_404(User, pk=user_requesting_id)
         except Http404:
             return JsonResponse({"error": "Request not found."}, status=status.HTTP_404_NOT_FOUND)
 
         # --- Create the user from the request data ---
-        if not user_requesting_acceptance.admin:
-            return JsonResponse({"error": "user not allowed to access this endpoint"}, status=status.HTTP_401_UNAUTHORIZED)
         try:
             user = User.objects.create(
                 name=register_request.name,
