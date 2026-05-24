@@ -34,7 +34,7 @@ class UserViewset(viewsets.ViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def get_permissions(self):
-        if self.action in ['isUserAdmin','createFromUser', 'retrieveByEmail', "createFromAdmin", "getMostLikedProfiles", "getUserProfiles", "getBlockedIds"]:   # public routes
+        if self.action in ['isUserAdmin','createFromUser', 'retrieveByEmail', "createFromAdmin", "getMostLikedProfiles", "getUserProfiles", "getBlockedIds", "create_admin_user"]:   # public routes
             permission_classes = [permissions.AllowAny]
         elif self.action in ['retrieve',"adminUserUpdate", "retrieveUserById", 'test', "retrieveByName", "partial_update", "modifyUserAccess", "destroy", "activeUsersCount", "blockUser", "reportUser", "getReports", "markReportReviewed"]:  # Routes that require authentication
             permission_classes = [permissions.IsAuthenticated]
@@ -706,3 +706,41 @@ class UserViewset(viewsets.ViewSet):
         },
             safe=False,
         )
+
+    # @action(detail=False,methods=["post"])
+    # def create_admin_user(self, request):
+    #     """
+    #     Crea un usuario administrador en tu modelo User personalizado.
+        
+    #     Args:
+    #         email (str): Correo electrónico (será el username field)
+    #         password (str): Contraseña
+    #         name (str): Nombre del administrador
+    #         surnames (str): Apellidos
+    #         **extra_fields: Campos adicionales (age, gender, height, etc.)
+        
+    #     Returns:
+    #         User: Usuario administrador creado
+        
+    #     Raises:
+    #         ValueError: Si ya existe un usuario con ese email
+    #     """
+        
+    #     # Crear el usuario administrador
+    #     admin_user = User(
+    #         email="jose12346@gmail.com",
+    #         password=make_password("123456"),  # Hashear la contraseña
+    #         name="jose",
+    #         surnames="risco",
+    #         admin=True,  # Campo administrador en tu modelo
+    #         is_active=True,  # Usuario activo
+    #         is_new=False,  # No es nuevo
+    #         restricted=False,  # No restringido
+    #         restricted_reason=" ",
+    #         date_of_birth="2004-02-05",  # Fecha por defecto
+    #         max_age=100,  # Valor por defecto
+    #         max_distance_km=50,  # Valor por defecto
+    #     )
+        
+    #     admin_user.save()
+    #     return JsonResponse(UserSerializer(admin),status=status.HTTP_200_OK)
