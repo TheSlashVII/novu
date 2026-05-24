@@ -125,6 +125,7 @@ export class AdminRegisterRequestDetailComponent {
         .subscribe({
             next: (res: any) => {
                 console.log('User created:', res);
+                this.emailService.sendAcceptanceEmail(this.registerRequest.email, this.registerRequest.name).subscribe()
                 this.goToAcceptedRequest();
             },
             error: (err) => {

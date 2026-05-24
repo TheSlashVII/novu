@@ -55,12 +55,7 @@ export class UserAPIService {
      */
     acceptRegisterRequest(id: number): Observable<any> {
         const ROUTE = `${this.baseServerURL}/accept/request/${id}/`;
-        return this.http.post(ROUTE, {
-            headers: this.authHeaders().headers,
-            body: {
-                user_id: this.getUserId()!
-            }
-        });
+        return this.http.post(ROUTE, {},this.authHeaders());
     }
 
     /**
@@ -69,10 +64,7 @@ export class UserAPIService {
      */
     deleteRegisterRequest(id:number){
         const ROUTE:string = `${this.baseServerURL}/delete/request/${id}/`;
-        return this.http.delete(ROUTE,{
-            headers: this.authHeaders().headers,
-            body: {user_id: this.getUserId()!}
-        })
+        return this.http.delete(ROUTE,this.authHeaders())
     }
 
     /**
@@ -100,6 +92,10 @@ export class UserAPIService {
         const ROUTE:string = `${this.baseServerURL}/profile/update/`;
         return this.http.put(ROUTE, data, this.authHeaders())
     }
+    getMostLikedProfiles() {
+        const ROUTE:string = `${this.baseServerURL}/count/most_liked/`;
+        return this.http.get<UserProfile[]>(ROUTE, this.authHeaders())
+    }
 
     // user management functions
 
@@ -113,16 +109,10 @@ export class UserAPIService {
         return this.http.post(ROUTE, data, this.authHeaders())
         // return this.http.post(ROUTE, data)
     }
-    adminDeleteUser(id:number){
-        const ROUTE:string = `${this.baseServerURL}/admin/delete/${id}`;
-        return this.http.delete(ROUTE, {
-            headers: this.authHeaders().headers,
-            body: {
-                user_id: this.getUserId()!
-            }
 
-        })
-        //return this.http.delete(ROUTE, this.authHeaders())
+    deleteUser(id: number){
+        const ROUTE:string = `${this.baseServerURL}/admin/delete/${id}`;
+        return this.http.delete(ROUTE, this.authHeaders())
     }
 
     /**
@@ -326,7 +316,7 @@ export class UserAPIService {
 
    /**
    * Valida si un token de reset sigue siendo válido (no expirado, no usado).
-    * @param uid 
+    * @param uid
    * @param token Token UUID que llegó por email
    */
    validateResetToken(uid: string,token: string): Observable<any> {

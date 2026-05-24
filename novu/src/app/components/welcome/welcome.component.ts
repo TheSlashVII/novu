@@ -27,7 +27,7 @@ export class WelcomeComponent {
         const token = this.userAPI.getToken();
         if(this.userAPI.isTokenExpired(token!)){
             this.isLoggedIn = false;
-            localStorage.removeItem('access_token');
+            localStorage.clear()
         } else {
             this.isLoggedIn = true;
         }

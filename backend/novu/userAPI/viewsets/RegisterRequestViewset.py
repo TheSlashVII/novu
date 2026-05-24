@@ -10,7 +10,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import os
 from pathlib import Path
-from ..emailTemplates.emailUtilities import sendPostRegisterEmail
+from ..emailTemplates.emailUtilities import *
 
 from ..models import Request, User, UserCard, CardTab
 from ..serializers import RequestSerializer
@@ -98,7 +98,7 @@ class RequestViewset(viewsets.ModelViewSet):
         """Deletes a register request and its associated photos."""
         user_requesting = get_object_or_404(User, email=request.user)
         if not user_requesting.admin:
-            return JsonResponse({"error": "user not allowed to enter this endpoint"}, status=status.HTTP_401_UNAUTHORIZED)
+            return JsonResponse({"error": "user not allowed to access this endpoint"}, status=status.HTTP_401_UNAUTHORIZED)
         BASE_DIR = Path(__file__).resolve().parent.parent.parent
         try:
             register_request = get_object_or_404(Request, pk=id)
@@ -114,7 +114,9 @@ class RequestViewset(viewsets.ModelViewSet):
                 {"message": f"Request {id} deleted successfully."},
                 status=status.HTTP_204_NO_CONTENT
             )
+        sendDeniedEmail(email=register_request.email, name=register_request.name)
         register_request.delete()
+        
         return JsonResponse(
             {"message": f"Request {id} deleted successfully."},
             status=status.HTTP_204_NO_CONTENT
@@ -131,8 +133,11 @@ class RequestViewset(viewsets.ModelViewSet):
         as pending for admin review.
         """
         userExists = User.objects.filter(email=request.data.get("email")).exists()
+        requestExists = Request.objects.filter(email=request.data.get("email")).exists()
         if(userExists):
             return JsonResponse({"error": "A user with this email exists"}, status=status.HTTP_400_BAD_REQUEST)
+        elif (requestExists):
+            return JsonResponse({"error": "A request with this email has been submitted"}, status=status.HTTP_400_BAD_REQUEST)
         serializer = RequestSerializer(data=request.data)
         print("IS VALID:", serializer.is_valid())
         print("ERRORS:", serializer.errors)
@@ -207,22 +212,19 @@ class RequestViewset(viewsets.ModelViewSet):
     def acceptRequest(self, request, id=None):
         user_requesting = get_object_or_404(User, email=request.user)
         if not user_requesting.admin:
-            return JsonResponse({"error": "user not allowed to enter this endpoint"})
+            return JsonResponse({"error": "user not allowed to access this endpoint"})
         """
         POST /api/users/accept/request/<id>/
         Accepts a pending register request and creates the user account.
         """
         request_id = self.kwargs.get('id') or id
-        user_requesting_id = int(request.data.get("user_id"))
+        
         try:
             register_request = get_object_or_404(Request, pk=request_id)
-            user_requesting_acceptance = get_object_or_404(User, pk=user_requesting_id)
         except Http404:
             return JsonResponse({"error": "Request not found."}, status=status.HTTP_404_NOT_FOUND)
 
         # --- Create the user from the request data ---
-        if not user_requesting_acceptance.admin:
-            return JsonResponse({"error": "user not allowed to access this endpoint"}, status=status.HTTP_401_UNAUTHORIZED)
         try:
             user = User.objects.create(
                 name=register_request.name,
@@ -247,6 +249,7 @@ class RequestViewset(viewsets.ModelViewSet):
         )
 
         # --- Delete the request after creating the user ---
+        
         register_request.delete()
 
         return JsonResponse(

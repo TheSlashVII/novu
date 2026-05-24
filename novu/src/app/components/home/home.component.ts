@@ -6,6 +6,8 @@ import {PanelServiceService} from '../../services/panel-service.service';
 import {FilterPanelComponent} from '../filter-panel/filter-panel.component';
 import {CardTab} from '../../services/card-tab.service';
 import {development} from '../../baseURLconfig';
+import {LikedPanelComponent} from '../liked-panel/liked-panel.component';
+import {LikedPanelServiceService} from '../../services/liked-panel-service.service';
 
 interface Profile {
   id: number;
@@ -35,6 +37,7 @@ export interface UserProfile {
     school_name:string;
     profile_pic:string | null;
     studies:Study[];
+    likes:number;
 }
 
 interface Interest{
@@ -46,7 +49,7 @@ interface Interest{
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [FilterPanelComponent],
+    imports: [FilterPanelComponent, LikedPanelComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
@@ -80,13 +83,19 @@ export class HomeComponent {
       school_name: "",
       surnames: "",
       tabs: [],
-      studies:[]
-
+      studies:[],
+      likes:0,
   });
   private likeAnimation: boolean = false;
   private dislikeAnimation: boolean = false;
 
-  public randomizeProfiles(array:UserProfile[]){
+    /**
+     * Used to toggle the liked users panel
+      */
+  toggleLikesPanel(): void {
+        this.likesPanel.toggle();
+    }
+  randomizeProfiles(array:UserProfile[]){
       let newArray:UserProfile[] = array;
       for (let i = 0; i < array.length; i++) {
           let randomIndex = Math.floor(Math.random() * (i+1));
@@ -94,7 +103,19 @@ export class HomeComponent {
       }
       return newArray;
   }
-  constructor(private userAPIService: UserAPIService, private router:Router, public filterPanel:PanelServiceService) {
+
+    /**
+     * function used to filter users in case the user is underage
+     */
+  ageSecurityFilter(){
+      let tempArr:UserProfile[] = this.userProfiles;
+      if(this.loggedUser().age < 18){
+          tempArr = tempArr.filter((currentUser:UserProfile) => currentUser.age < 18);
+          return tempArr;
+      }
+      return tempArr;
+  }
+  constructor(private userAPIService: UserAPIService, private router:Router, public filterPanel:PanelServiceService, public likesPanel:LikedPanelServiceService) {
       this.isLoggedIn = this.userAPIService.isLoggedIn();
       this.filterPanel.onApply = () => this.applyFilters();
         if(this.userAPIService.getToken() == null){
@@ -102,9 +123,7 @@ export class HomeComponent {
         }
       const isTokenExpired = this.userAPIService.isTokenExpired(this.userAPIService.getToken()!) != null ? this.userAPIService.isTokenExpired(this.userAPIService.getToken()!) : true;
       if (!this.isLoggedIn || isTokenExpired){
-          if (localStorage.getItem('token') != null) {
-              localStorage.removeItem('access_token');
-          }
+          localStorage.removeItem('access_token');
           this.router.navigateByUrl('');
 
 
@@ -187,6 +206,7 @@ export class HomeComponent {
 
                     this.allUserProfiles = this.randomizeProfiles(filtered); // randomizes the users
                     this.userProfiles = [...filtered];
+                    this.userProfiles = this.ageSecurityFilter() // if the user is less than 18 he will get a feed limited to 17 years old
                     this.loading = false;
                 },
                 error: () =>{
