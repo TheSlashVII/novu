@@ -130,6 +130,9 @@ class RequestViewset(viewsets.ModelViewSet):
         matches the face in the selfie, and if they match, saves the request
         as pending for admin review.
         """
+        userExists = User.objects.filter(email=request.data.get("email")).exists()
+        if(userExists):
+            return JsonResponse({"error": "A user with this email exists"}, status=status.HTTP_400_BAD_REQUEST)
         serializer = RequestSerializer(data=request.data)
         print("IS VALID:", serializer.is_valid())
         print("ERRORS:", serializer.errors)

@@ -136,8 +136,14 @@ export class RegisterComponent {
       error: (err) => {
        if(err.error?.error) {
         this.errorMessage = err.error.error;
+        setTimeout(()=>{
+            this.errorMessage = '';
+        },2000)
        } else {
         this.errorMessage = 'Algo ha ido mal. Intentalo de nuevo.';
+        setTimeout(()=> {
+            this.errorMessage = '';
+        })
        }
       }
   });

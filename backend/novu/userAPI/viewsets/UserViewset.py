@@ -356,15 +356,16 @@ class UserViewset(viewsets.ViewSet):
                 raw=tab.get("background_photo", ""),
                 user=user  # pass the already-fetched object instead of user_id
             )
-            
-            old_current_card_tab = CardTab.objects.filter(id_card=user_card, id_section=id_section).first()
-            # print(f"old background photo for this tab{old_current_card_tab}")
-            try:
-                os.remove(str(BASE_DIR / old_current_card_tab.background_photo))
-                print(f"removed {old_current_card_tab.background_photo}")
-            except Exception as e:
-                print(f"file not found '{old_current_card_tab.background_photo}' ignoring...")
-                # print(f"something happened: {str(e)}")
+            rawPic:str = tab.get("background_photo") 
+            if isinstance(rawPic, str) and rawPic.startswith("data:"):
+                old_current_card_tab = CardTab.objects.filter(id_card=user_card, id_section=id_section).first()
+                # print(f"old background photo for this tab{old_current_card_tab}")
+                try:
+                    os.remove(str(BASE_DIR / old_current_card_tab.background_photo))
+                    print(f"removed {old_current_card_tab.background_photo}")
+                except Exception as e:
+                    print(f"file not found '{old_current_card_tab.background_photo}' ignoring...")
+                    # print(f"something happened: {str(e)}")
             
             CardTab.objects.update_or_create(
                 id_card=user_card,
