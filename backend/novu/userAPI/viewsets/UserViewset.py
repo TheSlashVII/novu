@@ -365,7 +365,7 @@ class UserViewset(viewsets.ViewSet):
                     os.remove(str(BASE_DIR / old_current_card_tab.background_photo))
                     print(f"removed {old_current_card_tab.background_photo}")
                 except Exception as e:
-                    print(f"file not found '{old_current_card_tab.background_photo}' ignoring...")
+                    print(f"file not found. ignoring...")
                     # print(f"something happened: {str(e)}")
             
             CardTab.objects.update_or_create(
