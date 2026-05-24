@@ -11,13 +11,14 @@ from django.http import JsonResponse
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.decorators import action
 from ..emailTemplates.emailUtilities import *
+from rest_framework.permissions import AllowAny
 
 class EmailViewset(viewsets.ViewSet):
     
     authentication_classes = [JWTAuthentication]
     
     def get_permissions(self):
-        if self.action in []:  
+        if self.action in ['requestPasswordReset', 'validatePasswordResetToken', 'confirmPasswordReset']:  
             permission_classes = [permissions.AllowAny]
         elif self.action in ["sendAcceptedMailHandler", "sendDeniedMailHandler"]:  # Routes that require authentication
             permission_classes = [permissions.IsAuthenticated]
