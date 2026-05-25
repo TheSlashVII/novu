@@ -148,8 +148,18 @@ class EmailViewset(viewsets.ViewSet):
             return JsonResponse({"error": "El enlace ha expirado o ya fue utilizado"}, status=status.HTTP_400_BAD_REQUEST)
         
         # Guardar la nueva cobtraseña hasheada
+        # user.password = make_password(new_password)
+        # user.save()
+
+        # return JsonResponse({"message": "Contraseña actualizada exitosamente"}, status=status.HTTP_200_OK)
         user.password = make_password(new_password)
         user.save()
 
+        try:
+            sendPasswordResetChangedEmail(email=user.email, name=user.name)
+        except Exception:
+            pass # No bloqueamos el flujo si falla el email de confirmación
+
         return JsonResponse({"message": "Contraseña actualizada exitosamente"}, status=status.HTTP_200_OK)
+
 
