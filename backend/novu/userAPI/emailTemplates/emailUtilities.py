@@ -66,3 +66,16 @@ def sendPasswordResetEmail(email:str, name:str, reset_link:str):
     )
     msg.attach_alternative(htmlMessage, "text/html")
     msg.send(fail_silently=False)
+
+def sendPasswordResetChangedEmail(email:str, name:str):
+    htmlMessage = render_to_string("passwordChangedEmail.html", {"name": name})
+    plainMessage = f"Hola {name}, tu contraseña ha sido actualizada correctamente. Si no has sido tú, contacta con nosotros inmediatamente."
+
+    msg = EmailMultiAlternatives(
+        subject="Contraseña actualizada - Novu",
+        body=plainMessage,
+        from_email="novu-daemon@novu.cat",
+        to=[email],
+    )
+    msg.attach_alternative(htmlMessage, "text/html")
+    msg.send(fail_silently=False)
