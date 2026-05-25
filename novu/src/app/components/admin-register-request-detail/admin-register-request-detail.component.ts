@@ -45,6 +45,8 @@ export interface registerRequestInterface {
 export class AdminRegisterRequestDetailComponent {
     email: string = 'user@example.com';
     registerRequest: registerRequestInterface;
+    errorMessage: string = '';
+    isMessageShowing = false;
     constructor(
         private router: Router,
         activatedRoute: ActivatedRoute,
@@ -66,15 +68,6 @@ export class AdminRegisterRequestDetailComponent {
     setRegisterRequest(registerRequest: any) {
         this.registerRequest = registerRequest;
         console.log(this.registerRequest);
-    }
-    /*
-     * This function is to manage in the case where the OCR can't read the student ID
-     * */
-    getStudentId() {
-        if (this.registerRequest.id_student == null) {
-            return 'unavailable';
-        }
-        return this.registerRequest.id_student;
     }
     getStudentIdImage(){
         // const server = "http://localhost:8000/";
@@ -132,6 +125,11 @@ export class AdminRegisterRequestDetailComponent {
                 console.error('Error:', err);
                 if (err.status === 400) {
                     alert(err.error.error);
+                    this.errorMessage = err.error.error;
+                    this.isMessageShowing = true;
+                    setTimeout(() => {
+                        this.isMessageShowing = false;
+                    }, 2000)
                 } else {
                     alert('Error processing the request.');
                 }

@@ -12,7 +12,7 @@ import { development } from '../../baseURLconfig';
   styleUrl: './contact.component.css'
 })
 export class ContactComponent {
-  currentYear = new Date().getFullYear(); 
+  currentYear = new Date().getFullYear();
   private baseUrl = development ? 'http://localhost:8000' : window.location.origin;
 
   name: string = '';

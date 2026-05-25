@@ -13,6 +13,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 export class AdminRestrictUserDetailComponent implements OnInit {
     // {name:string, surnames:string, restricted:boolean, restricted_at:string, restricted_reason:string}
     userRestrictedStatusInfo:any = {}; // where we will store the user data retrieved
+    message:string = ''
+    isMessageShowing:boolean = false;
     userForm = new FormGroup({
         restricted: new FormControl(false),
         restricted_at: new FormControl(new Date().toISOString(), [Validators.required]), // default date: Current date in ISO format
@@ -48,7 +50,11 @@ export class AdminRestrictUserDetailComponent implements OnInit {
         console.log(dataToSend);
         this.userAPI.adminModifyRestrictedStatus(dataToSend).subscribe({
             next: (res)=> {
-                console.log(res);
+                this.message = "Restricted status has been updated successfully.";
+                this.isMessageShowing=true;
+                setTimeout(()=> {
+                    this.isMessageShowing=false;
+                },2000)
             }, error: err => {
                 console.log(err);
             }

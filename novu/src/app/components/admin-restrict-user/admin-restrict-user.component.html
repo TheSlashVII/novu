@@ -53,7 +53,13 @@
                         <div class="hidden md:grid grid-cols-[1fr_1fr_2fr_8rem_6rem_5rem] gap-4 bg-white py-4 px-5 sm:px-10 rounded-2xl items-center text-sm user-container">
                             <p>{{user.name}}</p>
                             <p>{{ user.surnames }}</p>
-                            <p class="italic">{{user.restricted_reason}}</p>
+                            <p class="italic">
+                                @if (user.restricted_reason == null || user.restricted_reason.length < 1) {
+                                    Unrestricted
+                                } @else {
+                                    {{user.restricted_reason}}
+                                }
+                            </p>
                             <p class="text-center">{{user.restricted_at != null ? this.splitDate(user.restricted_at) : "-"}}</p>
                             <div class="flex justify-center">
                                 <input type="checkbox" [checked]="user.restricted" [disabled]="true" />

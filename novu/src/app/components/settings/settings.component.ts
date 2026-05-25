@@ -73,6 +73,7 @@ export class SettingsComponent {
                     age:result.age,
                     studies: result.studies,
                     likes: result.likes,
+                    restricted:result.restricted,
                 })
                 let c = this.profile().tabs[0]
 
@@ -140,6 +141,7 @@ export class SettingsComponent {
         profile_pic: 'assets/Images/userIcon.svg',
         studies:[],
         likes:0,
+        restricted:false
     });
 
     tabs = signal<CardTab[]>([

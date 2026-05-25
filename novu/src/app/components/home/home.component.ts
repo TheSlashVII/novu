@@ -38,6 +38,7 @@ export interface UserProfile {
     profile_pic:string | null;
     studies:Study[];
     likes:number;
+    restricted:boolean;
 }
 
 interface Interest{
@@ -85,6 +86,7 @@ export class HomeComponent {
       tabs: [],
       studies:[],
       likes:0,
+      restricted:false,
   });
   private likeAnimation: boolean = false;
   private dislikeAnimation: boolean = false;
@@ -121,6 +123,7 @@ export class HomeComponent {
         if(this.userAPIService.getToken() == null){
             this.router.navigateByUrl('');
         }
+
       const isTokenExpired = this.userAPIService.isTokenExpired(this.userAPIService.getToken()!) != null ? this.userAPIService.isTokenExpired(this.userAPIService.getToken()!) : true;
       if (!this.isLoggedIn || isTokenExpired){
           localStorage.removeItem('access_token');
@@ -130,7 +133,8 @@ export class HomeComponent {
     }
       this.userAPIService.getUserById(this.userAPIService.getUserId()!).subscribe({
           next: data => {
-              let user:any = data
+              let user:UserProfile = (data as UserProfile);
+              if(user.restricted){this.router.navigateByUrl('');}
               if(user.is_new){this.router.navigateByUrl('/studies')}
           }
       })
@@ -194,7 +198,7 @@ export class HomeComponent {
         this.userAPIService.getUserProfiles().subscribe({
                 next: (data: any) => {
                     let filtered = (data as UserProfile[]).filter(
-                        user => user.tabs != null && user.id != userID && user.is_new == false
+                        user => user.tabs != null && user.id != userID && user.is_new == false && user.restricted == false
                     );
 
                     userMatches.forEach(currentExistingMatch => {
