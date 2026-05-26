@@ -60,7 +60,8 @@ export class HomeComponent {
   allUserProfiles: UserProfile[] = [];
   profiles: Profile[] = [];
   currentIndex: number = 0;
-    currentTabIndex = signal<Record<number, number>>({});
+  currentTabIndex = signal<Record<number, number>>({});
+  matchedProfile = signal<UserProfile | null>(null);
   loading: boolean = true;
   error: string = '';
     // hasWentBack:boolean = false;
@@ -453,7 +454,8 @@ export class HomeComponent {
   showMatchNotification(profile: UserProfile): void {
     // Usar setTimeout para evitar conflictos con la animacion
     setTimeout(() => {
-      alert(`Hiciste match con ${profile.name}`);
+      this.matchedProfile.set(profile);
+      setTimeout(() => this.matchedProfile.set(null), 3000);
     }, 100);
   }
 
