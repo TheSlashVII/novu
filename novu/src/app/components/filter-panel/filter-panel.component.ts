@@ -15,10 +15,10 @@ export class FilterPanelComponent {
 
   constructor(public filterPanel: PanelServiceService){}
 
-  applyFilters(): void{
-    if(this.filterPanel.onApply) this.filterPanel.onApply();
-    this.filterPanel.close();
-  }
+  applyFilters(): void {
+  this.filterPanel.prepareFiltersBeforeApply();
+  this.filterPanel.close();
+}
 
   resetFilters(): void{
     this.filterPanel.resetFilters();

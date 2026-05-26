@@ -60,7 +60,8 @@ export class HomeComponent {
   allUserProfiles: UserProfile[] = [];
   profiles: Profile[] = [];
   currentIndex: number = 0;
-    currentTabIndex = signal<Record<number, number>>({});
+  currentTabIndex = signal<Record<number, number>>({});
+  matchedProfile = signal<UserProfile | null>(null);
   loading: boolean = true;
   error: string = '';
     // hasWentBack:boolean = false;
@@ -268,35 +269,38 @@ export class HomeComponent {
 
   //Filtros
   applyFilters(): void {
-    const f = this.filterPanel.filters;
-    console.log('Filtros aplicados:', f);
-    console.log('Total perfiles antes:', this.allUserProfiles.length);
-    console.log('Primer usuario:', this.allUserProfiles[0]);
-    this.currentIndex = 0;
+  const f = this.filterPanel.filters;
+  const hasInterestSearch = this.filterPanel.interestSearch.trim() !== '';
+  const hasStudySearch = this.filterPanel.studySearch.trim() !== '';
 
-    this.userProfiles = [ ...this.allUserProfiles.filter(user => {
-      const ageOk = user.age >= f.ageMin && user.age <= f.ageMax;
-      console.log(`${user.name} - edad: ${user.age} - ageOk: ${ageOk}`);
-      console.log(`${user.name} - interests:`, user.interests);
-      console.log(`${user.name} - studies:`, user.studies);
+  this.currentIndex = 0;
 
-      let interestsOk = true;
-      if (f.interests.length > 0) {
-        const userInterestNames = (user.interests ?? []).map(i => i.name.toLowerCase());
-        interestsOk = f.interests.some(sel => userInterestNames.includes(sel.toLowerCase()))
-      }
+  this.userProfiles = [...this.allUserProfiles.filter(user => {
+    const ageOk = user.age >= f.ageMin && user.age <= f.ageMax;
 
-      // Estudios: el usuario debe tener al menos uno de los seleccionados
-      let studiesOk = true;
-      if (f.studies.length > 0) {
-        const userStudyNames = (user.studies ?? []).map(s => s.name.toLowerCase());
-        studiesOk = f.studies.some(sel => userStudyNames.includes(sel.toLowerCase()));
-      }
+    let interestsOk = true;
+    if (f.interests.length > 0) {
+      const userInterestNames = (user.interests ?? []).map(i => i.name.toLowerCase());
+      interestsOk = f.interests.some(sel => userInterestNames.includes(sel.toLowerCase()));
+    } else if (hasInterestSearch) {
+      // escribió algo pero no hubo coincidencias → no pasa nadie
+      interestsOk = false;
+    }
 
-      return ageOk && interestsOk && studiesOk;
-    })]
-    console.log('Total perfiles después:', this.userProfiles.length);
-  }
+    let studiesOk = true;
+    if (f.studies.length > 0) {
+      const userStudyNames = (user.studies ?? []).map(s => s.name.toLowerCase());
+      studiesOk = f.studies.some(sel => userStudyNames.includes(sel.toLowerCase()));
+    } else if (hasStudySearch) {
+      // escribió algo pero no hubo coincidencias → no pasa nadie
+      studiesOk = false;
+    }
+
+    return ageOk && interestsOk && studiesOk;
+  })];
+
+  console.log('Total perfiles después:', this.userProfiles.length);
+}
 
 
   getCurrentProfile(): UserProfile | null {
@@ -453,7 +457,8 @@ export class HomeComponent {
   showMatchNotification(profile: UserProfile): void {
     // Usar setTimeout para evitar conflictos con la animacion
     setTimeout(() => {
-      alert(`Hiciste match con ${profile.name}`);
+      this.matchedProfile.set(profile);
+      setTimeout(() => this.matchedProfile.set(null), 3000);
     }, 100);
   }
 
@@ -476,9 +481,14 @@ export class HomeComponent {
   goToProfile(): void { this.router.navigateByUrl('/settings'); }
 
     goToWelcome(): void { this.router.navigate(['']); }
-  toggleFilters() {
-    this.filterPanel.isOpen = !this.filterPanel.isOpen
+
+  toggleFilters(): void {
+  if (!this.filterPanel.isOpen) {
+    this.filterPanel.open();  // ← usa open() para que cargue los datos
+  } else {
+    this.filterPanel.close();
   }
+}
 
     protected readonly development = development;
     protected readonly window = window;
