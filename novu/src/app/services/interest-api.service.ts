@@ -22,7 +22,7 @@ export class InterestApiService {
     }
     //Gets all the interests availables
     getInterests(): Observable<{ id: number; name: string }[]> {
-        return this.http.get<{ id: number; name: string }[]>(`${this.baseServerURL}/interests/`);
+        return this.http.get<{ id: number; name: string }[]>(`${this.baseServerURL}/interests/`, this.authHeaders());
     }
 
     //Save the interests selected by the user
