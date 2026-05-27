@@ -26,12 +26,10 @@ export class RelationPreferencesComponent {
   }
 
   preferences: {id:number; label:string; selected:boolean }[] = [
-    {id: 1, label: 'Pareja a largo plazo', selected: false},
-    {id: 2, label: 'Largo plazo', selected:false},
-    {id: 3, label: 'Corto plazo', selected:false},
-    {id: 4, label: 'Algo casual', selected:false},
-    {id: 5, label: 'Nuevas amistades', selected:false},
-    {id: 6, label: 'Todavía lo estoy descubriendo', selected:false}
+    {id: 1, label: 'Amistad', selected: false},
+    {id: 2, label: 'Romance', selected:false},
+    {id: 3, label: 'Networking', selected:false},
+    {id: 4, label: 'Estudios', selected:false},
 ];
 
 hasSelection(): boolean{
