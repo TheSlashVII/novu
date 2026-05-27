@@ -108,7 +108,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'id', 'name', 'surnames',
             'gender', 'age','height', 'date_of_birth',
             'profile_pic', 'likes', 'school_name',
-            'amount_tabs', 'tabs','interests', "studies", "is_new"   
+            'amount_tabs', 'tabs','interests', "studies", "is_new","restricted"  
         ]
 
 

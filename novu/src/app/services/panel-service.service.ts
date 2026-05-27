@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable} from '@angular/core';
 import {baseServerURL} from '../baseURLconfig';
+import { UserAPIService } from './user-api.service';
 export interface StudentFilters{
   ageMin: number;
   ageMax: number;
@@ -33,26 +34,34 @@ export class PanelServiceService {
   studySearch           = '';
 
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private userAPI: UserAPIService) { }
 
   //Panel
-  public open(): void{
-    this.isOpen = true;
-    if(this.allInterests.length === 0){
-      this.loadingInterests();
-    }
-    if(this.allStudies.length === 0)
-      this.loadStudies();
+  public open(): void {
+  this.isOpen = true;
+  console.log('abriendo panel, allInterests:', this.allInterests.length, 'allStudies:', this.allStudies.length);
+  if (this.allInterests.length === 0) {
+    this.loadingInterests();
   }
+  if (this.allStudies.length === 0) {
+    this.loadStudies();
+  }
+}
 
-  public close(): void{
-    this.isOpen = false;
-  }
+  public close(): void {
+  this.isOpen = false;
+  if (this.onApply) this.onApply();
+}
+    private authHeaders(): { headers: HttpHeaders } {
+        return {
+            headers: new HttpHeaders({ "Authorization": "Bearer " + this.userAPI.getToken() })
+        };
+    }
 
   //Intereses
   public loadingInterests(): void{
     this.isLoadingInterests = true;
-    this.http.get<{name:string}[]>(`${baseServerURL}/interests/all/`).subscribe({
+    this.http.get<{name:string}[]>(`${baseServerURL}/interests/all/`, this.authHeaders()).subscribe({
       next: (data) => {
           //@ts-ignore
         const unique = [...new Set(data.map(i => i.name))].sort();
@@ -114,16 +123,21 @@ export class PanelServiceService {
     return this.allStudies.filter(s => s.toLowerCase().includes(q))
   }
 
-  loadStudies(): void{
-    this.isLoadingStudies = true;
-    this.http.get<{name: string}[]>(`${baseServerURL}/studies/all/`).subscribe({
-      next: (data) => {
-        this.allStudies = data.map(s => s.name).sort();
-        this.isLoadingStudies = false;
-      },
-      error: () => { this.isLoadingStudies = false;}
-    })
-  }
+  loadStudies(): void {
+  this.isLoadingStudies = true;
+  console.log('llamando a studies/all/...');
+  this.http.get<{name: string}[]>(`${baseServerURL}/studies/all/`).subscribe({
+    next: (data) => {
+      console.log('estudios recibidos:', data);
+      this.allStudies = data.map(s => s.name).sort();
+      this.isLoadingStudies = false;
+    },
+    error: (err) => {
+      console.log('error cargando estudios:', err);
+      this.isLoadingStudies = false;
+    }
+  });
+}
 
   toggleStudy(study: string): void{
     const idx = this.filters.studies.indexOf(study);
@@ -137,4 +151,34 @@ export class PanelServiceService {
   isStudySelected(study: string): boolean{
     return this.filters.studies.includes(study);
   }
+
+ prepareFiltersBeforeApply(): void {
+  console.log('interestSearch:', this.interestSearch);
+  console.log('studySearch:', this.studySearch);
+  console.log('allInterests:', this.allInterests);
+  console.log('allStudies:', this.allStudies);
+
+  if (this.interestSearch.trim() !== '') {
+    const regex = new RegExp(this.interestSearch.trim(), 'i');
+    const matches = this.allInterests.filter(i => regex.test(i));
+    console.log('matches intereses:', matches);
+    matches.forEach(m => {
+      if (!this.filters.interests.includes(m)) {
+        this.filters.interests.push(m);
+      }
+    });
+  }
+
+  if (this.studySearch.trim() !== '') {
+    const regex = new RegExp(this.studySearch.trim(), 'i');
+    const matches = this.allStudies.filter(s => regex.test(s));
+    console.log('matches estudios:', matches);
+    matches.forEach(m => {
+      if (!this.filters.studies.includes(m)) {
+        this.filters.studies.push(m);
+      }
+    });
+  }
+}
+
 }

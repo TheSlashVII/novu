@@ -17,6 +17,9 @@ export class InterestsComponent {
       this.userAPI.getUserById(this.userAPI.getUserId()!).subscribe({
           next: value =>{
               let user:UserProfile = (value as UserProfile); // cast the type into UserProfile
+              if(user.restricted){
+                  this.router.navigateByUrl('');
+              }
               if (!user.is_new){
                   this.router.navigate(["/home"])
               }

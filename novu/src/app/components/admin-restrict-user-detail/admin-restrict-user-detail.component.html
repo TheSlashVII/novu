@@ -30,7 +30,10 @@
             <p>Restricted Reason</p>
             <input type="text" class="w-100 rounded bg-white p-2" [value]="this.userRestrictedStatusInfo.restricted_reason" formControlName="restricted_reason" placeholder="Type a reason">
         </div>
-        <div class="flex flex-row gap-5 justify-end px-10">
+        <div class="flex flex-row gap-5 justify-end items-center px-10">
+            @if (this.isMessageShowing) {
+                <span class="text-xs">{{this.message}}</span>
+            }
             <button (click)="goToList()" type="button" class="rounded-2xl bg-white transform hover:text-[#61646b] py-2 px-5 hover:cursor-pointer">Back to List</button>
             <button type="submit" class="rounded-2xl bg-white transform hover:text-[#61646b] py-2 px-5 hover:cursor-pointer">Submit changes</button>
         </div>

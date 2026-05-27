@@ -20,8 +20,8 @@ def send_contact_email(request):
         send_mail(
             subject=f'Novu - Mensaje de contacto de {name}',
             message=f'Nombre: {name}\nEmail: {email}\n\nMensaje:\n{message}',
-            from_email='api@novu.cat',
-            recipient_list=['contacto@novu.cat'],
+            from_email='contact-daemon@novu.cat',
+            recipient_list=['junioruzama@gmail.com'],
             fail_silently=False,
         )
         

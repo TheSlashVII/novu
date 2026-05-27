@@ -52,12 +52,7 @@ export class ChatDetailComponent {
           this.router.navigate(['/login']);
           return;
       }
-    this.userAPI.getUserProfilePicture(this.otherUserId).subscribe({next: user => {
-        if (user.profile_picture != null) {
-            let userProfile = development ? `http://localhost:8000/${user.profile_picture}` : `${window.location.origin}/${user.profile_picture}`;
-            this.userAvatar.set(userProfile!)
-        }
-    }})
+
 
     this.currentUserId = userId;
     console.log('✅ Usuario actual ID:', this.currentUserId);
@@ -90,13 +85,25 @@ export class ChatDetailComponent {
       }
     });
   }
+  loadUserProfilePic(){
+      this.userAPI.getUserProfilePicture(this.otherUserId).subscribe({next: user => {
+              if (user.profile_picture != null) {
+                  let userProfile = development ? `http://localhost:8000/${user.profile_picture}` : `${window.location.origin}/${user.profile_picture}`;
+                  this.userAvatar.set(userProfile!)
+              } else {
+                  const initials = 'https://ui-avatars.com/api/?name=' + this.userName() + '&background=7c3aed&color=fff'
+                  this.userAvatar.set(initials)
+              }
+          }})
+  }
 
   loadUserData(userId: number): void {
     // Cargar datos del usuario desde la API o usar mock
     this.userAPI.getUserById(userId).subscribe({
       next: (user: any) => {
         this.userName.set(user.name || `Usuario ${userId}`);
-        this.userAvatar.set(user.avatar || 'https://randomuser.me/api/portraits/women/1.jpg');
+        // this.userAvatar.set(user.avatar || 'https://randomuser.me/api/portraits/women/1.jpg');
+          this.loadUserProfilePic()
         this.isOnline.set(false);
       },
       error: () => {

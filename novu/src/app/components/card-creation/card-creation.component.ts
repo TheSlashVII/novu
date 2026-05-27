@@ -3,6 +3,7 @@ import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import {CardTab, CardTabService} from '../../services/card-tab.service';
 import {UserAPIService} from '../../services/user-api.service';
 import {Router} from '@angular/router';
+import {UserProfile} from '../home/home.component';
 
 @Component({
   selector: 'app-card-creation',
@@ -36,6 +37,9 @@ export class CardCreationComponent implements OnDestroy {
 
         this.userAPI.getUserById(token.user_id).subscribe({
             next: (res:any) => {
+                if(res.restricted){
+                    this.router.navigateByUrl('');
+                }
                 if (!res.is_new) {
                     this.router.navigate(['/home']);
                 }

@@ -13,7 +13,7 @@ interface ChatPreview {
   name: string;
   lastMessage: string;
   lastMessageTime: string;
-  avatar: string;
+  avatar: string | null;
   unreadCount: number;
 }
 
@@ -72,12 +72,15 @@ export class ChatListComponent {
             // to get the profile pictures consistently
               forkJoin(profileRequests).subscribe({
                   next: (profiles) => {
-                      const updatedChats = chatsWithUnread.map((chat, i) => ({
-                          ...chat,
-                          avatar: development
-                              ? `http://localhost:8000/${profiles[i].profile_picture}`
-                              : `${window.location.origin}/${profiles[i].profile_picture}`
-                      }));
+                      const updatedChats = chatsWithUnread.map((chat, i) => {
+                          const pic = profiles[i].profile_picture;
+                          const avatar = pic
+                              ? (development
+                                  ? `http://localhost:8000/${pic}`
+                                  : `${window.location.origin}/${pic}`)
+                              : null;  // ← keep null so the template fallback kicks in
+                          return { ...chat, avatar };
+                      });
                       this.chats.set(updatedChats);
                   },
                   error: () => {
@@ -156,4 +159,6 @@ export class ChatListComponent {
   goToHome(): void {
     this.router.navigate(['/home']);
   }
+
+    protected readonly window = window;
 }

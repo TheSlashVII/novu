@@ -205,4 +205,43 @@
 
   </nav>
 
+  <!-- Match animation overlay -->
+@if (matchedProfile()) {
+  <div class="fixed inset-0 z-50 flex flex-col items-center justify-center
+              bg-black/60 backdrop-blur-sm animate-fade-in">
+
+    <div class="flex flex-col items-center gap-6 px-8">
+
+      <!-- Corazón animado -->
+      <div class="text-8xl animate-bounce">💜</div>
+
+      <!-- Texto -->
+      <div class="text-center">
+        <p class="text-white/80 font-[Inter] text-lg tracking-widest uppercase mb-1">Es un</p>
+        <h2 class="text-white font-[Poppins] font-extrabold text-5xl tracking-wide drop-shadow-lg">Match!</h2>
+      </div>
+
+      <!-- Nombre del match -->
+      <p class="text-white font-[Poppins] text-xl font-medium">
+        Tú y <span class="font-bold text-violet-300">{{ matchedProfile()!.name }}</span> os habéis gustado
+      </p>
+
+      <!-- Botones -->
+      <div class="flex gap-4 mt-4">
+        <button (click)="matchedProfile.set(null)"
+                class="px-6 py-3 rounded-full border-2 border-white/40 text-white
+                       font-[Inter] font-medium hover:bg-white/10 transition-all hover:cursor-pointer">
+          Seguir viendo
+        </button>
+        <button (click)="matchedProfile.set(null); goToChat()"
+                class="px-6 py-3 rounded-full bg-violet-600 text-white
+                       font-[Inter] font-semibold hover:bg-violet-700 transition-all hover:cursor-pointer">
+          Enviar mensaje
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
+
 </div>

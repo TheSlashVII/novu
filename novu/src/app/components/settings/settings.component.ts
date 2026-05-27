@@ -73,6 +73,7 @@ export class SettingsComponent {
                     age:result.age,
                     studies: result.studies,
                     likes: result.likes,
+                    restricted:result.restricted,
                 })
                 let c = this.profile().tabs[0]
 
@@ -140,6 +141,7 @@ export class SettingsComponent {
         profile_pic: 'assets/Images/userIcon.svg',
         studies:[],
         likes:0,
+        restricted:false
     });
 
     tabs = signal<CardTab[]>([
@@ -347,7 +349,7 @@ export class SettingsComponent {
         // Example call - replace with your actual endpoint and service method:
         this.userAPI.updateUserProfile(payload).subscribe({
            next: (res) => {
-             this.toastMessage = 'Changes saved';
+             this.toastMessage = 'Se han guardado los cambios';
              this.toastVisible = true;
              setTimeout(() => (this.toastVisible = false), 2500);
              this.newPassword = '';
@@ -355,7 +357,7 @@ export class SettingsComponent {
              console.log(res)
            },
            error: () => {
-             this.toastMessage = 'Save failed, please try again';
+             this.toastMessage = 'Error en guardar cambios';
              this.toastVisible = true;
              setTimeout(() => (this.toastVisible = false), 2500);
            }

@@ -93,7 +93,10 @@
                         <p class="font-semibold text-gray-800 text-sm truncate">
                             {{ profile.name }} {{ profile.surnames }}
                         </p>
-                        <p class="text-gray-400 text-xs">{{ profile.age }} años</p>
+                        @if (profile.age) {
+                            <p class="text-gray-400 text-xs">{{ profile.age }} años</p>
+                        }
+
                         @if (profile.school_name) {
                             <p class="text-gray-400 text-xs truncate">{{ profile.school_name }}</p>
                         }
