@@ -1,4 +1,4 @@
-import { afterNextRender, Component, inject, signal } from '@angular/core';
+import { afterNextRender, Component, inject, OnDestroy, signal } from '@angular/core';
 import {Router} from '@angular/router';
 import {HttpClient} from '@angular/common/http';
 import {UserAPIService} from '../../services/user-api.service';
@@ -54,7 +54,7 @@ interface Interest{
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
-export class HomeComponent {
+export class HomeComponent implements OnDestroy{
   private http = inject(HttpClient);
   userProfiles: UserProfile[] = [];
   allUserProfiles: UserProfile[] = [];
@@ -179,6 +179,12 @@ export class HomeComponent {
          */
     });
   }
+
+  ngOnDestroy(): void {
+    this.filterPanel.onApply = null;
+  }
+
+
     getProfilePicture(){
       return development ? `http://localhost:8000/${this.loggedUser().profile_pic}` : `${window.location.origin}/${this.loggedUser().profile_pic}`;
     }
@@ -269,6 +275,7 @@ export class HomeComponent {
 
   //Filtros
   applyFilters(): void {
+  console.trace('applyFilters llamado desde:');
   const f = this.filterPanel.filters;
   const hasInterestSearch = this.filterPanel.interestSearch.trim() !== '';
   const hasStudySearch = this.filterPanel.studySearch.trim() !== '';
