@@ -126,7 +126,7 @@ export class PanelServiceService {
   loadStudies(): void {
   this.isLoadingStudies = true;
   console.log('llamando a studies/all/...');
-  this.http.get<{name: string}[]>('http://localhost:8000/api/users/studies/all/').subscribe({
+  this.http.get<{name: string}[]>(`${baseServerURL}/studies/all/`).subscribe({
     next: (data) => {
       console.log('estudios recibidos:', data);
       this.allStudies = data.map(s => s.name).sort();
