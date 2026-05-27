@@ -30,7 +30,7 @@
     <div class="chat-item" (click)="openChat(chat.id)">
       <div class="avatar">
         <img [src]="chat.avatar || 'https://ui-avatars.com/api/?name=' + chat.name + '&background=7c3aed&color=fff'"
-             [alt]="chat.name">
+             [alt]="chat.name" onerror="this.src='https://ui-avatars.com/api/?name=' + chat.name + '&background=7c3aed&color=fff'">
       </div>
       <div class="chat-details">
         <div class="top-row">
