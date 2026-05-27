@@ -18,6 +18,7 @@ export class RegisterComponent {
   errorMessage: string = '';
   studentSelfieButtonLabel:string = 'Choose a file...'
   studentIdButtonLabel:string = 'Choose a file...'
+    loading:boolean = false;
 
   constructor(private userAPI: UserAPIService, private router: Router) {}
   formRegister = new FormGroup({
@@ -125,15 +126,17 @@ export class RegisterComponent {
 
 
 
-      console.log('Formulario válido:', dataToSend);
+      this.loading = true;
       // this.userAPI.createRegisterRequest(this.formRegister.value)
       // alert('¡Registro exitoso! Revisa la consola para ver los datos.');
        this.userAPI.createRegisterRequest(formData).subscribe({
        next: (res) => {
          //console.log(res);
+           this.loading = false;
          this.router.navigateByUrl("/postRegister");
        },
       error: (err) => {
+           this.loading = false
        if(err.error?.error) {
         this.errorMessage = err.error.error;
         setTimeout(()=>{
@@ -143,7 +146,7 @@ export class RegisterComponent {
         this.errorMessage = 'Algo ha ido mal. Intentalo de nuevo.';
         setTimeout(()=> {
             this.errorMessage = '';
-        })
+        }, 2000)
        }
       }
   });

@@ -208,8 +208,23 @@
               [disabled]="!isFormReady"
               [class.btn-active]="isFormReady"
               [class.btn-inactive]="!isFormReady"
-              class="hover:cursor-pointer h-12 w-[240px] rounded-full border-2 border-black text-white font-bold text-[16px] transition active:scale-[0.99]">
-              Crear cuenta
+              class="hover:cursor-pointer h-12 w-[240px] rounded-full border-2 border-black text-white font-bold text-[16px] transition active:scale-[0.99]"
+              [ngClass]="isFormReady && !loading
+                ? 'bg-gradient-to-r from-red-400 to-red-600 hover:opacity-90 active:scale-95 cursor-pointer'
+                : 'bg-gray-400 opacity-40 cursor-not-allowed'"
+            >
+                @if (loading) {
+                    <span class="inline-flex items-center gap-2 justify-center">
+                      <svg class="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                      </svg>
+                        Creando Petición ...
+                    </span>
+                } @else {
+                    Crear cuenta
+                }
+
             </button>
           </div>
 
