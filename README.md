@@ -1,5 +1,5 @@
 # Novu - Create new connections
-#### The project is deployed on this domain: https://novu.cat
+#### The project is deployed on this domain: https://novu.cat (deprecated)
 ## This is a tinder like webapp to find new friendships with other students. 
 It includes technologies such as face scan for the id to check if the id submitted by the user is actually a human being
 ## Pre-requisites
